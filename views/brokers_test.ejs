@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Broker List</title>
+    <link rel="shortcut icon" type="image/png" href="/images/favicon.png">
+    <link rel='stylesheet' href='/bootstrap-3.3.5/css/bootstrap.min.css'>
+    <link rel="stylesheet" media="screen" href="/stylesheets/index.min.css">
+    <link rel="stylesheet" media="screen"
+          href="/dataTables/stylesheets/dataTables.bootstrap.css">
+    <link rel="stylesheet" media="screen"
+          href="/chartist/stylesheets/chartist.min.css">
+    <!--
+    <script data-main="/vassets/javascripts/index.js" src="/webjars/requirejs/2.1.20/require.min.js"></script>
+    -->
+    <script src="/chartist/javascripts/chartist.min.js"></script>
+</head>
+<body role="document">
+
+
+<div class="navbar navbar-default" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <!--  Display three horizontal lines when navbar collapsed. -->
+                <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
+            </button>
+            <img src="/images/favicon.png">
+            <a class="navbar-brand un-float-me" href="/">
+                Kafka Manager</a><span class="label label-primary">test</span>
+        </div>
+
+
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Cluster<span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="/addCluster">Add Cluster</a></li>
+                        <li><a href="/clusters/test">Summary</a></li>
+                        <li><a href="/">List</a></li>
+                    </ul>
+                </li>
+                <li class="active"><a href="/clusters/test/brokers">Brokers</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Topic<span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="/clusters/test/createTopic">Create</a></li>
+                        <li><a href="/clusters/test/topics">List</a></li>
+                    </ul>
+                </li>
+                <li><a href="/clusters/test/leader">Preferred Replica Election</a></li>
+                <li><a href="/clusters/test/assignment">Reassign Partitions</a></li>
+                <li><a href="/clusters/test/consumers">Consumers</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Logkafka<span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="/clusters/test/logkafkas">List Logkafka</a></li>
+                        <li><a href="/clusters/test/createLogkafka">Create Logkafka</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="container" role="main">
+    <ol class="breadcrumb">
+        <li><a href="/">Clusters</a></li>
+        <li><a href="/clusters/<%=brokers[0].BrokerList[0].cluster%>"><%=brokers[0].BrokerList[0].cluster%></a></li>
+        <li class="active">Brokers</li>
+    </ol>
+
+    <div class="col-md-7 un-pad-me">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3>
+                    <button type="button" class="btn btn-link" onclick="goBack()">
+                        <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                    </button>
+                    Brokers
+                </h3>
+            </div>
+            <table class="table">
+                <thead>
+                <tr>
+                    <td>Id</td>
+                    <td>Host</td>
+                    <td>Port</td>
+                    <td>JMX Port</td>
+                    <td>Bytes In</td>
+                    <td>Bytes Out</td>
+                    <td>Size</td>
+                </tr>
+                </thead>
+
+                <tbody>
+                <!--Dynamic data-->
+
+
+                <%for(var j= 0; j < brokers[0].BrokerList.length; j++) {%>
+                <tr>
+                    <td> <a href="/brokers/<%=brokers[0].BrokerList[j].Id%>"><%=brokers[0].BrokerList[j].Id%></a></td>
+                    <td><%=brokers[0].BrokerList[j].brohost%> </td>
+                    <td><%=brokers[0].BrokerList[j].port%> </td>
+                    <td><%=brokers[0].BrokerList[j].JMXPort%> </td>
+                    <td><%=brokers[0].BrokerList[j].BytesIn%> </td>
+                    <td><%=brokers[0].BrokerList[j].BytesOut%> </td>
+                    <td><%=brokers[0].BrokerList[j].Size%> </td>
+                </tr>
+                <%}%>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="col-md-5 un-pad-me">
+        <div class="panel panel-default">
+            <div class="panel-heading"><h3>Combined Metrics</h3></div>
+
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Rate</th>
+                    <th>Mean</th>
+                    <th>1&nbsp;min</th>
+                    <th>5&nbsp;min</th>
+                    <th>15&nbsp;min</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <%for(var i= 0; i < brokers[0].Metrics.length; i++) {%>
+                <tr>
+                    <td><%=brokers[0].Metrics[i].Title%> </td>
+                    <td><span class="badge"><%=brokers[0].Metrics[i].Mean%> </span></td>
+                    <td><span class="badge"><%=brokers[0].Metrics[i].omin%> </span></td>
+                    <td><span class="badge"><%=brokers[0].Metrics[i].fmin%> </span></td>
+                    <td><span class="badge"><%=brokers[0].Metrics[i].tmin%> </span></td>
+                <tr>
+                    <%}%>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="/query-2.1.4/jquery.min.js"></script>
+<script src="/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script src="/dataTables/javascripts/jquery.dataTables.min.js"></script>
+<script src="/dataTables/javascripts/dataTables.bootstrap.js"></script>
+
+<script>
+    function goBack() {
+        window.history.back()
+    }
+
+    function checkBoxSelect(idPrefix, booleanValue, display) {
+        $("[id^=" + idPrefix + "]").prop("checked", booleanValue);
+    }
+
+    function selectBySubname(selectId, selectClass, display) {
+        var subname = $(selectId).val().toLowerCase();
+        $('.' + selectClass).not("[name*='" + subname + "']").css("display", "none");
+        $("[class='" + selectClass + "'][name*='" + subname + "']").css("display", display);
+        if (subname == "") {
+            $('.' + selectClass).css("display", display);
+        }
+    }
+
+    function disableSubmission() {
+        $('[type=submit]').prop('disabled', true);
+        $('[type=submit]').removeAttr('type');
+    }
+</script>
+
+</body>
+</html>
+

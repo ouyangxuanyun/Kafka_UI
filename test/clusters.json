@@ -1,0 +1,14 @@
+[
+  {
+    "name": "test",
+    "kafkaVersion": "0.9.0.1",
+    "zkHosts": "VM-01:2181,VM-02:2181,VM-03:2181,VM-04:2181",
+    "operation": "Disable"
+  },
+  {
+    "name": "test2",
+    "kafkaVersion": "0.9.0.1",
+    "zkHosts": "VM-01:2181,VM-02:2181,VM-03:2181,VM-04:2181",
+    "operation": "Disable"
+  }
+]
