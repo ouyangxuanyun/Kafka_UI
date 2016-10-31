@@ -29,6 +29,16 @@
       "BytesIn":"1111",
       "BytesOut":"111",
       "Size":"12"
+    },
+    {
+      "cluster":"test",
+      "Id":"3",
+      "brohost":"VM004",
+      "port":"9092",
+      "JMXPort":"0",
+      "BytesIn":"1111",
+      "BytesOut":"111",
+      "Size":"12"
     }
   ],
 
@@ -49,6 +59,20 @@
     },
     {
       "Title":"Bytes out /sec",
+      "Mean":"1.32",
+      "omin":"2.45",
+      "fmin":"4.45",
+      "tmin":"3.32"
+    },
+    {
+      "Title":"Bytes rejected /sec",
+      "Mean":"1.32",
+      "omin":"2.45",
+      "fmin":"4.45",
+      "tmin":"3.32"
+    },
+    {
+      "Title":"Failed fetch request /sec",
       "Mean":"1.32",
       "omin":"2.45",
       "fmin":"4.45",

@@ -1,0 +1,19 @@
+<html>
+<h1><%=dataIn[0]%></h1>,
+<h1><%=dataIn[1]%></h1>
+
+<script>
+    var t = new Array();
+    <% for(var i = 0; i < dataIn[0].length; i++) { %>
+    t[i] = "'"+ dataIn[0][i]+ "'";
+
+    <%}%>
+    console.log(t)
+    var data = {
+        labels:t,
+        series:[<%=dataIn[1]%>]
+    }
+
+</script>
+
+</html>

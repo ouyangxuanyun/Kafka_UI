@@ -16,7 +16,6 @@
 </head>
 <body role="document">
 
-
 <div class="navbar navbar-default" role="navigation">
     <div class="container">
         <div class="navbar-header">
@@ -97,9 +96,9 @@
                 <!--Dynamic data-->
 
 
-                <%for(var j= 0; j < brokers[0].BrokerList.length; j++) {%>
+                <%for(var j= 0; j < brokerid.length; j++) {%>
                 <tr>
-                    <td> <a href="/brokers/<%=brokers[0].BrokerList[j].Id%>"><%=brokers[0].BrokerList[j].Id%></a></td>
+                    <td><%=brokerid[j]%></td>
                     <td><%=brokers[0].BrokerList[j].brohost%> </td>
                     <td><%=brokers[0].BrokerList[j].port%> </td>
                     <td><%=brokers[0].BrokerList[j].JMXPort%> </td>

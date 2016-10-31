@@ -1,0 +1,82 @@
+
+"use strict";
+
+var KafkaRest = require('kafka-rest'),
+    argv = require('minimist')(process.argv.slice(2)),
+    async = require('async');
+var api_url = argv.url || "http://10.192.33.76:8082";
+var help = (argv.help || argv.h);
+
+if (help) {
+    console.log("Demonstrates accessing a variety of Kafka cluster metadata via the REST proxy API wrapper.");
+    console.log();
+    console.log("Usage: node metadata.js [--url <api-base-url>]");
+    process.exit(0);
+}
+var kafkautil = new Object();
+var kafka = new KafkaRest({"url": api_url});
+
+function listBrokers(callback) {
+    var result = new Array();
+    kafka.brokers.list(function (err, data) {
+        if (err) {
+            console.log("Failed trying to list brokers: " + err);
+        } else {
+            for (var i = 0; i < data.length; i++)
+                //console.log(data[i].toString() + " (raw: " + JSON.stringify(data[i].raw) + ")");
+                result.push(data[i].id)
+        }
+        //console.log(result.length)
+        callback(result)
+        //return result;
+        //console.log();
+    });
+}
+
+function listTopics(callback) {
+    var topicList = new Array();
+    kafka.topics.list(function (err, data) {
+        if (err) {
+            console("Failed to list topics: " + err);
+        } else {
+            for (var i = 0; i < data.length; i++)
+                //console.log(data[i].toString() + " (raw: " + JSON.stringify(data[i].raw) + ")");
+                topicList.push(data[i].name)
+        }
+        callback(topicList);
+        //console.log();
+       // done(err);
+    });
+}
+
+function listTopicPartitions(topicList,callback) {
+    if (firstTopicName == null) {
+        console.log("Didn't find any topics, skipping listing partitions.");
+        //console.log();
+        callback();
+    }
+
+    for (var i = 0; i < topicList.length; i++) {
+        kafka.topic(firstTopicName).partitions.list(function (err, data) {
+            if (err) {
+                console("Failed to list partitions: " + err);
+            } else {
+                for (var i = 0; i < data.length; i++)
+                    console.log(data[i].toString() + " (raw: " + JSON.stringify(data[i].raw) + ")");
+                if (data.length > 0)
+                    firstTopicPartitionId = data[0].id;
+            }
+    }
+
+        //console.log();
+        callback(err);
+    });
+}
+
+
+
+
+kafkautil.getbrokerlist=listBrokers;
+kafkautil.listTopics=listTopics;
+kafkautil.listTopicPartitions=listTopicPartitions;
+module.exports = kafkautil;

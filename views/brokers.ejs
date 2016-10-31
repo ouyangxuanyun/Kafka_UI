@@ -3,7 +3,7 @@
 <head>
     <title>Broker List</title>
     <link rel="shortcut icon" type="image/png" href="/images/favicon.png">
-    <link rel='stylesheet' href='/bootstrap/3.3.5/css/bootstrap.min.css'>
+    <link rel='stylesheet' href='/bootstrap-3.3.5/css/bootstrap.min.css'>
     <link rel="stylesheet" media="screen" href="/stylesheets/index.min.css">
     <link rel="stylesheet" media="screen"
           href="/dataTables/stylesheets/dataTables.bootstrap.css">
@@ -66,9 +66,10 @@
 <div class="container" role="main">
     <ol class="breadcrumb">
         <li><a href="/">Clusters</a></li>
-        <li><a href="/clusters/test">test</a></li>
+        <li><a href="/clusters/<%=brokers[0].BrokerList[0].cluster%>"><%=brokers[0].BrokerList[0].cluster%></a></li>
         <li class="active">Brokers</li>
     </ol>
+
     <div class="col-md-7 un-pad-me">
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -88,113 +89,31 @@
                     <td>JMX Port</td>
                     <td>Bytes In</td>
                     <td>Bytes Out</td>
-
                     <td>Size</td>
-
                 </tr>
                 </thead>
+
                 <tbody>
+                <!--Dynamic data-->
 
+
+                <%for(var j= 0; j < brokers[0].BrokerList.length; j++) {%>
                 <tr>
-                    <td><a href="/clusters/test/brokers/1">1</a></td>
-                    <td>VM-01</td>
-                    <td>9092</td>
-                    <td>-1</td>
-                    <td>
-                        <span class="badge">
-                            0.00
-                        </span>
-                    </td>
-                    <td>
-                        <span class="badge">
-                            0.00
-                        </span>
-                    </td>
-
-                    <td>
-                        <span class="badge">
-                            0 B
-                        </span>
-                    </td>
-
+                    <td> <a href="/brokers/<%=brokers[0].BrokerList[j].Id%>"><%=brokers[0].BrokerList[j].Id%></a></td>
+                    <td><%=brokers[0].BrokerList[j].brohost%> </td>
+                    <td><%=brokers[0].BrokerList[j].port%> </td>
+                    <td><%=brokers[0].BrokerList[j].JMXPort%> </td>
+                    <td><%=brokers[0].BrokerList[j].BytesIn%> </td>
+                    <td><%=brokers[0].BrokerList[j].BytesOut%> </td>
+                    <td><%=brokers[0].BrokerList[j].Size%> </td>
                 </tr>
-
-                <tr>
-                    <td><a href="/clusters/test/brokers/2">2</a></td>
-                    <td>VM-02</td>
-                    <td>9092</td>
-                    <td>-1</td>
-                    <td>
-                        <span class="badge">
-                            0.00
-                        </span>
-                    </td>
-                    <td>
-                        <span class="badge">
-                            0.00
-                        </span>
-                    </td>
-
-                    <td>
-                        <span class="badge">
-                            0 B
-                        </span>
-                    </td>
-
-                </tr>
-
-                <tr>
-                    <td><a href="/clusters/test/brokers/3">3</a></td>
-                    <td>VM-03</td>
-                    <td>9092</td>
-                    <td>-1</td>
-                    <td>
-                        <span class="badge">
-                            0.00
-                        </span>
-                    </td>
-                    <td>
-                        <span class="badge">
-                            0.00
-                        </span>
-                    </td>
-
-                    <td>
-                        <span class="badge">
-                            0 B
-                        </span>
-                    </td>
-
-                </tr>
-
-                <tr>
-                    <td><a href="/clusters/test/brokers/4">4</a></td>
-                    <td>VM-04</td>
-                    <td>9092</td>
-                    <td>-1</td>
-                    <td>
-                        <span class="badge">
-                            0.00
-                        </span>
-                    </td>
-                    <td>
-                        <span class="badge">
-                            0.00
-                        </span>
-                    </td>
-
-                    <td>
-                        <span class="badge">
-                            0 B
-                        </span>
-                    </td>
-
-                </tr>
+                <%}%>
 
                 </tbody>
             </table>
         </div>
     </div>
+
     <div class="col-md-5 un-pad-me">
         <div class="panel panel-default">
             <div class="panel-heading"><h3>Combined Metrics</h3></div>
@@ -210,103 +129,24 @@
                 </tr>
                 </thead>
                 <tbody>
+
+                <%for(var i= 0; i < brokers[0].Metrics.length; i++) {%>
                 <tr>
-                    <td>Messages in /sec</td>
-                    <td>
-                        <span class="badge">0.00</span>
-                    </td>
-                    <td>
-                        <span class="badge">0.00</span>
-                    </td>
-                    <td>
-                        <span class="badge">0.00</span>
-                    </td>
-                    <td>
-                        <span class="badge">0.00</span>
-                    </td>
+                    <td><%=brokers[0].Metrics[i].Title%> </td>
+                    <td><span class="badge"><%=brokers[0].Metrics[i].Mean%> </span></td>
+                    <td><span class="badge"><%=brokers[0].Metrics[i].omin%> </span></td>
+                    <td><span class="badge"><%=brokers[0].Metrics[i].fmin%> </span></td>
+                    <td><span class="badge"><%=brokers[0].Metrics[i].tmin%> </span></td>
                 <tr>
-                <tr>
-                    <td>Bytes in /sec</td>
-                    <td>
-                        <span class="badge">0.00</span>
-                    </td>
-                    <td>
-                        <span class="badge">0.00</span>
-                    </td>
-                    <td>
-                        <span class="badge">0.00</span>
-                    </td>
-                    <td>
-                        <span class="badge">0.00</span>
-                    </td>
-                <tr>
-                <tr>
-                    <td>Bytes out /sec</td>
-                    <td>
-                        <span class="badge">0.00</span>
-                    </td>
-                    <td>
-                        <span class="badge">0.00</span>
-                    </td>
-                    <td>
-                        <span class="badge">0.00</span>
-                    </td>
-                    <td>
-                        <span class="badge">0.00</span>
-                    </td>
-                <tr>
-                <tr>
-                    <td>Bytes rejected /sec</td>
-                    <td>
-                        <span class="badge">0.00</span>
-                    </td>
-                    <td>
-                        <span class="badge">0.00</span>
-                    </td>
-                    <td>
-                        <span class="badge">0.00</span>
-                    </td>
-                    <td>
-                        <span class="badge">0.00</span>
-                    </td>
-                <tr>
-                <tr>
-                    <td>Failed fetch request /sec</td>
-                    <td>
-                        <span class="badge">0.00</span>
-                    </td>
-                    <td>
-                        <span class="badge">0.00</span>
-                    </td>
-                    <td>
-                        <span class="badge">0.00</span>
-                    </td>
-                    <td>
-                        <span class="badge">0.00</span>
-                    </td>
-                <tr>
-                <tr>
-                    <td>Failed produce request /sec</td>
-                    <td>
-                        <span class="badge">0.00</span>
-                    </td>
-                    <td>
-                        <span class="badge">0.00</span>
-                    </td>
-                    <td>
-                        <span class="badge">0.00</span>
-                    </td>
-                    <td>
-                        <span class="badge">0.00</span>
-                    </td>
-                <tr>
+                    <%}%>
+
                 </tbody>
             </table>
         </div>
     </div>
 </div>
 
-<script src="/query/2.1.4/jquery.min.js"></script>
+<script src="/query-2.1.4/jquery.min.js"></script>
 <script src="/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <script src="/dataTables/javascripts/jquery.dataTables.min.js"></script>
 <script src="/dataTables/javascripts/dataTables.bootstrap.js"></script>
@@ -337,4 +177,3 @@
 
 </body>
 </html>
-

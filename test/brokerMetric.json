@@ -1,0 +1,37 @@
+[
+  {
+    "Title":"Messages in /sec",
+    "Mean":"1.32",
+    "omin":"2.45",
+    "fmin":"4.45",
+    "tmin":"3.32"
+  },
+  {
+    "Title":"Bytes in /sec",
+    "Mean":"2.32",
+    "omin":"3.45",
+    "fmin":"4.45",
+    "tmin":"4.32"
+  },
+  {
+    "Title":"Bytes out /sec",
+    "Mean":"3.32",
+    "omin":"4.45",
+    "fmin":"5.45",
+    "tmin":"6.32"
+  },
+  {
+    "Title":"Bytes rejected /sec",
+    "Mean":"4.32",
+    "omin":"5.45",
+    "fmin":"6.45",
+    "tmin":"7.32"
+  },
+  {
+    "Title":"Failed fetch request /sec",
+    "Mean":"7.32",
+    "omin":"8.45",
+    "fmin":"9.45",
+    "tmin":"9.32"
+  }
+]
