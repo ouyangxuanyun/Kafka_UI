@@ -1,4 +1,3 @@
-
 "use strict";
 
 var KafkaRest = require('kafka-rest'),
@@ -44,39 +43,57 @@ function listTopics(callback) {
                 topicList.push(data[i].name)
         }
         callback(topicList);
-        //console.log();
-       // done(err);
     });
 }
 
-function listTopicPartitions(topicList,callback) {
-    if (firstTopicName == null) {
+function listTopicPartitions(topicList) {
+    var broid = 1;
+    if (topicList == null || topicList.length == 0) {
         console.log("Didn't find any topics, skipping listing partitions.");
-        //console.log();
         callback();
     }
-
+    // name,repliccation, totalparti, onbros,partis
+    var perTopicDetail = [];
     for (var i = 0; i < topicList.length; i++) {
-        kafka.topic(firstTopicName).partitions.list(function (err, data) {
+        kafka.topic(topicList[i]).partitions.list(function (err, data) {
             if (err) {
                 console("Failed to list partitions: " + err);
             } else {
-                for (var i = 0; i < data.length; i++)
-                    console.log(data[i].toString() + " (raw: " + JSON.stringify(data[i].raw) + ")");
-                if (data.length > 0)
-                    firstTopicPartitionId = data[0].id;
-            }
-    }
+                var list = new Object();
+                list.name = data[0].topic.name;
+                list.replicationlen = data[0].raw.replicas.length;
+                list.partitionslen = data.length;
+                list.partitions = new Array();
 
-        //console.log();
-        callback(err);
-    });
+                for (var j = 0; j < data.length; j++) {
+                    console.log(data[j].toString() + " (raw: " + JSON.stringify(data[j].raw) + ")");
+                    console.log(data[j].raw.partition)
+                    var replicabro = [];
+                    // var replicalen = data[j].raw.partition
+                    var replicas = data[j].raw.replicas;
+                    for (var k = 0; k < replicas.length; k++) {
+                        replicabro.push(replicas[k].broker)
+                    }
+                    //console.log(replicabro);
+                    if (data[j].raw.partition == broid || (replicabro.indexOf(broid) > -1)) {
+                        if(data[j].raw.partition)
+                        list.partitions.push(data[j].raw.partition);
+                    }
+                    // perTopicDetail.name.push(data[i].topic.name);
+                    // perTopicDetail.detail.push(data[i].topic.name);
+                    //console.log("replication:" + data[j].raw);
+                }
+                console.log(list.partitions)
+
+            }
+            // console.log("name:" + data[0].topic.name)
+            // console.log("partitions:" + data.length);
+            // console.log("replications:" + data[0].raw.replicas.length);
+        });
+    }
 }
 
-
-
-
-kafkautil.getbrokerlist=listBrokers;
-kafkautil.listTopics=listTopics;
-kafkautil.listTopicPartitions=listTopicPartitions;
+kafkautil.getbrokerlist = listBrokers;
+kafkautil.listTopics = listTopics;
+kafkautil.listTopicPartitions = listTopicPartitions;
 module.exports = kafkautil;

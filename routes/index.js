@@ -17,6 +17,11 @@ router.get('/brokers', function (req, res, next) {
     kafka.getbrokerlist(function (data) {
         res.render('brokers_test', {brokers: brokers, brokerid: data})
     });
+    kafka.listTopics(function(data) {
+        kafka.listTopicPartitions(data)
+    })
+    var broid = 1;
+    //kafka.listTopics(kafka.listTopicPartitions(data))
     //res.render('brokers_test', {brokers: brokers,brokerid:brokerid})
 })
 
