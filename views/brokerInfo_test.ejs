@@ -151,8 +151,10 @@
                             };
 
                             var data = {
-                                labels: [<%=dataIn[1]%>],
+                                labels: [<%=dataIn[0]%>],
                                 //labels: ['09:21:58','09:22:28','09:22:58','09:23:28','09:23:58','09:24:28','09:24:58','09:25:28','09:25:58','09:26:28'],
+                                //labels:['09:21:58','09:22:28','09:22:58','09:23:28'],
+                                //labels:[1,2,3],
                                 series: [
                                     [<%=dataIn[1]%>]
                                 ]
@@ -178,14 +180,14 @@
                     </thead>
 
                     <tbody>
-                    <% for(var i = 0; i < topicInfo.length; i++) { %>
+                    <% for(var i = 0; i < topiclistdetail.length; i++) { %>
                     <tr>
-                        <td><a href="/clusters/<%= topicInfo[i].name %>"><%= topicInfo[i].name %></td>
-                        <td><%= topicInfo[i].Replication %></td>
-                        <td><%= topicInfo[i].TotalPar %></td>
-                        <td><%= topicInfo[i].ParsonBro %></td>
-                        <td><%= topicInfo[i].Partitions %></td>
-                        <td><%= topicInfo[i].Skewed %></td>
+                        <td><a href="/clusters/<%= topiclistdetail[i].name %>"><%= topiclistdetail[i].name %></td>
+                        <td><%= topiclistdetail[i].replicationlen %></td>
+                        <td><%= topiclistdetail[i].partitionslen %></td>
+                        <td><%= topiclistdetail[i].paronbro %></td>
+                        <td><%= topiclistdetail[i].partitions %></td>
+                        <td><%= topiclistdetail[i].skewed %></td>
                     </tr>
                     <% } %>
                     </tbody>
