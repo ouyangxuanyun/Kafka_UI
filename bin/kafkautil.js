@@ -4,6 +4,11 @@ var KafkaRest = require('kafka-rest'),
     async = require('async');
 var api_url = argv.url || "http://10.192.33.76:8082";
 var help = (argv.help || argv.h);
+var jmx = require("jmx");
+var client = jmx.createClient({
+    host: "10.192.33.69", // optional
+    port: 9998
+});
 
 if (help) {
     console.log("Demonstrates accessing a variety of Kafka cluster metadata via the REST proxy API wrapper.");
@@ -93,6 +98,10 @@ function listTopicPartitions(broid, topicList, callback) {
         });
     }
 }
+
+
+
+
 
 kafkautil.getbrokerlist = listBrokers;
 kafkautil.listTopics = listTopics;

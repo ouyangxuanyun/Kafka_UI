@@ -10,6 +10,10 @@ router.get('/', function (req, res, next) {
     res.render('index', {clusters: clusters})
 })
 
+/**
+ *brokerid ??????????????./test/brokers.json
+ */
+
 router.get('/brokers', function (req, res, next) {
     var brokers = JSON.parse(fs.readFileSync('./test/brokers.json'))
     kafka.getbrokerlist(function (data) {
@@ -17,8 +21,11 @@ router.get('/brokers', function (req, res, next) {
     });
 })
 
+/**
+ *
+ */
 router.get('/brokerInfo', function (req, res, next) {
-    var broid = 1; //?????????
+    var broid = 1; //
     var brokerInfo = JSON.parse(fs.readFileSync('./test/brokerInfo.json'))
     var brokerMetric = JSON.parse(fs.readFileSync('./test/brokerMetric.json'))
     // var labels = ['09:21:58', '09:22:28', '09:22:58', '09:23:28', '09:23:58', '09:24:28', '09:24:58', '09:25:28', '09:25:58', '09:26:28']
