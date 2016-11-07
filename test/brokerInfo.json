@@ -3,7 +3,7 @@
   "BroId":"1",
   "Topics":"4",
   "Partitions": "5",
-  "Messages":"100",
-  "Incoming": "40",
-  "Outgoing":"10"
+  "Messages":"???",
+  "Incoming": "???",
+  "Outgoing":"???"
 }

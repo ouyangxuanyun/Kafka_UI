@@ -4,11 +4,7 @@ var KafkaRest = require('kafka-rest'),
     async = require('async');
 var api_url = argv.url || "http://10.192.33.76:8082";
 var help = (argv.help || argv.h);
-var jmx = require("jmx");
-var client = jmx.createClient({
-    host: "10.192.33.69", // optional
-    port: 9998
-});
+
 
 if (help) {
     console.log("Demonstrates accessing a variety of Kafka cluster metadata via the REST proxy API wrapper.");
@@ -29,10 +25,7 @@ function listBrokers(callback) {
                 //console.log(data[i].toString() + " (raw: " + JSON.stringify(data[i].raw) + ")");
                 result.push(data[i].id)
         }
-        //console.log(result.length)
         callback(result)
-        //return result;
-        //console.log();
     });
 }
 
@@ -51,7 +44,10 @@ function listTopics(callback) {
 }
 
 function listTopicPartitions(broid, topicList, callback) {
-    var perTopicDetail = [];
+    var perTopicDetail = [0, 0];// [BrokerIdSummary_Topics ,BrokerIdSummary_Partitions]
+    var BrokerIdSummary_Topics = 0;
+    var BrokerIdSummary_Partitions = 0;
+
     if (topicList == null || topicList.length == 0) {
         console.log("Didn't find any topics, skipping listing partitions.");
         callback(perTopicDetail);
@@ -81,26 +77,27 @@ function listTopicPartitions(broid, topicList, callback) {
                 }
                 //console.log("******* " + list.partitions)
                 if (list.partitions.length) {
+                    BrokerIdSummary_Topics++;
                     list.name = data[0].topic.name;
                     list.replicationlen = data[0].raw.replicas.length;
                     list.partitionslen = data.length;
                     list.paronbro = list.partitions.length;
-                    list.skewed = false;
+                    list.skewed = "????";
+                    BrokerIdSummary_Partitions += list.partitions.length;
                 }
-                console.log("~~~~~~~TopicName: " + list.name + "  Replication:" + list.replicationlen + "  Total Partitions:" +
-                    list.partitionslen + "  Partitions on Brokers:" + list.paronbro + "  Skewed:" + list.skewed +
-                    "  Partitions:" + list.partitions)
+                // console.log("~~~~~~~TopicName: " + list.name + "  Replication:" + list.replicationlen + "  Total Partitions:" +
+                //     list.partitionslen + "  Partitions on Brokers:" + list.paronbro + "  Skewed:" + list.skewed +
+                //     "  Partitions:" + list.partitions)
                 perTopicDetail.push(list);
-                if (topicList.length == perTopicDetail.length) {
+                if (topicList.length == perTopicDetail.length - 2) {
+                    perTopicDetail[0] = BrokerIdSummary_Topics
+                    perTopicDetail[1] = BrokerIdSummary_Partitions
                     callback(perTopicDetail);
                 }
             }
         });
     }
 }
-
-
-
 
 
 kafkautil.getbrokerlist = listBrokers;
