@@ -59,9 +59,9 @@
 <div class="container" role="main">
     <ol class="breadcrumb">
         <li><a href="/">Clusters</a></li>
-        <li><a href="/clusters/<%= brokerInfo.ClusterName %>"><%= brokerInfo.ClusterName %></a></li>
-        <li><a href="/clusters/test/brokers">Brokers</a></li>
-        <li class="active"><%= brokerInfo.BroId %></li>
+        <li><a href="/clusters/<%= clustername %>"><%= clustername %></a></li>
+        <li><a href="/clusters/<%=clustername%>/brokers">Brokers</a></li>
+        <li class="active"><%= brokerlistId%></li>
     </ol>
 
     <div class="col-md-12 un-pad-me">
@@ -70,7 +70,7 @@
                 <h3>
                     <button type="button" class="btn btn-link" onclick="goBack()"><span
                                 class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span></button>
-                    Broker Id 1
+                    Broker Id <%=brokerlistId%>
                 </h3>
             </div>
             <div class="row">
@@ -81,24 +81,24 @@
                             <tbody>
                             <tr>
                                 <td># of Topics</td>
-                                <td><%= brokerInfo.Topics %></td>
+                                <td><%= topiclistdetail[0] %></td>
                             </tr>
                             <tr>
                                 <td># of Partitions</td>
-                                <td><%= brokerInfo.Partitions %></td>
+                                <td><%= topiclistdetail[1] %></td>
                             </tr>
 
                             <tr>
                                 <td>% of Messages</td>
-                                <td><%= brokerInfo.Messages %></td>
+                                <td><%= (100*brokerMetric[0][0]/InOutMessage[0][0]).toFixed(2) %>%</td>
                             </tr>
                             <tr>
                                 <td>% of Incoming</td>
-                                <td><%= brokerInfo.Incoming %></td>
+                                <td><%= (100*brokerMetric[1][0]/InOutMessage[1][0]).toFixed(2) %>%</td>
                             </tr>
                             <tr>
                                 <td>% of Outgoing</td>
-                                <td><%= brokerInfo.Outgoing %></td>
+                                <td><%= (100*brokerMetric[2][0]/InOutMessage[2][0]).toFixed(2) %>%</td>
                             </tr>
                             </tbody>
                         </table>
@@ -111,23 +111,23 @@
                         <table class="table">
                             <thead>
                             <tr>
-                                <th>Rate</th>
+                                <th>Rate/sec</th>
                                 <th>Mean</th>
                                 <th>1&nbsp;min</th>
                                 <th>5&nbsp;min</th>
                                 <th>15&nbsp;min</th>
                             </tr>
                             </thead>
-
                             <tbody>
                             <!--Dynamic data-->
-                            <% for(var i = 0; i < brokerMetric.length; i++) { %>
+                            <% var Ratetitle = ["Messages in", "Bytes in", "Bytes out", "Bytes rejected", "Failed fetch request", "Failed produce request"] %>
+                            <% for(var i = 0; i < 6; i++) { %>
                             <tr>
-                                <td><%= brokerMetric[i].Title %></td>
-                                <td><span class="badge"><%= brokerMetric[i].Mean %> </span></td>
-                                <td><span class="badge"><%= brokerMetric[i].omin %> </span></td>
-                                <td><span class="badge"><%= brokerMetric[i].fmin %> </span></td>
-                                <td><span class="badge"><%= brokerMetric[i].tmin %> </span></td>
+                                <td><%= Ratetitle[i] %></td>
+                                <td><span class="badge"><%= brokerMetric[i][0].toFixed(2) %> </span></td>
+                                <td><span class="badge"><%= brokerMetric[i][1].toFixed(2) %> </span></td>
+                                <td><span class="badge"><%= brokerMetric[i][2].toFixed(2) %> </span></td>
+                                <td><span class="badge"><%= brokerMetric[i][3].toFixed(2) %> </span></td>
                             <tr>
                                 <% } %>
                             </tbody>
@@ -145,14 +145,18 @@
                                 axisY: {
                                     type: Chartist.AutoScaleAxis,
                                     low: -1,
-                                    high: 1,
+                                    // high: 1,
                                     onlyInteger: true
                                 }
                             };
+
                             var data = {
-                                labels: ['09:21:58', '09:22:28', '09:22:58', '09:23:28', '09:23:58', '09:24:28', '09:24:58', '09:25:28', '09:25:58', '09:26:28'],
+                                labels: [<%= dataIn[0] %>],
+                                //labels: ['09:21:58','09:22:28','09:22:58','09:23:28','09:23:58','09:24:28','09:24:58','09:25:28','09:25:58','09:26:28'],
+                                //labels:['09:21:58','09:22:28','09:22:58','09:23:28'],
+                                //labels:[1,2,3],
                                 series: [
-                                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                                    [<%= dataIn[1] %>]
                                 ]
                             };
                             new Chartist.Line('.ct-chart', data, options);
@@ -174,18 +178,22 @@
                         <th>Skewed?</th>
                     </tr>
                     </thead>
+
                     <tbody>
-                    <% for(var i = 0; i < topicInfo.length; i++) { %>
+                    <% for(var i = 2; i < topiclistdetail.length; i++) { %>
+                    <% if (topiclistdetail[i].partitions.length !== 0) { %>  <!-- 传进来的有空值，会在界面显示空行，排除这种情况-->
                     <tr>
-                        <td><a href="/clusters/<%= topicInfo[i].name %>"><%= topicInfo[i].name %></td>
-                        <td><%= topicInfo[i].Replication %></td>
-                        <td><%= topicInfo[i].TotalPar %></td>
-                        <td><%= topicInfo[i].ParsonBro %></td>
-                        <td><%= topicInfo[i].Partitions %></td>
-                        <td><%= topicInfo[i].Skewed %></td>
+                        <td><a href="/clusters/<%= topiclistdetail[i].name %>"><%= topiclistdetail[i].name %></td>
+                        <td style="word-wrap: break-word"><%= topiclistdetail[i].replicationlen %></td>
+                        <td style="word-wrap: break-word"><%= topiclistdetail[i].partitionslen %></td>
+                        <td style="word-wrap: break-word"><%= topiclistdetail[i].paronbro %></td>
+                        <td style="word-wrap: break-word"><%= topiclistdetail[i].partitions %></td>
+                        <td style="word-wrap: break-word"><%= topiclistdetail[i].skewed %></td>
                     </tr>
                     <% } %>
+                    <% } %>
                     </tbody>
+
                 </table>
             </div>
         </div>

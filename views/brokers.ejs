@@ -16,7 +16,6 @@
 </head>
 <body role="document">
 
-
 <div class="navbar navbar-default" role="navigation">
     <div class="container">
         <div class="navbar-header">
@@ -42,7 +41,7 @@
                 </li>
                 <li class="active"><a href="/clusters/test/brokers">Brokers</a></li>
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Topic<span class="caret"></span></a>
+                    <a href="/clusters/test/topics" class="dropdown-toggle" data-toggle="dropdown">Topic<span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
                         <li><a href="/clusters/test/createTopic">Create</a></li>
                         <li><a href="/clusters/test/topics">List</a></li>
@@ -66,7 +65,7 @@
 <div class="container" role="main">
     <ol class="breadcrumb">
         <li><a href="/">Clusters</a></li>
-        <li><a href="/clusters/<%=brokers[0].BrokerList[0].cluster%>"><%=brokers[0].BrokerList[0].cluster%></a></li>
+        <li><a href="/clusters/<%=clustername%>"><%=clustername%></a></li>
         <li class="active">Brokers</li>
     </ol>
 
@@ -97,9 +96,9 @@
                 <!--Dynamic data-->
 
 
-                <%for(var j= 0; j < brokers[0].BrokerList.length; j++) {%>
+                <%for(var j= 0; j < brokerid.length; j++) {%>
                 <tr>
-                    <td> <a href="/brokers/<%=brokers[0].BrokerList[j].Id%>"><%=brokers[0].BrokerList[j].Id%></a></td>
+                    <td><a href="/clusters/<%=clustername%>/brokers/<%=brokerid[j]%>"><%=brokerid[j]%></a></td>
                     <td><%=brokers[0].BrokerList[j].brohost%> </td>
                     <td><%=brokers[0].BrokerList[j].port%> </td>
                     <td><%=brokers[0].BrokerList[j].JMXPort%> </td>
@@ -121,7 +120,7 @@
             <table class="table">
                 <thead>
                 <tr>
-                    <th>Rate</th>
+                    <th>Rate/sec</th>
                     <th>Mean</th>
                     <th>1&nbsp;min</th>
                     <th>5&nbsp;min</th>
@@ -129,14 +128,14 @@
                 </tr>
                 </thead>
                 <tbody>
-
-                <%for(var i= 0; i < brokers[0].Metrics.length; i++) {%>
+                <% var Ratetitle = ["Messages in", "Bytes in", "Bytes out", "Bytes rejected", "Failed fetch request", "Failed produce request"] %>
+                <%for(var i= 0; i < combinedMetrics.length; i++) {%>
                 <tr>
-                    <td><%=brokers[0].Metrics[i].Title%> </td>
-                    <td><span class="badge"><%=brokers[0].Metrics[i].Mean%> </span></td>
-                    <td><span class="badge"><%=brokers[0].Metrics[i].omin%> </span></td>
-                    <td><span class="badge"><%=brokers[0].Metrics[i].fmin%> </span></td>
-                    <td><span class="badge"><%=brokers[0].Metrics[i].tmin%> </span></td>
+                    <td><%= Ratetitle[i] %></td>
+                    <td><span class="badge"><%=combinedMetrics[i][0].toFixed(2)%> </span></td>
+                    <td><span class="badge"><%=combinedMetrics[i][1].toFixed(2)%> </span></td>
+                    <td><span class="badge"><%=combinedMetrics[i][2].toFixed(2)%> </span></td>
+                    <td><span class="badge"><%=combinedMetrics[i][3].toFixed(2)%> </span></td>
                 <tr>
                     <%}%>
 
@@ -177,3 +176,4 @@
 
 </body>
 </html>
+

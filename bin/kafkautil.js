@@ -1,10 +1,8 @@
 "use strict";
-var KafkaRest = require('kafka-rest'),
-    argv = require('minimist')(process.argv.slice(2)),
-    async = require('async');
+var KafkaRest = require('kafka-rest');
+var argv = require('minimist')(process.argv.slice(2));
 var api_url = argv.url || "http://10.192.33.76:8082";
 var help = (argv.help || argv.h);
-
 
 if (help) {
     console.log("Demonstrates accessing a variety of Kafka cluster metadata via the REST proxy API wrapper.");
@@ -43,6 +41,13 @@ function listTopics(callback) {
     });
 }
 
+/**
+ *
+ * @param broid      传入的broker ID
+ * @param topicList 传入的topic列表
+ * @param callback  返回perTopicDetail数组[summary标题栏的Topics, summary标题栏的Partitions, list对象1，list对象2，……]
+ * list 对象包含底部栏Per Topic Detail的信息，
+ */
 function listTopicPartitions(broid, topicList, callback) {
     var perTopicDetail = [0, 0];// [BrokerIdSummary_Topics ,BrokerIdSummary_Partitions]
     var BrokerIdSummary_Topics = 0;
@@ -52,7 +57,7 @@ function listTopicPartitions(broid, topicList, callback) {
         console.log("Didn't find any topics, skipping listing partitions.");
         callback(perTopicDetail);
     }
-    // name,repliccation, totalparti, onbros,partis
+    //以下是获取在此broker上的每个topic的信息：包括name，replication，partitions，partitionsOnBroker,partitions,skew
     var i = 0;
     for (; i < topicList.length; i++) {
         kafka.topic(topicList[i]).partitions.list(function (err, data) {
@@ -61,22 +66,18 @@ function listTopicPartitions(broid, topicList, callback) {
             } else {
                 var list = new Object();
                 list.partitions = new Array();
-                for (var j = 0; j < data.length; j++) {
-                    //console.log(data[j].toString() + " (raw: " + JSON.stringify(data[j].raw) + ")");
-                    // console.log(data[j].raw.partition)
-                    var replicabro = [];
-                    // var replicalen = data[j].raw.partition
+                for (var j = 0; j < data.length; j++) { //获取partitions
+                    //console.log(data[j].toString() + " (raw: " + JSON.stringify(data[j].raw) + ")");console.log(data[j].raw.partition)
+                    var replicabro = [];// var replicalen = data[j].raw.partition
                     var replicas = data[j].raw.replicas;
                     for (var k = 0; k < replicas.length; k++) {
                         replicabro.push(replicas[k].broker)
-                    }
-                    //console.log("######## " + replicabro);
-                    if (data[j].raw.partition == broid || (replicabro.indexOf(broid) > -1)) {
+                    }//console.log("######## " + replicabro);
+                    if ((replicabro.indexOf(broid) > -1)) { // if (data[j].raw.partition == broid ||(replicabro.indexOf(broid) > -1))
                         list.partitions.push(data[j].raw.partition);
                     }
-                }
-                //console.log("******* " + list.partitions)
-                if (list.partitions.length) {
+                }//console.log("******* " + list.partitions)
+                if (list.partitions.length) { //获取topic的其他信息
                     BrokerIdSummary_Topics++;
                     list.name = data[0].topic.name;
                     list.replicationlen = data[0].raw.replicas.length;

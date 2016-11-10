@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Topic List</title>
+    <link rel="shortcut icon" type="image/png" href="/images/favicon.png">
+    <link rel='stylesheet' href='/bootstrap-3.3.5/css/bootstrap.min.css'>
+
+    <link rel="stylesheet" media="screen" href="/stylesheets/index.min.css">
+    <link rel="stylesheet" media="screen" href="/dataTables/stylesheets/dataTables.bootstrap.css">
+    <link rel="stylesheet" media="screen" href="/chartist/stylesheets/chartist.min.css">
+    <!--
+    <script data-main="/vassets/javascripts/index.js" src="/webjars/requirejs/2.1.20/require.min.js"></script>
+    -->
+    <script src="/chartist/javascripts/chartist.min.js"></script>
+
+    <script src="/jquery-2.1.4/jquery.min.js"></script>
+    <script src="/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+    <script src="/dataTables/javascripts/jquery.dataTables.min.js"></script>
+    <script src="/dataTables/javascripts/dataTables.bootstrap.js"></script>
+</head>
+<body role="document">
+
+<div class="navbar navbar-default" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <!--  Display three horizontal lines when navbar collapsed. -->
+                <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
+            </button>
+            <img src="/images/favicon.png">
+            <a class="navbar-brand un-float-me" href="/">
+                Kafka Manager</a><span class="label label-primary">test</span>
+        </div>
+
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Cluster<span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="/addCluster">Add Cluster</a></li>
+                        <li><a href="/clusters/test">Summary</a></li>
+                        <li><a href="/">List</a></li>
+                    </ul>
+                </li>
+
+                <li><a href="/clusters/test/brokers">Brokers</a></li>
+
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Topic<span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="/clusters/test/createTopic">Create</a></li>
+                        <li class="active"><a href="/clusters/test/topics">List</a></li>
+                    </ul>
+                </li>
+
+                <li><a href="/clusters/test/leader">Preferred Replica Election</a></li>
+                <li><a href="/clusters/test/assignment">Reassign Partitions</a></li>
+                <li><a href="/clusters/test/consumers">Consumers</a></li>
+
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Logkafka<span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="/clusters/test/logkafkas">List Logkafka</a></li>
+                        <li><a href="/clusters/test/createLogkafka">Create Logkafka</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+</div>
+
+<div class="container" role="main">
+    <ol class="breadcrumb">
+
+        <li><a href="/">Clusters</a></li>
+
+        <li><a href="/clusters/test">test</a></li>
+
+        <li class="active">Topics</li>
+
+    </ol>
+
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading"><h4>Operations</h4></div>
+            <table class="table">
+                <tr>
+                    <td>
+                        <a href="/clusters/test/assignments/confirm" class="submit-button btn btn-primary" role="button">Generate Partition Assignments</a>
+                    </td>
+                    <td>
+                        <a href="/clusters/test/assignments/run" class="submit-button btn btn-primary" role="button">Run Partition Assignments</a>
+                    </td>
+
+                    <td>
+                        <a href="/clusters/test/topics/addPartitions" class="submit-button btn btn-primary" role="button">Add Partitions</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading"><h3>Topics</h3></div>
+
+            <table class="table" id="topics-table">
+                <thead>
+                <tr><th>Topic</th>
+                    <th># Partitions</th>
+                    <th># Brokers</th>
+                    <th>Brokers Spread %</th>
+                    <th>Brokers Skew %</th>
+                    <th># Replicas</th>
+                    <th>Under Replicated %</th>
+                    <th>Producer Message/Sec</th>
+                    <th>Summed Recent Offsets</th>
+                    <th>Leader Size</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <!--Dynamic data-->
+                <%for(var i= 0; i < topics.length ; i++) {%>
+                <tr class="
+    
+">
+                    <td class="
+    
+"><a href="/clusters/test/topics/<%=topics[i].raw.name%>"><%=topics[i].raw.name%></a></td>
+                    <%var p_num = topics[i].raw.partitions.length%>
+                    <td><%=p_num%></td>
+                    <%var b_arry = new Array()%>
+                    <%b_arry[0] = topics[i].raw.partitions[0].replicas[0].broker%>
+                    <%for(var m= 0; m< topics[i].raw.partitions.length; m++) {%>
+                        <%for(var n= 0; n< topics[i].raw.partitions[m].replicas.length; n++) {%>
+                            <%var flag= false%>
+                            <%for(var l= 0; l<b_arry.length; l++) {%>
+                                <%if (topics[i].raw.partitions[m].replicas[n].broker == b_arry[l]) {%>
+                                    <%flag =true %>
+                                    <% break%>
+                                <%}%>
+                            <%}%>
+                            <%if ( flag== false) b_arry.push(topics[i].raw.partitions[m].replicas[n].broker)%>
+                        <%}%>
+                    <%}%>
+                    <%var b_t_num = b_arry.length%>
+                    <td><%=b_t_num%></td>
+                    <%var b_num = topics[i].brokers.length%>
+                    <%var broker_spread = Math.round(b_t_num*100/b_num)%>
+                    <td class="
+    warning
+"><%=broker_spread%></td>
+                    <td class="
+
+<%var broker_skew = 0%>
+<%if (b_t_num < p_num ) broker_skew = Math.round(100-b_t_num/p_num*100)%>
+"><%=broker_skew%></td>
+                    <%var r_num = topics[i].raw.partitions[0].replicas.length%>
+                    <td><%=r_num%></td>
+                    <td class="
+
+<%var under_repicated = 0%>
+"><%=under_repicated%> under_replicated</td>
+                    <%var producer_mesg_rate = 1.00%>
+                    <td><%=producer_mesg_rate%> producer_mesg_rate</td>
+                    <%var summed_recent_offset = 2%>
+                    <td><%=summed_recent_offset%> summed_recent_offset</td>
+                    <%var leader_size = ''%>
+                    <td><%=leader_size%> leader_size</td>
+                </tr>
+                <%}%>
+                </tbody>
+                
+            </table>
+
+        </div>
+    </div>
+
+</div>
+
+
+
+<script>
+    function goBack() {
+        window.history.back()
+    }
+
+    function checkBoxSelect(idPrefix, booleanValue, display) {
+        $("[id^="+idPrefix+"]").prop("checked",booleanValue);
+    }
+
+    function selectBySubname(selectId, selectClass, display) {
+        var subname = $(selectId).val().toLowerCase();
+        $('.' + selectClass).not("[name*='" + subname + "']").css("display", "none");
+        $("[class='"+selectClass+"'][name*='"+subname+"']").css("display", display);
+        if (subname == "") {
+            $('.' + selectClass).css("display", display);
+        }
+    }
+
+    function disableSubmission() {
+        $('[type=submit]').prop('disabled', true);
+        $('[type=submit]').removeAttr('type');
+    }
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#topics-table').DataTable();
+    } );
+</script>
+
+</body>
+</html>

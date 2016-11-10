@@ -1,9 +1,0 @@
-{
-  "ClusterName":"test",
-  "BroId":"1",
-  "Topics":"4",
-  "Partitions": "5",
-  "Messages":"???",
-  "Incoming": "???",
-  "Outgoing":"???"
-}

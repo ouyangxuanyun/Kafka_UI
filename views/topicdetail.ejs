@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Topic View</title>
+    <link rel="shortcut icon" type="image/png" href="/images/favicon.png">
+    <link rel='stylesheet' href='/bootstrap-3.3.5/css/bootstrap.min.css'>
+
+    <link rel="stylesheet" media="screen" href="/stylesheets/index.min.css">
+    <link rel="stylesheet" media="screen" href="/dataTables/stylesheets/dataTables.bootstrap.css">
+    <link rel="stylesheet" media="screen" href="/chartist/stylesheets/chartist.min.css">
+    <!--
+    <script data-main="/vassets/javascripts/index.js" src="/webjars/requirejs/2.1.20/require.min.js"></script>
+    -->
+    <script src="/chartist/javascripts/chartist.min.js"></script>
+
+    <script src="/jquery-2.1.4/jquery.min.js"></script>
+    <script src="/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+    <script src="/dataTables/javascripts/jquery.dataTables.min.js"></script>
+    <script src="/dataTables/javascripts/dataTables.bootstrap.js"></script>
+
+</head>
+<body role="document">
+
+<div class="navbar navbar-default" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <!--  Display three horizontal lines when navbar collapsed. -->
+                <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
+            </button>
+            <img src="/images/favicon.png">
+            <a class="navbar-brand un-float-me" href="/">
+                Kafka Manager</a><span class="label label-primary">test</span>
+        </div>
+
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Cluster<span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="/addCluster">Add Cluster</a></li>                                    <li><a href="/clusters/test">Summary</a></li>
+                        <li><a href="/">List</a></li>
+                    </ul>
+                </li>
+                <li><a href="/clusters/test/brokers">Brokers</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Topic<span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="/clusters/test/createTopic">Create</a></li>
+                        <li><a href="/clusters/test/topics">List</a></li>
+                    </ul>
+                </li>
+                <li><a href="/clusters/test/leader">Preferred Replica Election</a></li>
+                <li><a href="/clusters/test/assignment">Reassign Partitions</a></li>
+                <li><a href="/clusters/test/consumers">Consumers</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Logkafka<span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="/clusters/test/logkafkas">List Logkafka</a></li>
+                        <li><a href="/clusters/test/createLogkafka">Create Logkafka</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="container" role="main">
+
+    <ol class="breadcrumb">
+
+        <li><a href="/">Clusters</a></li>
+
+        <li><a href="/clusters/test">test</a></li>
+
+        <li><a href="/clusters/test/topics">Topics</a></li>
+
+        <li class="active"><%=topicdetail.topicname%></li>
+
+    </ol>
+
+    <div class="col-md-12 un-pad-me">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3><button type="button" class="btn btn-link" onclick="goBack()"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span></button><%=topicdetail.topicname%></h3>
+            </div>
+
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><h4>Topic Summary</h4></div>
+                        <table class="table">
+                            <tbody>
+                            <tr>
+                                <td>Replication</td>
+                                <%var r_num= topicdetail.raw.partitions[0].replicas.length%>
+                                <td><%=r_num%></td>
+                            <tr>
+                                <td>Number of Partitions</td>
+                                <%var p_num= topicdetail.raw.partitions.length%>
+                                <td><%=p_num%></td>
+                            </tr>
+                            <tr>
+                                <td>Sum of partition offsets</td>
+                                <%var offset= 0%>
+                                <td><%=offset%> offset</td>
+                            </tr>
+                            <tr>
+                                <td>Total number of Brokers</td>
+                                <%var b_num= topicdetail.brokers.length%>
+                                <td><%=b_num%></td>
+                            </tr>
+                            <tr>
+                                <%var b_arry= new Array()%>
+                                <%b_arry[0]= topicdetail.raw.partitions[0].replicas[0].broker%>
+                                <%for(var m= 0; m< topicdetail.raw.partitions.length; m++) {%>
+                                    <%for(var n= 0; n< topicdetail.raw.partitions[m].replicas.length; n++) {%>
+                                        <%var flag= false%>
+                                        <%for(var l= 0; l<b_arry.length; l++) {%>
+                                            <%if (topicdetail.raw.partitions[m].replicas[n].broker == b_arry[l]) {%>
+                                                <%flag= true %>
+                                                <% break%>
+                                            <%}%>
+                                        <%}%>
+                                        <%if ( flag== false) b_arry.push(topicdetail.raw.partitions[m].replicas[n].broker)%>
+                                    <%}%>
+                                <%}%>
+                                <td>Number of Brokers for Topic</td>
+                                <%var b_t_num= b_arry.length%>
+                                <td><%= b_t_num%></td>
+                            </tr>
+                            <tr>
+                                <td>Preferred Replicas %</td>
+
+                                <%var p_r_num= 0%>
+                                <%for (var i= 0; i< topicdetail.raw.partitions.length; i++) {%>
+                                    <%if (topicdetail.raw.partitions[i].replicas[0].leader) p_r_num++%>
+                                <%}%>
+                                <%var p_r_rate= Math.round(p_r_num/p_num*100)%>
+                                <td class="
+
+">
+                                    <%= p_r_rate%>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Brokers Skewed %</td>
+                                <%var b_sk_rate= 0%>
+                                <%if (b_t_num < p_num ) b_sk_rate= Math.round(100-b_t_num/p_num*100)%>
+                                <td class="
+
+">
+                                    <%=b_sk_rate%>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Brokers Spread %</td>
+                                <%var b_sp_rate= Math.round(b_t_num*100/b_num)%>
+                                <td class="
+
+">
+                                    <%=b_sp_rate%>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Under-replicated %</td>
+                                <%var u_r_rate= 0%>
+                                <td class="
+
+">
+                                    <%=u_r_rate%> u_r_rate
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Leader Size</td>
+                                <%var leader_size= 0%>
+                                <td>
+                                    <%=leader_size%> leader_size
+                                </td>
+                            </tr>
+
+                            </tbody>
+                        </table>
+
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><h4>Metrics</h4></div>
+
+
+
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Rate</th>
+                                <th>Mean</th>
+                                <th>1&nbsp;min</th>
+                                <th>5&nbsp;min</th>
+                                <th>15&nbsp;min</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>Messages in /sec</td>
+                                <td>
+                                    <span class="badge">待定</span>
+                                </td>
+                                <td>
+                                    <span class="badge">待定</span>
+                                </td>
+                                <td>
+                                    <span class="badge">待定</span>
+                                </td>
+                                <td>
+                                    <span class="badge">待定</span>
+                                </td>
+                            <tr>
+                            <tr>
+                                <td>Bytes in /sec</td>
+                                <td>
+                                    <span class="badge">待定</span>
+                                </td>
+                                <td>
+                                    <span class="badge">待定</span>
+                                </td>
+                                <td>
+                                    <span class="badge">待定</span>
+                                </td>
+                                <td>
+                                    <span class="badge">待定</span>
+                                </td>
+                            <tr>
+                            <tr>
+                                <td>Bytes out /sec</td>
+                                <td>
+                                    <span class="badge">待定</span>
+                                </td>
+                                <td>
+                                    <span class="badge">待定</span>
+                                </td>
+                                <td>
+                                    <span class="badge">待定</span>
+                                </td>
+                                <td>
+                                    <span class="badge">待定</span>
+                                </td>
+                            <tr>
+                            <tr>
+                                <td>Bytes rejected /sec</td>
+                                <td>
+                                    <span class="badge">待定</span>
+                                </td>
+                                <td>
+                                    <span class="badge">待定</span>
+                                </td>
+                                <td>
+                                    <span class="badge">待定</span>
+                                </td>
+                                <td>
+                                    <span class="badge">待定</span>
+                                </td>
+                            <tr>
+                            <tr>
+                                <td>Failed fetch request /sec</td>
+                                <td>
+                                    <span class="badge">待定</span>
+                                </td>
+                                <td>
+                                    <span class="badge">待定</span>
+                                </td>
+                                <td>
+                                    <span class="badge">待定</span>
+                                </td>
+                                <td>
+                                    <span class="badge">待定</span>
+                                </td>
+                            <tr>
+                            <tr>
+                                <td>Failed produce request /sec</td>
+                                <td>
+                                    <span class="badge">待定</span>
+                                </td>
+                                <td>
+                                    <span class="badge">待定</span>
+                                </td>
+                                <td>
+                                    <span class="badge">待定</span>
+                                </td>
+                                <td>
+                                    <span class="badge">待定</span>
+                                </td>
+                            <tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+                <div class="col-md-7">
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><h4>Operations</h4></div>
+                        <table class="table">
+                            <tbody>
+                            <tr>
+                                <td>
+                                    <a href="/clusters/test/topics/test/confirm_delete" class='btn btn-primary btn-block'>Delete Topic</a>
+                                </td>
+                                <td>
+
+                                    <form action="/clusters/test/assignment?t=test" method="POST" class="form-vertical " role="form">
+
+                                        <fieldset>
+                                            <input type="hidden" name="operation" value="run">
+                                            <input type="hidden" name="brokers" value="">
+
+                                            <div class="form-group  " >
+                                                <button type="submit" class="btn btn-primary btn-block"> Reassign Partitions </button>
+                                            </div>
+                                        </fieldset>
+                                    </form>
+                                </td>
+                                <td>
+                                    <a href="/clusters/test/assignment/confirm?t=test" class="submit-button btn btn-primary" role="button">Generate Partition Assignments</a>
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a href="/clusters/test/topics/test/addPartitions" class="submit-button btn btn-primary" role="button">Add Partitions</a>
+                                </td>
+                                <td>
+                                    <a href="/clusters/test/topics/test/updateConfig" class="submit-button btn btn-primary" role="button">Update Config</a>
+                                </td>
+
+                                <td>
+                                    <a href="/clusters/test/topics/test/assignments/manual" class="submit-button btn btn-primary" role="button">Manual Partition Assignments</a>
+                                </td>
+
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><h4>Partitions by Broker</h4></div>
+                        <table class="table" style="table-layout: fixed; width: 100%">
+                            <thead>
+                            <tr><th>Broker</th><th># of Partitions</th><th>Partitions</th><th>Skewed?</th></tr>
+                            </thead>
+                            <tbody>
+
+
+                            <%var b_p_list= []%>
+                            <%for(var i= 0; i< b_arry.length; i++) {%>
+                                <%var p_list= []%>
+                                <%for (var m= 0; m< topicdetail.raw.partitions.length; m++) {%>
+                                    <%for (var n= 0; n< topicdetail.raw.partitions[m].replicas.length; n++) {%>
+                                        <%if (topicdetail.raw.partitions[m].replicas[n].broker== b_arry[i]) {%>
+                                            <%p_list.push({parititonID: topicdetail.raw.partitions[m].partition})%>
+                                        <%}%>
+                                    <%}%>
+                                <%}%>
+                                <%b_p_list.push({broker: b_arry[i], partitions: p_list})%>
+                            <%}%>
+
+                            <%for (var i= 0; i< b_p_list.length; i++) {%>
+                            <tr>
+                                <td><a href="/clusters/test/brokers/1"><%=b_p_list[i].broker%></a></td>
+                                <td><%=b_p_list[i].partitions.length%></td>
+
+                                <%var partitons_list= ''%>
+                                <%for (var j= 0; j< b_p_list[i].partitions.length; j++) {%>
+                                    <%if (j== 0) partitons_list+= '('%>
+                                    <%if (j!=0 ) partitons_list+= ','%>
+                                    <%partitons_list+= b_p_list[i].partitions[j].parititonID%>
+                                    <%if (j== b_p_list[i].partitions.length-1) partitons_list+= ')'%>
+                                <%}%>
+
+                                <td style="word-wrap: break-word"><%=partitons_list%></td>
+                                <%var skewed = (b_sk_rate != 0)%>
+                                <td class="
+
+">
+                                    <%=skewed%>
+                                </td>
+                            </tr>
+                            <%}%>
+
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><h4>Consumers consuming from this topic</h4></div>
+
+                        <table class="table">
+                            <tbody>
+
+                            <tr>
+                                <td><a href="/clusters/test/consumers/kafka-node1-group/topic/test/type/ZK">consumer group 待定</a></td>
+                                <td>type 待定</td>
+                            </tr>
+
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><h4>Partition Information</h4></div>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Partition</th>
+                                <th>Latest Offset</th>
+                                <th>Leader</th>
+                                <th>Replicas</th>
+                                <th>In Sync Replicas</th>
+                                <th>Preferred Leader?</th>
+                                <th>Under Replicated?</th>
+
+                                <th>Leader Size</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            <%for(var i= topicdetail.raw.partitions.length-1; i>= 0 ; i--) {%>
+                            <tr>
+                                <td><%=topicdetail.raw.partitions[i].partition%></td>
+                                <%var replicas_list= ''%>
+                                <%var isr_list= ''%>
+                                <%for (var j= 0; j< topicdetail.raw.partitions[i].replicas.length; j++) {%>
+                                    <%if (j== 0) {%>
+                                        <%replicas_list+= '('%>
+                                        <%isr_list += '('%>
+                                    <%}%>
+                                    <%if (j!=0 ) replicas_list+= ','%>
+                                    <%if (topicdetail.raw.partitions[i].replicas[j].in_sync) {%>
+                                        <%if (j!=0 ) isr_list+= ','%>
+                                        <%isr_list+= topicdetail.raw.partitions[i].replicas[j].broker%>
+                                    <%}%>
+                                    <%replicas_list+= topicdetail.raw.partitions[i].replicas[j].broker%>
+                                    <%if (j== topicdetail.raw.partitions[i].replicas.length-1) {%>
+                                        <%replicas_list+= ')'%>
+                                        <%isr_list+= ')'%>
+                                    <%}%>
+                                <%}%>
+                                <td>待定</td>
+                                <td class="
+
+">
+                                    <a href="/clusters/test/brokers/2"><%=topicdetail.raw.partitions[i].leader%></a>
+                                </td>
+                                <td style="word-wrap: break-word"><%=replicas_list%></td>
+
+
+                                <td style="word-wrap: break-word"><%=isr_list%></td>
+                                <%var preferred_leader = (topicdetail.raw.partitions[i].replicas[0].leader)%>
+                                <td class="
+
+">
+                                    <%=preferred_leader%>
+                                </td>
+                                <td class="
+
+">
+                                    false待定
+                                </td>
+
+                                <td>待定</td>
+
+                            </tr>
+                            <%}%>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+    function goBack() {
+        window.history.back()
+    }
+
+    function checkBoxSelect(idPrefix, booleanValue, display) {
+        $("[id^="+idPrefix+"]").prop("checked",booleanValue);
+    }
+
+    function selectBySubname(selectId, selectClass, display) {
+        var subname = $(selectId).val().toLowerCase();
+        $('.' + selectClass).not("[name*='" + subname + "']").css("display", "none");
+        $("[class='"+selectClass+"'][name*='"+subname+"']").css("display", display);
+        if (subname == "") {
+            $('.' + selectClass).css("display", display);
+        }
+    }
+
+    function disableSubmission() {
+        $('[type=submit]').prop('disabled', true);
+        $('[type=submit]').removeAttr('type');
+    }
+</script>
+
+</body>
+</html>

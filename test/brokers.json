@@ -1,83 +1,38 @@
 [{
   "BrokerList":[
     {
-      "cluster":"test",
-      "Id":"1",
       "brohost":"VM001",
       "port":"9092",
       "JMXPort":"0",
-      "BytesIn":"32323",
-      "BytesOut":"12",
-      "Size":"54"
+      "BytesIn":"???",
+      "BytesOut":"???",
+      "Size":"???"
     },
     {
-      "cluster":"test",
-      "Id":"2",
       "brohost":"VM002",
       "port":"9092",
       "JMXPort":"0",
-      "BytesIn":"1111",
-      "BytesOut":"22",
-      "Size":"12"
+      "BytesIn":"???",
+      "BytesOut":"???",
+      "Size":"???"
     },
     {
-      "cluster":"test",
-      "Id":"3",
       "brohost":"VM003",
       "port":"9092",
       "JMXPort":"0",
-      "BytesIn":"1111",
-      "BytesOut":"111",
-      "Size":"12"
+      "BytesIn":"???",
+      "BytesOut":"???",
+      "Size":"???"
     },
     {
-      "cluster":"test",
-      "Id":"3",
       "brohost":"VM004",
       "port":"9092",
       "JMXPort":"0",
-      "BytesIn":"1111",
-      "BytesOut":"111",
-      "Size":"12"
+      "BytesIn":"???",
+      "BytesOut":"???",
+      "Size":"???"
     }
   ],
-
-  "Metrics":[
-    {
-      "Title":"Messages in /sec",
-      "Mean":"1.32",
-      "omin":"2.45",
-      "fmin":"4.45",
-      "tmin":"3.32"
-    },
-    {
-      "Title":"Bytes in /sec",
-      "Mean":"1.32",
-      "omin":"2.45",
-      "fmin":"4.45",
-      "tmin":"3.32"
-    },
-    {
-      "Title":"Bytes out /sec",
-      "Mean":"1.32",
-      "omin":"2.45",
-      "fmin":"4.45",
-      "tmin":"3.32"
-    },
-    {
-      "Title":"Bytes rejected /sec",
-      "Mean":"1.32",
-      "omin":"2.45",
-      "fmin":"4.45",
-      "tmin":"3.32"
-    },
-    {
-      "Title":"Failed fetch request /sec",
-      "Mean":"1.32",
-      "omin":"2.45",
-      "fmin":"4.45",
-      "tmin":"3.32"
-    }
-  ]
+  "Metrics":[]
 }
 ]

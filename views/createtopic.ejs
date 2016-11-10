@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Topic</title>
+    <link rel="shortcut icon" type="image/png" href="/images/favicon.png">
+    <link rel='stylesheet' href='/bootstrap-3.3.5/css/bootstrap.min.css'>
+
+    <link rel="stylesheet" media="screen" href="/stylesheets/index.min.css">
+    <link rel="stylesheet" media="screen" href="dataTables/stylesheets/dataTables.bootstrap.css">
+    <link rel="stylesheet" media="screen" href="/chartist/stylesheets/chartist.min.css">
+    <!--
+    <script data-main="/javascripts/index.js" src="/requirejs/2.1.20/require.min.js"></script>
+    -->
+    <script src="/chartist/javascripts/chartist.min.js"></script>
+
+    <script src="/jquery-2.1.4/jquery.min.js"></script>
+    <script src="/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+    <script src="/dataTables/javascripts/jquery.dataTables.min.js"></script>
+    <script src="/dataTables/javascripts/dataTables.bootstrap.js"></script>
+
+</head>
+<body role="document">
+
+<div class="navbar navbar-default" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <!--  Display three horizontal lines when navbar collapsed. -->
+                <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
+            </button>
+            <img src="/images/favicon.png">
+            <a class="navbar-brand un-float-me" href="/">
+                Kafka Manager</a><span class="label label-primary">test</span>
+        </div>
+
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Cluster<span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="/addCluster">Add Cluster</a></li>
+                        <li><a href="/clusters/test">Summary</a></li>
+                        <li><a href="/">List</a></li>
+                    </ul>
+                </li>
+                <li><a href="/clusters/test/brokers">Brokers</a></li>
+
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Topic<span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li class="active"><a href="/clusters/test/createTopic">Create</a></li>
+                        <li><a href="/clusters/test/topics">List</a></li>
+                    </ul>
+                </li>
+
+                <li><a href="/clusters/test/leader">Preferred Replica Election</a></li>
+                <li><a href="/clusters/test/assignment">Reassign Partitions</a></li>
+                <li><a href="/clusters/test/consumers">Consumers</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Logkafka<span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="/clusters/test/logkafkas">List Logkafka</a></li>
+                        <li><a href="/clusters/test/createLogkafka">Create Logkafka</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+</div>
+
+<div class="container" role="main">
+
+    <ol class="breadcrumb">
+
+        <li><a href="/">Clusters</a></li>
+        <li><a href="/clusters/test">test</a></li>
+        <li><a href="/clusters/test/topics">Topics</a></li>
+        <li class="active">Create Topic</li>
+
+    </ol>
+
+    <div class="col-md-6 un-pad-me">
+        <div class="panel panel-default">
+            <div class="panel-heading"><h3><button type="button" class="btn btn-link" onclick="goBack()"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span></button>Create Topic</h3></div>
+
+            <div class="panel-body">
+
+                <form action="/clusters/test/createResult" class="form-vertical " role="form">
+                    <table class="table">
+                        <tbody>
+                        <tr>
+                            <td>
+
+                                <div class="form-group  " id="topic_field">
+                                    <label class="control-label" for="topic">Topic</label>
+                                    <input type="text" id="topic" name="topic" value="" class="form-control" placeholder="" autofocus="true">
+                                </div>
+
+                                <div class="form-group  " id="partitions_field">
+                                    <label class="control-label" for="partitions">Partitions</label>
+                                    <input type="text" id="partitions" name="partitions" value="1" class="form-control" placeholder="8">
+                                </div>
+
+                                <div class="form-group  " id="replication_field">
+                                    <label class="control-label" for="replication">Replication Factor</label>
+                                    <input type="text" id="replication" name="replication" value="1" class="form-control" placeholder="3">
+                                </div>
+
+                                <div class="form-group  " >
+                                    <button type="submit" class="submit-button btn btn-primary"> Create </button>
+                                </div>
+
+                                <a href="/clusters/test/topics" class="cancel-button btn btn-default" role="button">Cancel</a>
+                            </td>
+                            <td>
+
+                                <input type="hidden" name="configs[0].name" value="retention.ms" >
+
+                                <div class="form-group  " id="configs_0_value_field">
+                                    <label class="control-label" for="configs_0_value">retention.ms</label>
+                                    <input type="text" id="configs_0_value" name="configs[0].value" value="" class="form-control">
+                                </div>
+
+                                <input type="hidden" name="configs[1].name" value="max.message.bytes" >
+
+                                <div class="form-group  " id="configs_1_value_field">
+                                    <label class="control-label" for="configs_1_value">max.message.bytes</label>
+                                    <input type="text" id="configs_1_value" name="configs[1].value" value="" class="form-control">
+                                </div>
+
+                                <input type="hidden" name="configs[2].name" value="segment.index.bytes" >
+
+                                <div class="form-group  " id="configs_2_value_field">
+                                    <label class="control-label" for="configs_2_value">segment.index.bytes</label>
+                                    <input type="text" id="configs_2_value" name="configs[2].value" value="" class="form-control">
+                                </div>
+
+                                <input type="hidden" name="configs[3].name" value="segment.bytes" >
+
+                                <div class="form-group  " id="configs_3_value_field">
+                                    <label class="control-label" for="configs_3_value">segment.bytes</label>
+                                    <input type="text" id="configs_3_value" name="configs[3].value" value="" class="form-control">
+                                </div>
+
+                                <input type="hidden" name="configs[4].name" value="min.cleanable.dirty.ratio" >
+
+                                <div class="form-group  " id="configs_4_value_field">
+                                    <label class="control-label" for="configs_4_value">min.cleanable.dirty.ratio</label>
+                                    <input type="text" id="configs_4_value" name="configs[4].value" value="" class="form-control">
+                                </div>
+
+                                <input type="hidden" name="configs[5].name" value="min.insync.replicas" >
+
+                                <div class="form-group  " id="configs_5_value_field">
+                                    <label class="control-label" for="configs_5_value">min.insync.replicas</label>
+                                    <input type="text" id="configs_5_value" name="configs[5].value" value="" class="form-control">
+                                </div>
+
+                                <input type="hidden" name="configs[6].name" value="delete.retention.ms" >
+
+                                <div class="form-group  " id="configs_6_value_field">
+                                    <label class="control-label" for="configs_6_value">delete.retention.ms</label>
+                                    <input type="text" id="configs_6_value" name="configs[6].value" value="" class="form-control">
+                                </div>
+
+                                <input type="hidden" name="configs[7].name" value="flush.messages" >
+
+                                <div class="form-group  " id="configs_7_value_field">
+                                    <label class="control-label" for="configs_7_value">flush.messages</label>
+                                    <input type="text" id="configs_7_value" name="configs[7].value" value="" class="form-control">
+                                </div>
+
+                                <input type="hidden" name="configs[8].name" value="preallocate" >
+
+                                <div class="form-group  " id="configs_8_value_field">
+                                    <label class="control-label" for="configs_8_value">preallocate</label>
+                                    <input type="text" id="configs_8_value" name="configs[8].value" value="" class="form-control">
+                                </div>
+
+                                <input type="hidden" name="configs[9].name" value="retention.bytes" >
+
+                                <div class="form-group  " id="configs_9_value_field">
+                                    <label class="control-label" for="configs_9_value">retention.bytes</label>
+                                    <input type="text" id="configs_9_value" name="configs[9].value" value="" class="form-control">
+                                </div>
+
+                                <input type="hidden" name="configs[10].name" value="flush.ms" >
+
+                                <div class="form-group  " id="configs_10_value_field">
+                                    <label class="control-label" for="configs_10_value">flush.ms</label>
+                                    <input type="text" id="configs_10_value" name="configs[10].value" value="" class="form-control">
+                                </div>
+
+                                <input type="hidden" name="configs[11].name" value="cleanup.policy" >
+
+                                <div class="form-group  " id="configs_11_value_field">
+                                    <label class="control-label" for="configs_11_value">cleanup.policy</label>
+                                    <input type="text" id="configs_11_value" name="configs[11].value" value="" class="form-control">
+                                </div>
+
+                                <input type="hidden" name="configs[12].name" value="file.delete.delay.ms" >
+
+                                <div class="form-group  " id="configs_12_value_field">
+                                    <label class="control-label" for="configs_12_value">file.delete.delay.ms</label>
+                                    <input type="text" id="configs_12_value" name="configs[12].value" value="" class="form-control">
+                                </div>
+
+                                <input type="hidden" name="configs[13].name" value="segment.jitter.ms" >
+
+                                <div class="form-group  " id="configs_13_value_field">
+                                    <label class="control-label" for="configs_13_value">segment.jitter.ms</label>
+                                    <input type="text" id="configs_13_value" name="configs[13].value" value="" class="form-control">
+                                </div>
+
+                                <input type="hidden" name="configs[14].name" value="index.interval.bytes" >
+
+                                <div class="form-group  " id="configs_14_value_field">
+                                    <label class="control-label" for="configs_14_value">index.interval.bytes</label>
+                                    <input type="text" id="configs_14_value" name="configs[14].value" value="" class="form-control">
+                                </div>
+
+                                <input type="hidden" name="configs[15].name" value="compression.type" >
+
+                                <div class="form-group  " id="configs_15_value_field">
+                                    <label class="control-label" for="configs_15_value">compression.type</label>
+                                    <input type="text" id="configs_15_value" name="configs[15].value" value="" class="form-control">
+                                </div>
+
+                                <input type="hidden" name="configs[16].name" value="segment.ms" >
+
+                                <div class="form-group  " id="configs_16_value_field">
+                                    <label class="control-label" for="configs_16_value">segment.ms</label>
+                                    <input type="text" id="configs_16_value" name="configs[16].value" value="" class="form-control">
+                                </div>
+
+                                <input type="hidden" name="configs[17].name" value="unclean.leader.election.enable" >
+
+                                <div class="form-group  " id="configs_17_value_field">
+                                    <label class="control-label" for="configs_17_value">unclean.leader.election.enable</label>
+                                    <input type="text" id="configs_17_value" name="configs[17].value" value="" class="form-control">
+                                </div>
+
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function goBack() {
+        window.history.back()
+    }
+
+    function checkBoxSelect(idPrefix, booleanValue, display) {
+        $("[id^="+idPrefix+"]").prop("checked",booleanValue);
+    }
+
+    function selectBySubname(selectId, selectClass, display) {
+        var subname = $(selectId).val().toLowerCase();
+        $('.' + selectClass).not("[name*='" + subname + "']").css("display", "none");
+        $("[class='"+selectClass+"'][name*='"+subname+"']").css("display", display);
+        if (subname == "") {
+            $('.' + selectClass).css("display", display);
+        }
+    }
+
+    function disableSubmission() {
+        $('[type=submit]').prop('disabled', true);
+        $('[type=submit]').removeAttr('type');
+    }
+</script>
+
+</body>
+</html>

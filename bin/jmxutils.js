@@ -2,10 +2,14 @@
 var jmx = require("jmx");
 var jmxutil = new Object();
 
-var Metricsneed = ["BytesInPerSec", "BytesOutPerSec", "BytesRejectedPerSec", "FailedFetchRequestsPerSec",
-    "FailedProduceRequestsPerSec", "MessagesInPerSec"]
 
-function connecthost(host, port,callback) {
+/**
+ * @param host
+ * @param port
+ * @param callback 返回Metrics， 一个二维数组，Metrics[0-5]是以下获取的6个信息，每个信息包含Mean, 1min,5min,15min 4个信息
+ * 连接一个broker， 获取这个broker上的MessagesIn，BytesIn，BytesOut，BytesReject，FailFech，FailProduce 6个信息
+ */
+function connecthost(host, port, callback) {
     var Metrics = [];
     var flag = 0;
     var client = jmx.createClient({
@@ -15,37 +19,37 @@ function connecthost(host, port,callback) {
     client.connect();
     client.on("connect", function () {
         console.log("connect successful !")
-        getmetricrow("kafka.server:type=BrokerTopicMetrics,name=MessagesInPerSec",function (data) {
+        getmetricrow("kafka.server:type=BrokerTopicMetrics,name=MessagesInPerSec", function (data) {
             // console.log("MessagesInPerSec" + data)
             Metrics[0] = data; //MessagesIn
             flag++;
             if (flag === 6) callback(Metrics)
         });
-        getmetricrow("kafka.server:type=BrokerTopicMetrics,name=BytesInPerSec",function (data) {
+        getmetricrow("kafka.server:type=BrokerTopicMetrics,name=BytesInPerSec", function (data) {
             // console.log("BytesInPerSec" + data)
             Metrics[1] = data; //BytesIn
             flag++;
             if (flag === 6) callback(Metrics)
         });
-        getmetricrow("kafka.server:type=BrokerTopicMetrics,name=BytesOutPerSec",function (data) {
+        getmetricrow("kafka.server:type=BrokerTopicMetrics,name=BytesOutPerSec", function (data) {
             // console.log("BytesOutPerSec" + data)
             Metrics[2] = data; //BytesOut
             flag++;
             if (flag === 6) callback(Metrics)
         });
-        getmetricrow("kafka.server:type=BrokerTopicMetrics,name=BytesRejectedPerSec",function (data) {
+        getmetricrow("kafka.server:type=BrokerTopicMetrics,name=BytesRejectedPerSec", function (data) {
             // console.log("BytesRejectedPerSec" + data)
             Metrics[3] = data;//BytesReject
             flag++;
             if (flag === 6) callback(Metrics)
         });
-        getmetricrow("kafka.server:type=BrokerTopicMetrics,name=FailedFetchRequestsPerSec",function (data) {
+        getmetricrow("kafka.server:type=BrokerTopicMetrics,name=FailedFetchRequestsPerSec", function (data) {
             // console.log("FailedFetchRequestsPerSec" + data)
             Metrics[4] = data;//FailFech
             flag++;
             if (flag === 6) callback(Metrics)
         });
-        getmetricrow("kafka.server:type=BrokerTopicMetrics,name=FailedProduceRequestsPerSec",function (data) {
+        getmetricrow("kafka.server:type=BrokerTopicMetrics,name=FailedProduceRequestsPerSec", function (data) {
             // console.log("FailedProduceRequestsPerSec" + data)
             Metrics[5] = data;//FailProduce
             flag++;
@@ -53,8 +57,10 @@ function connecthost(host, port,callback) {
         });
 
 
-        //get MeanRate,OneMinuteRate,FiveMinuteRate,FifteenMinuteRate,
-        function getmetricrow(MBeanname,callback) {
+        /**
+         * 得到一行的信息包括： MeanRate,OneMinuteRate,FiveMinuteRate,FifteenMinuteRate,
+         */
+        function getmetricrow(MBeanname, callback) {
             var result = [];
             var i = 0;
             client.getAttribute(MBeanname, "MeanRate", function (data) {
@@ -86,51 +92,52 @@ function connecthost(host, port,callback) {
                 if (i == 4) callback(result);
             });
         }
-
     });
 }
 
 // connecthost("10.192.33.69", 9998, function (data) {
 //     console.log("***************" + data[5])
 // })
+// getcombinedMetrics(BrokerList, function (data) {
+//     console.log("%%%%%%%%  " + data[0])
+// });
 
-var BrokerList = [
-    [1,"10.192.33.57",9997],
-    [1,"10.192.33.26",9998],
-    [1,"10.192.33.69",9998],
-    [1,"10.192.33.76",9998]
-]
-
-function getcombinedMetrics(BrokerList,callback) {
+/**
+ *
+ * @param BrokerList 传入所有的broker
+ * @param callback 得到各个broker 6行信息（每行4个）的均值，作为combinedMetric返回
+ *
+ */
+function getcombinedMetrics(BrokerList, callback) {
     var result = [];
-    var combinedMetric = new Array(new Array());
+    var combinedMetric = new Array();
     var flag = 0;
-    for (var i = 0; i < BrokerList.length;i++) {
-        connecthost(BrokerList[i][1],BrokerList[i][2],function (oneHostMetric) { // data是一个二维数组，[MessagesIn,BytesIn,BytesOut…]
-            result[i] = oneHostMetric;
-            flag++;
-        })
-    }
-
-    if (flag == BrokerList.length) {
-        for (var m = 0; m < 6; m ++) {
-            for (var n = 0; n <4; n++) {
-                for (var j = 0; j < result.length; j++) {
+    for (var i = 0; i < BrokerList.length; i++) {
+        !function (i) {
+            connecthost(BrokerList[i][1], BrokerList[i][2], function (oneHostMetric) { // data是一个二维数组，[MessagesIn,BytesIn,BytesOut…]
+                result[i] = oneHostMetric;
+                flag++;//console.log(flag);console.log(BrokerList.length);console.log(result); //各个host数据全部计算完毕，flag满足条件进行下一步
+                if (flag == BrokerList.length) {
                     var temp = 0;
-                    temp  += result[j][m][n];
+                    for (var m = 0; m < 6; m++) {
+                        combinedMetric[m] = new Array();
+                        for (var n = 0; n < 4; n++) {
+                            temp = 0;
+                            for (var j = 0; j < result.length; j++) {
+                                temp += result[j][m][n];
+                            }
+                            combinedMetric[m][n] = temp;
+                        }
+                    }
+                    callback(combinedMetric);
                 }
-                combinedMetric[m][n] = temp / result.length;
-            }
-        }
-    }
-    if (combinedMetric.length == 6 &&combinedMetric[5].length == 4) {
-        callback(combinedMetric);
+            })
+        }(i);
     }
 }
 
-
-
-jmxutil.connecthost =connecthost;
+jmxutil.connecthost = connecthost;
+jmxutil.getcombinedMetrics = getcombinedMetrics;
 module.exports = jmxutil;
 
 
