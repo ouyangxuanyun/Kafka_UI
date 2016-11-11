@@ -86,9 +86,12 @@
                     <td>Host</td>
                     <td>Port</td>
                     <td>JMX Port</td>
-                    <td>Bytes In</td>
+                    <td>Time</td>
+                    <td>Version</td>
+                  <!--  <td>Bytes In</td>
                     <td>Bytes Out</td>
                     <td>Size</td>
+                    -->
                 </tr>
                 </thead>
 
@@ -96,15 +99,19 @@
                 <!--Dynamic data-->
 
 
-                <%for(var j= 0; j < brokerid.length; j++) {%>
+                <%for(var j= 0; j < BrokerList.length; j++) {%>
                 <tr>
-                    <td><a href="/clusters/<%=clustername%>/brokers/<%=brokerid[j]%>"><%=brokerid[j]%></a></td>
-                    <td><%=brokers[0].BrokerList[j].brohost%> </td>
-                    <td><%=brokers[0].BrokerList[j].port%> </td>
-                    <td><%=brokers[0].BrokerList[j].JMXPort%> </td>
-                    <td><%=brokers[0].BrokerList[j].BytesIn%> </td>
-                    <td><%=brokers[0].BrokerList[j].BytesOut%> </td>
-                    <td><%=brokers[0].BrokerList[j].Size%> </td>
+                    <td><a href="/clusters/<%=clustername%>/brokers/<%=BrokerList[j][0] + 1%>"><%=BrokerList[j][0] + 1%></a></td>
+                    <td><%=BrokerList[j][1]%> </td>
+                    <td><%=BrokerList[j][2]%> </td>
+                    <td><%=BrokerList[j][3]%> </td>
+                    <td><%=BrokerList[j][4]%> </td>
+                    <td><%=BrokerList[j][5]%> </td>
+
+                    <!--   <td><%BrokerList[j][3]%> </td>
+                    <td><%BrokerList[j][3]%> </td>
+                    <td><%BrokerList[j][3]%> </td>
+                       -->
                 </tr>
                 <%}%>
 

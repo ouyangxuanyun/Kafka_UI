@@ -1,8 +1,9 @@
-var express = require('express')
-var router = express.Router()
-var fs = require('fs')
-var kafka = require('../bin/kafkautil')
-var jmxutil = require('../bin/jmxutils')
+var express = require('express');
+var router = express.Router();
+var fs = require('fs');
+var kafka = require('../bin/kafkautil');
+var jmxutil = require('../bin/jmxutils');
+var zkutil = require('../bin/zkutils');
 var KafkaRest = require('kafka-rest');
 var url = 'http://10.192.33.76:8082';
 var kafka1 = new KafkaRest({'url': url});
@@ -10,13 +11,12 @@ var kafka1 = new KafkaRest({'url': url});
 /* GET home page. */
 router.get('/', function (req, res, next) {
     //var clusters = JSON.parse(fs.readFileSync('../test/clusters.json'))
-    var clusters = JSON.parse(fs.readFileSync('./test/clusters.json'))
+    var clusters = JSON.parse(fs.readFileSync('./test/clusters.json'));
     res.render('index', {clusters: clusters})
 })
 router.get('/clusters/test', function (req, res) {
     res.redirect('/clusters/test/topics')
 })
-
 
 /* GET topic list page. */
 router.get('/clusters/test/topics', function (req, res, next) {
@@ -122,28 +122,34 @@ router.get('/clusters/test/createResult', function (req, res, next) {
  *
  */
 var InOutMessage = [];
-var BrokerList = [
-    [1, "10.192.33.57", 9997],
-    [2, "10.192.33.26", 9998],
-    [3, "10.192.33.69", 9998],
-    [4, "10.192.33.76", 9998]
-]
+// var BrokerList = [
+//     [1, "10.192.33.57", 9997],
+//     [2, "10.192.33.26", 9998],
+//     [3, "10.192.33.69", 9998],
+//     [4, "10.192.33.76", 9998]
+// ]
 
+var BrokerList = "";
 //router.get('/clusters/' + clustername + '/brokers', function (req, res, next) {
 router.get('/clusters/:clustername/brokers', function (req, res, next) {
     var clustername = req.params.clustername;
-    var brokers = JSON.parse(fs.readFileSync('./test/brokers.json'))
-    jmxutil.getcombinedMetrics(BrokerList, function (combinedMetrics) {
-        InOutMessage = combinedMetrics;
-        kafka.getbrokerlist(function (data) { //brokers是测试数据
-            res.render('brokers', {
-                clustername: clustername,
-                brokers: brokers,
-                combinedMetrics: combinedMetrics,
-                brokerid: data
-            })
+    var brokers = JSON.parse(fs.readFileSync('./test/brokers.json'));
+
+    zkutil.getBrokerList(function (_BrokerList) {
+        BrokerList = _BrokerList;
+        jmxutil.getcombinedMetrics(BrokerList, function (combinedMetrics) {
+            InOutMessage = combinedMetrics;
+            kafka.getbrokerlist(function (data) { //brokers是测试数据
+                res.render('brokers', {
+                    clustername: clustername,
+                    brokers: brokers,
+                    combinedMetrics: combinedMetrics,
+                    BrokerList: BrokerList
+                })
+            });
         });
     });
+
 })
 
 /**
@@ -157,7 +163,7 @@ router.get('/clusters/:clustername/brokers/:brokerlistId', function (req, res, n
     var brokerlistId = req.params.brokerlistId;
     var broid = BrokerList[brokerlistId - 1][0];
     var host = BrokerList[brokerlistId - 1][1];
-    var port = BrokerList[brokerlistId - 1][2];
+    var port = BrokerList[brokerlistId - 1][3];
     var series = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     var labels = ['09', '10', '11']
     var dataIn = [labels, series]
