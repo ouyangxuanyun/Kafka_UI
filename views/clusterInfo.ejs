@@ -4,13 +4,13 @@
     <title>Kafka Manager</title>
     <link rel="shortcut icon" type="image/png" href="/images/favicon.png">
     <link rel='stylesheet' href='/bootstrap-3.3.5/css/bootstrap.min.css'>
-    <link rel="stylesheet" media="screen" href="/stylesheets/2b56540dba204490b0a8b01818b05991-index.min.css">
+    <link rel="stylesheet" media="screen" href="/stylesheets/index.min.css">
     <link rel="stylesheet" media="screen" href="/dataTables/stylesheets/dataTables.bootstrap.css">
     <link rel="stylesheet" media="screen" href="/chartist/stylesheets/chartist.min.css">
     <!--
     <script data-main="/vassets/javascripts/index.js" src="/webjars/requirejs/2.1.20/require.min.js"></script>
     -->
-    <script src="/vassets/chartist/javascripts/c7d17af297af222b85192c2df48b8390-chartist.min.js"></script>
+    <script src="/chartist/javascripts/chartist.min.js"></script>
 </head>
 <body role="document">
 
@@ -23,7 +23,7 @@
             </button>
             <img src="/images/favicon.png">
             <a class="navbar-brand un-float-me" href="/">
-                Kafka Manager</a><span class="label label-primary">test</span>
+                Kafka Manager</a><span class="label label-primary"><%=clusterInfoname%></span>
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
@@ -63,7 +63,7 @@
 <div class="container" role="main">
     <ol class="breadcrumb">
         <li><a href="/">Clusters</a></li>
-        <li>test</li>
+        <li><%=clusterInfoname%></li>
         <li class="active">Summary</li>
     </ol>
     <div class="col-md-6 un-pad-me">        <div class="panel panel-default">
@@ -72,11 +72,11 @@
                 <tbody>
                 <tr>
                     <td><b>Zookeepers</b></td>
-                    <td>VM-01:2181 VM-02:2181 VM-03:2181 VM-04:2181</td>
+                    <td><%=clusterInfo["zkHosts"]%></td>
                 </tr>
                 <tr>
                     <td><b>Version</b></td>
-                    <td>0.9.0.1</td>
+                    <td><%=clusterInfo["kafkaVersion"]%></td>
                 </tr>
                 </tbody>
             </table>
@@ -87,19 +87,17 @@
                 <tbody>
                 <tr>
                     <td><b>Topics</b></td>
-                    <td><a href="/clusters/test/topics">24</a></td>
+                    <td><a href="/clusters/<%=clusterInfoname%>/topics"><%=listlen%></a></td>
                     <td><b>Brokers</b></td>
-                    <td><a href="/clusters/test/brokers">4</a></td>
+                    <td><a href="/clusters/<%=clusterInfoname%>/brokers"><%=bronum%></a></td>
                 </tr>
                 </tbody>
             </table>
         </div>
-
     </div>
-
 </div>
-<script src="/jquery/2.1.4/jquery.min.js"></script>
-<script src="/bootstrap/3.3.5-js/bootstrap.min.js"></script>
+<script src="/jquery-2.1.4/jquery.min.js"></script>
+<script src="/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="/dataTables/javascripts/jquery.dataTables.min.js"></script>
 <script src="/dataTables/javascripts/dataTables.bootstrap.js"></script>
 

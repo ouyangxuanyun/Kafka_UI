@@ -7,55 +7,79 @@ var zkutil = require('../bin/zkutils');
 var KafkaRest = require('kafka-rest');
 var url = 'http://10.192.33.76:8082';
 var kafka1 = new KafkaRest({'url': url});
+var kafka2connstr = '10.192.33.57:2181,10.192.33.69:2181,10.192.33.76:2181';
 
-var AllCluster = [];AllCluster.length = 0;  // 全局存储创建的cluster 信息
+var testInfo = require('../test/gettestInfo')
+var AllCluster = [];
+AllCluster.length = 1;  // 全局存储创建的cluster 信息
+AllCluster["test"] = testInfo();// console.log(AllCluster["test"])
 
-
-
-/* GET home page. */
+/*显示clusters list 信息， homepage页*/
 router.get('/', function (req, res, next) {
-    //var clusters = JSON.parse(fs.readFileSync('../test/clusters.json'))
-    var clusters = JSON.parse(fs.readFileSync('./test/clusters.json'));
-    res.render('index', {clusters: clusters});
+    var clusters = [];
+    for (var key in AllCluster) {
+        var cluster = new Object();
+        cluster.name = key;
+        cluster.kafkaVersion = AllCluster[key]["kafkaVersion"];
+        cluster.zkHosts = AllCluster[key]["zkHosts"];
+        cluster.operation = "Disable";
+        clusters.push(cluster);// console.log(cluster.name,cluster.kafkaVersion,cluster.zkHosts,cluster.operation);
+    }
+    res.render('clusters', {clusters: clusters});
 });
 
+/* 添加cluster页面*/
 router.get('/addCluster', function (req, res, next) {
     res.render('addcluster');
 });
 
-/**
- * 获取表单提交的数据处理后存入attresult 数组，详细见README/1.
- */
-router.get('/clusters', function (req, res, next) {
-    var attresult = [];
-    var attsjson = req.query;
-    console.log(attsjson);
-    attresult["clustername"] = req.query.name;
-    attresult["zkHosts"] = req.query.zkHosts; //因为zkHost里面有：，会影响下面继续以：为分隔符进行分割，先保存
-    var attsstr = JSON.stringify(attsjson);//console.log(attsstr)
-    var arr1 = attsstr.slice(1,-1).split(",");
-    for (var i = 2; i < arr1.length; i++) {
-        var temp = arr1[i].split(":");
-        attresult[temp[0].slice(1,-1)] = temp[1].slice(1,-1)
-    }
-    console.log(attresult["clustername"]);
-    AllCluster[attresult["clustername"]] = attresult;
-    AllCluster.length++;
-    console.log(attresult);
-    console.log("LLLLLLLLLLLLLL:    " + AllCluster.length);
-    res.render('addclusterresult')
+/*Cluster Modify 页面 */
+router.get('/updateCluster', function (req, res, next) {
+    res.render('updateCluster');
 });
 
 
+
+/* 获取表单提交的数据处理后存入attresult 数组，详细见README/1.*/
+router.get('/clusters', function (req, res, next) {
+    var attresult = [];
+    var attsjson = req.query;// console.log(attsjson);
+    var clustername = req.query.name
+    attresult["clustername"] = clustername;
+    attresult["zkHosts"] = req.query.zkHosts; //因为zkHost里面有：，会影响下面继续以：为分隔符进行分割，先保存
+    var attsstr = JSON.stringify(attsjson);//console.log(attsstr)
+    var arrs = attsstr.slice(1, -1).split(",");
+    for (var i = 2; i < arrs.length; i++) {
+        var temp = arrs[i].split(":");
+        attresult[temp[0].slice(1, -1)] = temp[1].slice(1, -1)
+    }
+    AllCluster[attresult["clustername"]] = attresult;
+    AllCluster.length++;
+    res.render('addclusterresult', {clustername: clustername})
+});
+
+/*每个cluster详情页*/
 router.get('/clusters/:clustername', function (req, res, next) {
-    console.log("***************************************************" + req.params.clustername)
-    console.log(AllCluster[ req.params.clustername]);
+    //console.log(AllCluster[req.params.clustername]);
+    var clusterInfoname = req.params.clustername;
+    zkutil.getbrokernumbers(function (bronum) {
+        kafka.getlistlen(function (listlen) {
+            res.render('clusterInfo', {
+                clusterInfoname: clusterInfoname,
+                listlen: listlen,
+                bronum: bronum,
+                clusterInfoname: clusterInfoname,
+                clusterInfo: AllCluster[clusterInfoname]
+            });
+        });
+    })
 });
 
 
 /* GET topic list page. */
-router.get('/clusters/test/topics', function (req, res, next) {
+router.get('/clusters/:clustername/topics', function (req, res, next) {
     //var topics = JSON.parse(fs.readFileSync('./test/TopicList.json'));
+    var clustername = req.params.clustername;
     var topic_count = 0;
     var topic_list = [];
     var broker_list = 0;
@@ -91,7 +115,7 @@ router.get('/clusters/test/topics', function (req, res, next) {
                         topic_count++;
                         //console.log(topic_list);
                         if (topic_count == data.length) {
-                            res.render('topics', {topics: topic_list});
+                            res.render('topics', {clustername: clustername, topics: topic_list});
                             console.log(topic_list);
                         }
                     }
@@ -137,16 +161,13 @@ router.get('/clusters/test/createTopic', function (req, res, next) {
 
 /* topic create result page. */
 router.get('/clusters/test/createResult', function (req, res, next) {
-    console.log("00000000000000000%%%%%%%%%%%%%%%%%%")
     var topic_name = req.query.topic;
     var kafka2 = require('kafka-node'),
         Producer = kafka2.Producer,
-        client = new kafka2.Client('10.192.33.57:2181,10.192.33.69:2181,10.192.33.76:2181'),
+        client = new kafka2.Client(kafka2connstr);
         producer = new Producer(client)
     producer.on('ready', function () {
-        console.log("11111111%%%%%%%%%%%%%%%%%%%")
         producer.createTopics(topic_name, false, function (err, data) {
-            console.log("222222%%%%%%%%%%%%%%%%%%%")
             if (err) {
                 console.log('Error: While writing message to Kafka', err)
                 res.render('createtopicresult', err);
@@ -160,67 +181,39 @@ router.get('/clusters/test/createResult', function (req, res, next) {
 });
 
 
-/**
- *
- */
-var InOutMessage = [];
-// var BrokerList = [
-//     [1, "10.192.33.57", 9997],
-//     [2, "10.192.33.26", 9998],
-//     [3, "10.192.33.69", 9998],
-//     [4, "10.192.33.76", 9998]
-// ]
-
-var BrokerList = "";
-//router.get('/clusters/' + clustername + '/brokers', function (req, res, next) {
+/* Broker list 页面*/
+var InOutMessage = []; //全局，也提供给broker详细页面
+var BrokerList = ""; //全局，也提供给broker详细页面
 router.get('/clusters/:clustername/brokers', function (req, res, next) {
     var clustername = req.params.clustername;
-    var brokers = JSON.parse(fs.readFileSync('./test/brokers.json'));
-
     zkutil.getBrokerList(function (_BrokerList) {
         BrokerList = _BrokerList;
         jmxutil.getcombinedMetrics(BrokerList, function (combinedMetrics) {
             InOutMessage = combinedMetrics;
-            kafka.getbrokerlist(function (data) { //brokers是测试数据
-                res.render('brokers', {
-                    clustername: clustername,
-                    brokers: brokers,
-                    combinedMetrics: combinedMetrics,
-                    BrokerList: BrokerList
-                })
-            });
+            res.render('brokers', {
+                clustername: clustername,
+                combinedMetrics: combinedMetrics,
+                BrokerList: BrokerList
+            })
         });
     });
 });
 
-/**
- *
- */
-
-// 选择进入哪个broker 的页面,还用到了clustername，这个页面上两级的cluster的名字
-//router.get('/clusters/' + clustername + '/brokers/*', function (req, res, next) {
+/*Broker 详细页面 */
 router.get('/clusters/:clustername/brokers/:brokerlistId', function (req, res, next) {
-    var clustername = req.params.clustername;//var pathurl = URL.parse(req.url).pathname;var brokerlistId = pathurl.substr(23);
+    var clustername = req.params.clustername;
     var brokerlistId = req.params.brokerlistId;
-    console.log("###############################" + BrokerList);
-    var broid = BrokerList[brokerlistId][0] + 1;
-    var host = BrokerList[brokerlistId][1];
-    var port = BrokerList[brokerlistId][3];
-    var series = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    var labels = ['09', '10', '11']
-    var dataIn = [labels, series]
-    console.log(JSON.stringify(labels))
+    var broid = BrokerList[brokerlistId - 1][0] + 1;
+    var host = BrokerList[brokerlistId - 1][1];
+    var port = BrokerList[brokerlistId - 1][3];
 
     jmxutil.connecthost(host, port, function (metrics) {
         kafka.listTopics(function (allist) {
             kafka.listTopicPartitions(broid, allist, function (topiclistdetail) {
-                // console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-                //console.log(topiclistdetail)
                 res.render('brokerInfo', {
                     clustername: clustername,
-                    brokerlistId: brokerlistId,
+                    brokerlistId: broid,
                     brokerMetric: metrics,
-                    dataIn: dataIn,
                     topiclistdetail: topiclistdetail,
                     InOutMessage: InOutMessage
                 })

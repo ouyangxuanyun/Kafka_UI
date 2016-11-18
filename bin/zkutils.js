@@ -51,7 +51,7 @@ function timeStamp2String(time) {
     var hour = datetime.getHours();
     var minute = datetime.getMinutes();
     var second = datetime.getSeconds();
-    return year + "-" + month + "-" + date + " " + hour + ":" + minute + ":" + second ;
+    return year + "-" + month + "-" + date + " " + hour + ":" + minute + ":" + second;
 };
 
 /**
@@ -83,6 +83,18 @@ function getbrokerinfo(brokerid, callback) {
     });
 }
 
+function getbrokernumbers(callback) {
+    client.getChildren("/brokers/ids", function (error, children, stats) {
+        if (error) {
+            console.log(error.stack);
+            return;
+        }
+        callback (children.length);
+    });
+}
+
+
 zkutils.getbrokerinfo = getbrokerinfo;
 zkutils.getBrokerList = getBrokerList;
+zkutils.getbrokernumbers = getbrokernumbers;
 module.exports = zkutils;

@@ -41,6 +41,16 @@ function listTopics(callback) {
     });
 }
 
+function getlistlen(callback) {
+    kafka.topics.list(function (err, data) {
+        if (err) {
+            console("Failed to list topics: " + err);
+            return;
+        }
+        callback(data.length);
+    });
+}
+
 /**
  *
  * @param broid      传入的broker ID
@@ -103,5 +113,6 @@ function listTopicPartitions(broid, topicList, callback) {
 kafkautil.getbrokerlist = listBrokers;
 kafkautil.listTopics = listTopics;
 kafkautil.listTopicPartitions = listTopicPartitions;
+kafkautil.getlistlen = getlistlen;
 module.exports = kafkautil;
 
