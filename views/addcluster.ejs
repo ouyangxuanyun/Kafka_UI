@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Cluster</title>
+    <link rel="shortcut icon" type="image/png" href="/images/favicon.png">\
+    <link rel='stylesheet' href='/bootstrap-3.3.5/css/bootstrap.min.css'>
+    <link rel="stylesheet" media="screen" href="/stylesheets/index.min.css">
+    <link rel="stylesheet" media="screen" href="/dataTables/stylesheets/dataTables.bootstrap.css">
+    <link rel="stylesheet" media="screen" href="/chartist/stylesheets/chartist.min.css">
+    <script src="/chartist/javascripts/chartist.min.js"></script>
+</head>
+
+<body role="document">
+<nav class="navbar navbar-default" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <img src="/images/favicon.png">
+            <a class="navbar-brand un-float-me" href="/">Kafka Manager</a>
+        </div>
+
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Cluster<span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li class="active"><a href="/addCluster">Add Cluster</a></li>
+                        <li><a href="/">List</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+</nav>
+<div class="container" role="main">
+    <ol class="breadcrumb">
+        <li><a href="/">Clusters</a></li>
+        <li class="active">Add Cluster</li>
+    </ol>
+    <div class="col-md-6 un-pad-me">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3>
+                    <button type="button" class="btn btn-link" onclick="goBack()"><span
+                                class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span></button>
+                    Add Cluster
+                </h3>
+            </div>
+
+            <div class="panel-body">
+                <form action="/clusters"   class="form-vertical " role="form">
+                    <fieldset>
+                        <div class="form-group  " id="name_field">
+                            <label class="control-label" for="name">Cluster Name</label>
+                            <input type="text" id="name" name="name" value="" class="form-control" placeholder=""
+                                   autofocus="true">
+                        </div>
+                        <div class="form-group  " id="zkHosts_field">
+                            <label class="control-label" for="zkHosts">Cluster Zookeeper Hosts</label>
+                            <input type="text" id="zkHosts" name="zkHosts" value="" class="form-control"
+                                   placeholder="zk1:2181,zk2:2181,zk3:2181/NAMESPACE">
+                        </div>
+                        <div class="form-group  " id="kafkaVersion_field">
+                            <label class="control-label" for="kafkaVersion">Kafka Version</label>
+                            <select id="kafkaVersion" name="kafkaVersion" class="form-control">
+                                <option value="0.9.0.0">0.9.0.0</option>
+                                <option value="0.8.1.1">0.8.1.1</option>
+                                <option value="0.9.0.1" selected>0.9.0.1</option>
+                                <option value="0.8.2.1">0.8.2.1</option>
+                                <option value="0.8.2.2">0.8.2.2</option>
+                                <option value="0.8.2.0">0.8.2.0</option>
+                            </select>
+                        </div>
+                        <div class="form-group  " id="jmxEnabled_field">
+                            <div class="checkbox">
+                                <label for="jmxEnabled">
+                                    <input type="checkbox" id="jmxEnabled" name="jmxEnabled" value="true">
+                                    Enable JMX Polling (Set JMX_PORT env variable before starting kafka server)
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group  " id="jmxUser_field">
+                            <label class="control-label" for="jmxUser">JMX Auth Username</label>
+                            <input type="text" id="jmxUser" name="jmxUser" value="" class="form-control">
+                        </div>
+                        <div class="form-group  " id="jmxPass_field">
+                            <label class="control-label" for="jmxPass">JMX Auth Password</label>
+                            <input type="text" id="jmxPass" name="jmxPass" value="" class="form-control">
+                        </div>
+                        <div class="form-group  " id="logkafkaEnabled_field">
+                            <div class="checkbox">
+                                <label for="logkafkaEnabled">
+                                    <input type="checkbox" id="logkafkaEnabled" name="logkafkaEnabled" value="true">
+                                    Enable Logkafka
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group  " id="pollConsumers_field">
+                            <div class="checkbox">
+                                <label for="pollConsumers">
+                                    <input type="checkbox" id="pollConsumers" name="pollConsumers" value="true">
+                                    Poll consumer information (Not recommended for large # of consumers)
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group  " id="filterConsumers_field">
+                            <div class="checkbox">
+                                <label for="filterConsumers">
+                                    <input type="checkbox" id="filterConsumers" name="filterConsumers" value="true">
+                                    Filter out inactive consumers
+                                </label>
+
+                            </div>
+                        </div>
+                        <div class="form-group  " id="activeOffsetCacheEnabled_field">
+                            <div class="checkbox">
+                                <label for="activeOffsetCacheEnabled">
+                                    <input type="checkbox" id="activeOffsetCacheEnabled" name="activeOffsetCacheEnabled"
+                                           value="true">
+                                    Enable Active OffsetCache (Not recommended for large # of consumers)
+                                </label>
+                            </div>
+
+                        </div>
+
+                        <div class="form-group  " id="displaySizeEnabled_field">
+                            <div class="checkbox">
+                                <label for="displaySizeEnabled">
+                                    <input type="checkbox" id="displaySizeEnabled" name="displaySizeEnabled"
+                                           value="true">
+                                    Display Broker and Topic Size (only works after applying <a
+                                            href="https://issues.apache.org/jira/browse/KAFKA-1614">this patch</a>)
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group  " id="tuning_brokerViewUpdatePeriodSeconds_field">
+                            <label class="control-label" for="tuning_brokerViewUpdatePeriodSeconds">brokerViewUpdatePeriodSeconds</label>
+                            <input type="number" id="tuning_brokerViewUpdatePeriodSeconds"
+                                   name="tuning.brokerViewUpdatePeriodSeconds" value="30" class="form-control">
+                        </div>
+
+                        <div class="form-group  " id="tuning_clusterManagerThreadPoolSize_field">
+
+                            <label class="control-label" for="tuning_clusterManagerThreadPoolSize">clusterManagerThreadPoolSize</label>
+
+                            <input type="number" id="tuning_clusterManagerThreadPoolSize"
+                                   name="tuning.clusterManagerThreadPoolSize" value="2" class="form-control">
+                        </div>
+                        <div class="form-group  " id="tuning_clusterManagerThreadPoolQueueSize_field">
+
+
+                            <label class="control-label" for="tuning_clusterManagerThreadPoolQueueSize">clusterManagerThreadPoolQueueSize</label>
+
+
+                            <input type="number" id="tuning_clusterManagerThreadPoolQueueSize"
+                                   name="tuning.clusterManagerThreadPoolQueueSize" value="100" class="form-control">
+
+
+                        </div>
+
+
+                        <div class="form-group  " id="tuning_kafkaCommandThreadPoolSize_field">
+
+
+                            <label class="control-label" for="tuning_kafkaCommandThreadPoolSize">kafkaCommandThreadPoolSize</label>
+
+
+                            <input type="number" id="tuning_kafkaCommandThreadPoolSize"
+                                   name="tuning.kafkaCommandThreadPoolSize" value="2" class="form-control">
+                        </div>
+                        <div class="form-group  " id="tuning_kafkaCommandThreadPoolQueueSize_field">
+                            <label class="control-label" for="tuning_kafkaCommandThreadPoolQueueSize">kafkaCommandThreadPoolQueueSize</label>
+                            <input type="number" id="tuning_kafkaCommandThreadPoolQueueSize"
+                                   name="tuning.kafkaCommandThreadPoolQueueSize" value="100" class="form-control">
+                        </div>
+                        <div class="form-group  " id="tuning_logkafkaCommandThreadPoolSize_field">
+                            <label class="control-label" for="tuning_logkafkaCommandThreadPoolSize">logkafkaCommandThreadPoolSize</label>
+                            <input type="number" id="tuning_logkafkaCommandThreadPoolSize"
+                                   name="tuning.logkafkaCommandThreadPoolSize" value="2" class="form-control">
+                        </div>
+                        <div class="form-group  " id="tuning_logkafkaCommandThreadPoolQueueSize_field">
+                            <label class="control-label" for="tuning_logkafkaCommandThreadPoolQueueSize">logkafkaCommandThreadPoolQueueSize</label>
+                            <input type="number" id="tuning_logkafkaCommandThreadPoolQueueSize"
+                                   name="tuning.logkafkaCommandThreadPoolQueueSize" value="100" class="form-control">
+                        </div>
+                        <div class="form-group  " id="tuning_logkafkaUpdatePeriodSeconds_field">
+                            <label class="control-label" for="tuning_logkafkaUpdatePeriodSeconds">logkafkaUpdatePeriodSeconds</label>
+                            <input type="number" id="tuning_logkafkaUpdatePeriodSeconds"
+                                   name="tuning.logkafkaUpdatePeriodSeconds" value="30" class="form-control">
+                        </div>
+                        <div class="form-group  " id="tuning_partitionOffsetCacheTimeoutSecs_field">
+                            <label class="control-label" for="tuning_partitionOffsetCacheTimeoutSecs">partitionOffsetCacheTimeoutSecs</label>
+                            <input type="number" id="tuning_partitionOffsetCacheTimeoutSecs"
+                                   name="tuning.partitionOffsetCacheTimeoutSecs" value="5" class="form-control">
+                        </div>
+                        <div class="form-group  " id="tuning_brokerViewThreadPoolSize_field">
+                            <label class="control-label"
+                                   for="tuning_brokerViewThreadPoolSize">brokerViewThreadPoolSize</label>
+                            <input type="number" id="tuning_brokerViewThreadPoolSize"
+                                   name="tuning.brokerViewThreadPoolSize" value="1" class="form-control">
+                        </div>
+                        <div class="form-group  " id="tuning_brokerViewThreadPoolQueueSize_field">
+                            <label class="control-label" for="tuning_brokerViewThreadPoolQueueSize">brokerViewThreadPoolQueueSize</label>
+                            <input type="number" id="tuning_brokerViewThreadPoolQueueSize"
+                                   name="tuning.brokerViewThreadPoolQueueSize" value="1000" class="form-control">
+                        </div>
+                        <div class="form-group  " id="tuning_offsetCacheThreadPoolSize_field">
+                            <label class="control-label" for="tuning_offsetCacheThreadPoolSize">offsetCacheThreadPoolSize</label>
+                            <input type="number" id="tuning_offsetCacheThreadPoolSize"
+                                   name="tuning.offsetCacheThreadPoolSize" value="1" class="form-control">
+                        </div>
+                        <div class="form-group  " id="tuning_offsetCacheThreadPoolQueueSize_field">
+                            <label class="control-label" for="tuning_offsetCacheThreadPoolQueueSize">offsetCacheThreadPoolQueueSize</label>
+                            <input type="number" id="tuning_offsetCacheThreadPoolQueueSize"
+                                   name="tuning.offsetCacheThreadPoolQueueSize" value="1000" class="form-control">
+                        </div>
+                        <div class="form-group  " id="tuning_kafkaAdminClientThreadPoolSize_field">
+                            <label class="control-label" for="tuning_kafkaAdminClientThreadPoolSize">kafkaAdminClientThreadPoolSize</label>
+                            <input type="number" id="tuning_kafkaAdminClientThreadPoolSize"
+                                   name="tuning.kafkaAdminClientThreadPoolSize" value="1" class="form-control">
+                        </div>
+                        <div class="form-group  " id="tuning_kafkaAdminClientThreadPoolQueueSize_field">
+                            <label class="control-label" for="tuning_kafkaAdminClientThreadPoolQueueSize">kafkaAdminClientThreadPoolQueueSize</label>
+                            <input type="number" id="tuning_kafkaAdminClientThreadPoolQueueSize"
+                                   name="tuning.kafkaAdminClientThreadPoolQueueSize" value="1000" class="form-control">
+                        </div>
+                        <div class="form-group  ">
+                            <button type="submit" class="submit-button btn btn-primary"> Save</button>
+                        </div>
+                        <a href="/" class="cancel-button btn btn-default" role="button">Cancel</a>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+        <div class="panel panel-info">
+            <div class="panel-heading">References</div>
+            <ol>
+                <li><a href="https://kafka.apache.org/08/quickstart.html">Kafka Quickstart</a></li>
+                <li><a href="https://github.com/Qihoo360/logkafka">LogKafka</a></li>
+            </ol>
+        </div>
+    </div>
+</div>
+<script src="/dataTables/javascripts/jquery.dataTables.min.js"></script>
+<script src="/dataTables/javascripts/dataTables.bootstrap.js"></script>
+
+<script>
+    function goBack() {
+        window.history.back()
+    }
+
+    function checkBoxSelect(idPrefix, booleanValue, display) {
+        $("[id^=" + idPrefix + "]").prop("checked", booleanValue);
+    }
+
+    function selectBySubname(selectId, selectClass, display) {
+        var subname = $(selectId).val().toLowerCase();
+        $('.' + selectClass).not("[name*='" + subname + "']").css("display", "none");
+        $("[class='" + selectClass + "'][name*='" + subname + "']").css("display", display);
+        if (subname == "") {
+            $('.' + selectClass).css("display", display);
+        }
+    }
+
+    function disableSubmission() {
+        $('[type=submit]').prop('disabled', true);
+        $('[type=submit]').removeAttr('type');
+    }
+</script>
+
+</body>
+</html>
+
+

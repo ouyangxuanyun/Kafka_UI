@@ -100,7 +100,6 @@ function listTopicPartitions(broid, topicList, callback) {
     }
 }
 
-
 kafkautil.getbrokerlist = listBrokers;
 kafkautil.listTopics = listTopics;
 kafkautil.listTopicPartitions = listTopicPartitions;

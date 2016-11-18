@@ -8,15 +8,50 @@ var KafkaRest = require('kafka-rest');
 var url = 'http://10.192.33.76:8082';
 var kafka1 = new KafkaRest({'url': url});
 
+var AllCluster = [];AllCluster.length = 0;  // 全局存储创建的cluster 信息
+
+
+
 /* GET home page. */
 router.get('/', function (req, res, next) {
     //var clusters = JSON.parse(fs.readFileSync('../test/clusters.json'))
     var clusters = JSON.parse(fs.readFileSync('./test/clusters.json'));
-    res.render('index', {clusters: clusters})
-})
-router.get('/clusters/test', function (req, res) {
-    res.redirect('/clusters/test/topics')
-})
+    res.render('index', {clusters: clusters});
+});
+
+router.get('/addCluster', function (req, res, next) {
+    res.render('addcluster');
+});
+
+/**
+ * 获取表单提交的数据处理后存入attresult 数组，详细见README/1.
+ */
+router.get('/clusters', function (req, res, next) {
+    var attresult = [];
+    var attsjson = req.query;
+    console.log(attsjson);
+    attresult["clustername"] = req.query.name;
+    attresult["zkHosts"] = req.query.zkHosts; //因为zkHost里面有：，会影响下面继续以：为分隔符进行分割，先保存
+    var attsstr = JSON.stringify(attsjson);//console.log(attsstr)
+    var arr1 = attsstr.slice(1,-1).split(",");
+    for (var i = 2; i < arr1.length; i++) {
+        var temp = arr1[i].split(":");
+        attresult[temp[0].slice(1,-1)] = temp[1].slice(1,-1)
+    }
+    console.log(attresult["clustername"]);
+    AllCluster[attresult["clustername"]] = attresult;
+    AllCluster.length++;
+    console.log(attresult);
+    console.log("LLLLLLLLLLLLLL:    " + AllCluster.length);
+    res.render('addclusterresult')
+});
+
+
+router.get('/clusters/:clustername', function (req, res, next) {
+    console.log("***************************************************" + req.params.clustername)
+    console.log(AllCluster[ req.params.clustername]);
+});
+
 
 /* GET topic list page. */
 router.get('/clusters/test/topics', function (req, res, next) {
@@ -69,8 +104,6 @@ router.get('/clusters/test/topics', function (req, res, next) {
 
 /* GET each topic details . */
 router.get('/clusters/test/topics/:topic', function (req, res, next) {
-    //var clusters = JSON.parse(fs.readFileSync('../test/clusters.json'));
-    //var pathurl = URL.parse(req.url).pathname;var topics_name = pathurl.substr(22);
     var topics_name = req.params.topic;
     console.log(req.param.topic);
     kafka1.topics.get(topics_name, function (err, datas) {
@@ -104,17 +137,26 @@ router.get('/clusters/test/createTopic', function (req, res, next) {
 
 /* topic create result page. */
 router.get('/clusters/test/createResult', function (req, res, next) {
+    console.log("00000000000000000%%%%%%%%%%%%%%%%%%")
     var topic_name = req.query.topic;
-    kafka1.topic(topic_name).produce('', function (err, data) {
-        if (err) {
-            console.log('Failed to create topic ' + topic_name + ' :\n' + err);
-            res.render('createtopicresult', err);
-        }
-        else {
-            console.log('create topic  ' + topic_name + 'successfully!');
-            res.render('createtopicresult', {topic_name: topic_name});
-        }
-    });
+    var kafka2 = require('kafka-node'),
+        Producer = kafka2.Producer,
+        client = new kafka2.Client('10.192.33.57:2181,10.192.33.69:2181,10.192.33.76:2181'),
+        producer = new Producer(client)
+    producer.on('ready', function () {
+        console.log("11111111%%%%%%%%%%%%%%%%%%%")
+        producer.createTopics(topic_name, false, function (err, data) {
+            console.log("222222%%%%%%%%%%%%%%%%%%%")
+            if (err) {
+                console.log('Error: While writing message to Kafka', err)
+                res.render('createtopicresult', err);
+            }
+            else {
+                console.log('create topic  ' + topic_name + 'successfully!');
+                res.render('createtopicresult', {topic_name: topic_name});
+            }
+        })
+    })
 });
 
 
@@ -149,8 +191,7 @@ router.get('/clusters/:clustername/brokers', function (req, res, next) {
             });
         });
     });
-
-})
+});
 
 /**
  *
@@ -161,9 +202,10 @@ router.get('/clusters/:clustername/brokers', function (req, res, next) {
 router.get('/clusters/:clustername/brokers/:brokerlistId', function (req, res, next) {
     var clustername = req.params.clustername;//var pathurl = URL.parse(req.url).pathname;var brokerlistId = pathurl.substr(23);
     var brokerlistId = req.params.brokerlistId;
-    var broid = BrokerList[brokerlistId - 1][0];
-    var host = BrokerList[brokerlistId - 1][1];
-    var port = BrokerList[brokerlistId - 1][3];
+    console.log("###############################" + BrokerList);
+    var broid = BrokerList[brokerlistId][0] + 1;
+    var host = BrokerList[brokerlistId][1];
+    var port = BrokerList[brokerlistId][3];
     var series = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     var labels = ['09', '10', '11']
     var dataIn = [labels, series]
@@ -185,6 +227,6 @@ router.get('/clusters/:clustername/brokers/:brokerlistId', function (req, res, n
             })
         })
     })
-})
+});
 
-module.exports = router
+module.exports = router;
