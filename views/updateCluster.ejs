@@ -4,7 +4,7 @@
     <title>Update Cluster</title>
     <link rel="shortcut icon" type="image/png" href="/images/favicon.png">
     <link rel='stylesheet' href='/bootstrap-3.3.5/css/bootstrap.min.css'>
-    <link rel="stylesheet" media="screen" href="/stylesheets/2b56540dba204490b0a8b01818b05991-index.min.css">
+    <link rel="stylesheet" media="screen" href="/stylesheets/index.min.css">
     <link rel="stylesheet" media="screen" href="/dataTables/stylesheets/dataTables.bootstrap.css">
     <link rel="stylesheet" media="screen" href="/chartist/stylesheets/chartist.min.css">
     <!--
@@ -38,7 +38,6 @@
                 </li>
             </ul>
         </div>
-
     </div>
 </nav>
 
@@ -59,14 +58,14 @@
                 </h3>
             </div>
             <div class="panel-body">
-                <form action="/clusters/test" method="POST" class="form-vertical " role="form">
+                <form action="/clusters/<%=modifyname%>" method="POST" class="form-vertical " role="form">
                     <fieldset>
                         <input type="hidden" name="operation" value="Update">
                         <input type="hidden" name="name" value="test">
                         <div class="form-group  " id="zkHosts_field">
                             <label class="control-label" for="zkHosts">Cluster Zookeeper Hosts</label>
                             <input type="text" id="zkHosts" name="zkHosts"
-                                   value="VM-01:2181,VM-02:2181,VM-03:2181,VM-04:2181" class="form-control"
+                                   value="<%=originInfo["zkHosts"]%>" class="form-control"
                                    placeholder="zk1:2181,zk2:2181,zk3:2181/NAMESPACE" autoFocus="true">
                         </div>
                         <div class="form-group  " id="kafkaVersion_field">
@@ -83,318 +82,148 @@
                         <div class="form-group  " id="jmxEnabled_field">
                             <div class="checkbox">
                                 <label for="jmxEnabled">
-                                    <input type="checkbox" id="jmxEnabled" name="jmxEnabled" value="true" checked>
+                                    <input type="checkbox" id="jmxEnabled" name="jmxEnabled" value="<%=originInfo["jmxEnabled"]%>" checked>
                                     Enable JMX Polling (Set JMX_PORT env variable before starting kafka server)
                                 </label>
                             </div>
                         </div>
                         <div class="form-group  " id="jmxUser_field">
-
-
                             <label class="control-label" for="jmxUser">JMX Auth Username</label>
-
-
-                            <input type="text" id="jmxUser" name="jmxUser" value="" class="form-control">
-
-
+                            <input type="text" id="jmxUser" name="jmxUser" value="<%=originInfo["jmxUser"]%>" class="form-control">
                         </div>
-
-
                         <div class="form-group  " id="jmxPass_field">
-
-
                             <label class="control-label" for="jmxPass">JMX Auth Password</label>
-
-
-                            <input type="text" id="jmxPass" name="jmxPass" value="" class="form-control">
-
-
+                            <input type="text" id="jmxPass" name="jmxPass" value="<%=originInfo["jmxPass"]%>" class="form-control">
                         </div>
-
-
                         <div class="form-group  " id="pollConsumers_field">
-
-
                             <div class="checkbox">
                                 <label for="pollConsumers">
-                                    <input type="checkbox" id="pollConsumers" name="pollConsumers" value="true" checked>
+                                    <input type="checkbox" id="pollConsumers" name="pollConsumers" value="<%=originInfo["pollConsumers"]%>" <%=originInfo["check_pollConsumers"]%>>
                                     Poll consumer information (Not recommended for large # of consumers)
                                 </label>
-
                             </div>
-
-
                         </div>
-
 
                         <div class="form-group  " id="filterConsumers_field">
 
-
                             <div class="checkbox">
                                 <label for="filterConsumers">
-                                    <input type="checkbox" id="filterConsumers" name="filterConsumers" value="true"
-                                           checked>
+                                    <input type="checkbox" id="filterConsumers" name="filterConsumers" value="<%=originInfo["filterConsumers"]%>"
+                                           <%=originInfo["check_filterConsumers"]%>>
                                     Filter out inactive consumers
                                 </label>
-
                             </div>
-
-
                         </div>
-
-
                         <div class="form-group  " id="logkafkaEnabled_field">
-
-
                             <div class="checkbox">
                                 <label for="logkafkaEnabled">
-                                    <input type="checkbox" id="logkafkaEnabled" name="logkafkaEnabled" value="true"
-                                           checked>
+                                    <input type="checkbox" id="logkafkaEnabled" name="logkafkaEnabled" value="<%=originInfo["logkafkaEnabled"]%>"
+                                           <%=originInfo["check_logkafkaEnabled"]%>>
                                     Enable Logkafka
                                 </label>
-
                             </div>
-
-
                         </div>
-
-
                         <div class="form-group  " id="activeOffsetCacheEnabled_field">
-
 
                             <div class="checkbox">
                                 <label for="activeOffsetCacheEnabled">
                                     <input type="checkbox" id="activeOffsetCacheEnabled" name="activeOffsetCacheEnabled"
-                                           value="true">
+                                           value="<%=originInfo["activeOffsetCacheEnabled"]%>" <%=originInfo["check_activeOffsetCacheEnabled"]%>>
                                     Enable Active OffsetCache (Not recommended for large # of consumers)
                                 </label>
-
                             </div>
-
-
                         </div>
-
-
                         <div class="form-group  " id="displaySizeEnabled_field">
-
-
                             <div class="checkbox">
                                 <label for="displaySizeEnabled">
                                     <input type="checkbox" id="displaySizeEnabled" name="displaySizeEnabled"
-                                           value="true" checked>
+                                           value="<%=originInfo["displaySizeEnabled"]%>" <%=originInfo["check_displaySizeEnabled"]%>>
                                     Display Broker and Topic Size (only works after applying <a
                                             href="https://issues.apache.org/jira/browse/KAFKA-1614">this patch</a>)
                                 </label>
                             </div>
-
-
                         </div>
-
-
                         <div class="form-group  " id="tuning_brokerViewUpdatePeriodSeconds_field">
-
-
                             <label class="control-label" for="tuning_brokerViewUpdatePeriodSeconds">brokerViewUpdatePeriodSeconds</label>
-
-
                             <input type="number" id="tuning_brokerViewUpdatePeriodSeconds"
-                                   name="tuning.brokerViewUpdatePeriodSeconds" value="30" class="form-control">
+                                   name="tuning.brokerViewUpdatePeriodSeconds" value="<%=originInfo["tuning.brokerViewUpdatePeriodSeconds"]%>" class="form-control">
 
 
                         </div>
-
-
                         <div class="form-group  " id="tuning_clusterManagerThreadPoolSize_field">
-
-
                             <label class="control-label" for="tuning_clusterManagerThreadPoolSize">clusterManagerThreadPoolSize</label>
-
-
                             <input type="number" id="tuning_clusterManagerThreadPoolSize"
-                                   name="tuning.clusterManagerThreadPoolSize" value="2" class="form-control">
-
-
+                                   name="tuning.clusterManagerThreadPoolSize" value="<%=originInfo["tuning.clusterManagerThreadPoolSize"]%>" class="form-control">
                         </div>
-
-
                         <div class="form-group  " id="tuning_clusterManagerThreadPoolQueueSize_field">
-
-
                             <label class="control-label" for="tuning_clusterManagerThreadPoolQueueSize">clusterManagerThreadPoolQueueSize</label>
-
-
                             <input type="number" id="tuning_clusterManagerThreadPoolQueueSize"
-                                   name="tuning.clusterManagerThreadPoolQueueSize" value="100" class="form-control">
-
-
+                                   name="tuning.clusterManagerThreadPoolQueueSize" value="<%=originInfo["tuning.clusterManagerThreadPoolQueueSize"]%>" class="form-control">
                         </div>
-
-
                         <div class="form-group  " id="tuning_kafkaCommandThreadPoolSize_field">
-
-
                             <label class="control-label" for="tuning_kafkaCommandThreadPoolSize">kafkaCommandThreadPoolSize</label>
-
-
                             <input type="number" id="tuning_kafkaCommandThreadPoolSize"
-                                   name="tuning.kafkaCommandThreadPoolSize" value="2" class="form-control">
-
-
+                                   name="tuning.kafkaCommandThreadPoolSize" value="<%=originInfo["tuning.kafkaCommandThreadPoolSize"]%>" class="form-control">
                         </div>
-
-
                         <div class="form-group  " id="tuning_kafkaCommandThreadPoolQueueSize_field">
-
-
                             <label class="control-label" for="tuning_kafkaCommandThreadPoolQueueSize">kafkaCommandThreadPoolQueueSize</label>
-
-
                             <input type="number" id="tuning_kafkaCommandThreadPoolQueueSize"
-                                   name="tuning.kafkaCommandThreadPoolQueueSize" value="100" class="form-control">
-
-
+                                   name="tuning.kafkaCommandThreadPoolQueueSize" value="<%=originInfo["tuning.kafkaCommandThreadPoolQueueSize"]%>" class="form-control">
                         </div>
-
-
                         <div class="form-group  " id="tuning_logkafkaCommandThreadPoolSize_field">
-
-
                             <label class="control-label" for="tuning_logkafkaCommandThreadPoolSize">logkafkaCommandThreadPoolSize</label>
-
-
                             <input type="number" id="tuning_logkafkaCommandThreadPoolSize"
-                                   name="tuning.logkafkaCommandThreadPoolSize" value="2" class="form-control">
-
-
+                                   name="tuning.logkafkaCommandThreadPoolSize" value="<%=originInfo["tuning.logkafkaCommandThreadPoolSize"]%>" class="form-control">
                         </div>
-
-
                         <div class="form-group  " id="tuning_logkafkaCommandThreadPoolQueueSize_field">
-
-
                             <label class="control-label" for="tuning_logkafkaCommandThreadPoolQueueSize">logkafkaCommandThreadPoolQueueSize</label>
-
-
                             <input type="number" id="tuning_logkafkaCommandThreadPoolQueueSize"
-                                   name="tuning.logkafkaCommandThreadPoolQueueSize" value="100" class="form-control">
-
-
+                                   name="tuning.logkafkaCommandThreadPoolQueueSize" value="<%=originInfo["tuning.logkafkaCommandThreadPoolQueueSize"]%>" class="form-control">
                         </div>
-
-
                         <div class="form-group  " id="tuning_logkafkaUpdatePeriodSeconds_field">
-
-
                             <label class="control-label" for="tuning_logkafkaUpdatePeriodSeconds">logkafkaUpdatePeriodSeconds</label>
-
-
                             <input type="number" id="tuning_logkafkaUpdatePeriodSeconds"
-                                   name="tuning.logkafkaUpdatePeriodSeconds" value="30" class="form-control">
-
-
+                                   name="tuning.logkafkaUpdatePeriodSeconds" value="<%=originInfo["tuning.logkafkaUpdatePeriodSeconds"]%>" class="form-control">
                         </div>
-
-
                         <div class="form-group  " id="tuning_partitionOffsetCacheTimeoutSecs_field">
-
-
                             <label class="control-label" for="tuning_partitionOffsetCacheTimeoutSecs">partitionOffsetCacheTimeoutSecs</label>
-
-
                             <input type="number" id="tuning_partitionOffsetCacheTimeoutSecs"
-                                   name="tuning.partitionOffsetCacheTimeoutSecs" value="5" class="form-control">
-
-
+                                   name="tuning.partitionOffsetCacheTimeoutSecs" value="<%=originInfo["tuning.partitionOffsetCacheTimeoutSecs"]%>" class="form-control">
                         </div>
-
-
                         <div class="form-group  " id="tuning_brokerViewThreadPoolSize_field">
-
-
                             <label class="control-label"
                                    for="tuning_brokerViewThreadPoolSize">brokerViewThreadPoolSize</label>
-
-
                             <input type="number" id="tuning_brokerViewThreadPoolSize"
-                                   name="tuning.brokerViewThreadPoolSize" value="2" class="form-control">
-
-
+                                   name="tuning.brokerViewThreadPoolSize" value="<%=originInfo["tuning.brokerViewThreadPoolSize"]%>" class="form-control">
                         </div>
-
-
                         <div class="form-group  " id="tuning_brokerViewThreadPoolQueueSize_field">
-
-
                             <label class="control-label" for="tuning_brokerViewThreadPoolQueueSize">brokerViewThreadPoolQueueSize</label>
-
-
                             <input type="number" id="tuning_brokerViewThreadPoolQueueSize"
-                                   name="tuning.brokerViewThreadPoolQueueSize" value="1000" class="form-control">
-
-
+                                   name="tuning.brokerViewThreadPoolQueueSize" value="<%=originInfo["tuning.brokerViewThreadPoolQueueSize"]%>" class="form-control">
                         </div>
-
-
                         <div class="form-group  " id="tuning_offsetCacheThreadPoolSize_field">
-
-
                             <label class="control-label" for="tuning_offsetCacheThreadPoolSize">offsetCacheThreadPoolSize</label>
-
-
                             <input type="number" id="tuning_offsetCacheThreadPoolSize"
-                                   name="tuning.offsetCacheThreadPoolSize" value="2" class="form-control">
-
-
+                                   name="tuning.offsetCacheThreadPoolSize" value="<%=originInfo["tuning.offsetCacheThreadPoolSize"]%>" class="form-control">
                         </div>
-
-
                         <div class="form-group  " id="tuning_offsetCacheThreadPoolQueueSize_field">
-
-
                             <label class="control-label" for="tuning_offsetCacheThreadPoolQueueSize">offsetCacheThreadPoolQueueSize</label>
-
-
                             <input type="number" id="tuning_offsetCacheThreadPoolQueueSize"
-                                   name="tuning.offsetCacheThreadPoolQueueSize" value="1000" class="form-control">
-
-
+                                   name="tuning.offsetCacheThreadPoolQueueSize" value="<%=originInfo["tuning.offsetCacheThreadPoolQueueSize"]%>" class="form-control">
                         </div>
-
-
                         <div class="form-group  " id="tuning_kafkaAdminClientThreadPoolSize_field">
-
-
                             <label class="control-label" for="tuning_kafkaAdminClientThreadPoolSize">kafkaAdminClientThreadPoolSize</label>
-
-
                             <input type="number" id="tuning_kafkaAdminClientThreadPoolSize"
-                                   name="tuning.kafkaAdminClientThreadPoolSize" value="2" class="form-control">
-
-
+                                   name="tuning.kafkaAdminClientThreadPoolSize" value="<%=originInfo["tuning.kafkaAdminClientThreadPoolSize"]%>" class="form-control">
                         </div>
-
-
                         <div class="form-group  " id="tuning_kafkaAdminClientThreadPoolQueueSize_field">
-
-
                             <label class="control-label" for="tuning_kafkaAdminClientThreadPoolQueueSize">kafkaAdminClientThreadPoolQueueSize</label>
-
-
                             <input type="number" id="tuning_kafkaAdminClientThreadPoolQueueSize"
-                                   name="tuning.kafkaAdminClientThreadPoolQueueSize" value="1000" class="form-control">
-
-
+                                   name="tuning.kafkaAdminClientThreadPoolQueueSize" value="<%=originInfo["tuning.kafkaAdminClientThreadPoolQueueSize"]%>" class="form-control">
                         </div>
-
-
                         <div class="form-group  ">
-
-
                             <button type="submit" class="submit-button btn btn-primary btn"> Save</button>
-
-
                         </div>
-
                         <a href="/" class="cancel-button btn btn-default" role="button">Cancel</a>
                     </fieldset>
 
@@ -409,18 +238,12 @@
                 <li><a href="https://github.com/Qihoo360/logkafka">LogKafka</a></li>
             </ol>
         </div>
-
-
     </div>
-
-
 </div>
-
 <script src="/jquery-2.1.4/jquery.min.js"></script>
 <script src="/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="/dataTables/javascripts/jquery.dataTables.min.js"></script>
 <script src="/dataTables/javascripts/dataTables.bootstrap.js"></script>
-
 <script>
     function goBack() {
         window.history.back()

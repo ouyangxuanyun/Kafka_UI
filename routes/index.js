@@ -12,7 +12,7 @@ var kafka2connstr = '10.192.33.57:2181,10.192.33.69:2181,10.192.33.76:2181';
 var testInfo = require('../test/gettestInfo')
 var AllCluster = [];
 AllCluster.length = 1;  // 全局存储创建的cluster 信息
-AllCluster["test"] = testInfo();// console.log(AllCluster["test"])
+AllCluster["test1"] = testInfo();// console.log(AllCluster["test"])
 
 /*显示clusters list 信息， homepage页*/
 router.get('/', function (req, res, next) {
@@ -35,13 +35,22 @@ router.get('/addCluster', function (req, res, next) {
 
 /*Cluster Modify 页面 */
 router.get('/updateCluster', function (req, res, next) {
-    res.render('updateCluster');
+    console.log(req.query.c);//获取要修改的cluster name
+    var modifyname = req.query.c;
+    var originInfo = AllCluster[modifyname];
+    res.render('updateCluster',{modifyname:modifyname,originInfo:originInfo});
 });
 
 
+router.post('/clusters/:clustername', function (req, res, next) {
+    var attresult = [];
+    var attsjson = req.body;
+    console.log(attsjson);
+})
 
 /* 获取表单提交的数据处理后存入attresult 数组，详细见README/1.*/
 router.get('/clusters', function (req, res, next) {
+    var checkedkey = ["logkafkaEnabled","pollConsumers","filterConsumers","activeOffsetCacheEnabled","displaySizeEnabled"];
     var attresult = [];
     var attsjson = req.query;// console.log(attsjson);
     var clustername = req.query.name
@@ -52,6 +61,15 @@ router.get('/clusters', function (req, res, next) {
     for (var i = 2; i < arrs.length; i++) {
         var temp = arrs[i].split(":");
         attresult[temp[0].slice(1, -1)] = temp[1].slice(1, -1)
+    }
+    for (var j = 0; j < checkedkey.length;j++){
+        !function (j) {
+            if (attresult.hasOwnProperty(checkedkey[j])){
+                attresult["check_"+ checkedkey[j]] = "checked";
+            } else {
+                attresult["check_" + checkedkey[j]] = "";
+            }
+        }(j)
     }
     AllCluster[attresult["clustername"]] = attresult;
     AllCluster.length++;
