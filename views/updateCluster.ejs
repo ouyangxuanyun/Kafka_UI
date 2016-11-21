@@ -45,7 +45,7 @@
 <div class="container" role="main">
     <ol class="breadcrumb">
         <li><a href="/">Clusters</a></li>
-        <li>test</li>
+        <li><%=modifyname%></li>
         <li class="active">Update Cluster</li>
     </ol>
     <div class="col-md-6 un-pad-me">
@@ -61,7 +61,7 @@
                 <form action="/clusters/<%=modifyname%>" method="POST" class="form-vertical " role="form">
                     <fieldset>
                         <input type="hidden" name="operation" value="Update">
-                        <input type="hidden" name="name" value="test">
+                        <input type="hidden" name="name" value="<%=modifyname%>">
                         <div class="form-group  " id="zkHosts_field">
                             <label class="control-label" for="zkHosts">Cluster Zookeeper Hosts</label>
                             <input type="text" id="zkHosts" name="zkHosts"
