@@ -14,6 +14,7 @@ var AllCluster = [];
 AllCluster.length = 1;  // 全局存储创建的cluster 信息
 AllCluster["test1"] = testInfo();// console.log(AllCluster["test"])
 
+
 /*显示clusters list 信息， homepage页*/
 router.get('/', function (req, res, next) {
     var clusters = [];
@@ -23,66 +24,17 @@ router.get('/', function (req, res, next) {
         cluster.kafkaVersion = AllCluster[key]["kafkaVersion"];
         cluster.zkHosts = AllCluster[key]["zkHosts"];
         cluster.operation = AllCluster[key]["operation"];
+        console.log("／／／／／／／／／／／／／／／／／／／／／／／" +　cluster.operation)
         clusters.push(cluster);// console.log(cluster.name,cluster.kafkaVersion,cluster.zkHosts,cluster.operation);
     }
     res.render('clusters', {clusters: clusters});
 });
 
+
 /* 添加cluster页面*/
 router.get('/addCluster', function (req, res, next) {
     res.render('addcluster');
 });
-
-/*Cluster Modify 页面 */
-router.get('/updateCluster', function (req, res, next) {
-    console.log(req.query.c);//获取要修改的cluster name
-    var modifyname = req.query.c;
-    var originInfo = AllCluster[modifyname];
-    res.render('updateCluster', {modifyname: modifyname, originInfo: originInfo});
-});
-
-
-router.post('/clusters/:clustername', function (req, res, next) {
-    console.log("------------------------------判断是modify 还是 disable:::" + req.body.operation);
-    var clustername = req.body.name;
-    var checkedkey = ["logkafkaEnabled", "pollConsumers", "filterConsumers", "activeOffsetCacheEnabled", "displaySizeEnabled"];
-    var attsjson = req.body;
-    var changedInfo = AllCluster[clustername];//console.log(changedInfo);
-
-    if (req.body.operation == "Disable") {
-        console.log("Disable 提交了表单");
-        changedInfo["operation"] = "Disable"
-
-        res.render('changeclusterresult', {title: "Disable Cluster", clustername: clustername})
-
-    }
-    if (req.body.operation == "Update") {
-        console.log("Update 提交了表单");
-
-        changedInfo["operation"] = "Update";
-        changedInfo["zkHosts"] = attsjson.zkHosts;
-        var attsstr = JSON.stringify(attsjson);//console.log("转成字符串" + attsstr)
-        var arrs = attsstr.slice(1, -1).split(",");//console.log("分割成数组" + arrs)
-
-        for (var j = 0; j < checkedkey.length; j++) {
-            // console.log("删除已经加入的checked");
-            changedInfo["check_" + checkedkey[j]] = "";
-        }
-
-        for (var i = 3; i < arrs.length; i++) { //要从zkHost后一位开始以：分割，此时zhHosts的位置是2,
-            var temp = arrs[i].split(":");
-            var key = temp[0].slice(1, -1);
-            var value = temp[1].slice(1, -1);
-            changedInfo[key] = value;
-            if (checkedkey.indexOf(key) > -1) {
-                console.log("有checked 选项" + key)
-                changedInfo["check_" + key] = "checked";
-            }
-        }
-        res.render('changeclusterresult', {title: "Update Cluster", clustername: clustername})
-    }
-
-})
 
 
 /* 获取表单提交的数据处理后存入attresult 数组，详细见README/1.*/
@@ -114,6 +66,7 @@ router.get('/clusters', function (req, res, next) {
     res.render('changeclusterresult', {title: "Add Cluster", clustername: clustername})
 });
 
+
 /*每个cluster详情页*/
 router.get('/clusters/:clustername', function (req, res, next) {
     //console.log(AllCluster[req.params.clustername]);
@@ -130,6 +83,68 @@ router.get('/clusters/:clustername', function (req, res, next) {
         });
     })
 });
+
+
+/*Cluster Modify 页面 */
+router.get('/updateCluster', function (req, res, next) {
+    console.log(req.query.c);//获取要修改的cluster name
+    var modifyname = req.query.c;
+    var originInfo = AllCluster[modifyname];
+    res.render('updateCluster', {modifyname: modifyname, originInfo: originInfo});
+});
+
+/* Clusters 页面增删改  Modify/Disable/Enable/Delete,　update页面save按钮 或者Cluster页面Disable，Enable，Delete按钮*/
+router.post('/clusters/:clustername', function (req, res, next) {
+    console.log("------------------------------判断操作-----------------------------" + req.body.operation);
+    var clustername = req.body.name;
+    var checkedkey = ["logkafkaEnabled", "pollConsumers", "filterConsumers", "activeOffsetCacheEnabled", "displaySizeEnabled"];
+    var attsjson = req.body;
+    var changedInfo = AllCluster[clustername];//console.log(changedInfo);
+
+    if (req.body.operation == "Update") {
+        console.log("Update 提交了表单");
+        changedInfo["operation"] = "Update";
+        changedInfo["zkHosts"] = attsjson.zkHosts;
+        var attsstr = JSON.stringify(attsjson);//console.log("转成字符串" + attsstr)
+        var arrs = attsstr.slice(1, -1).split(",");//console.log("分割成数组" + arrs)
+
+        for (var j = 0; j < checkedkey.length; j++) {
+            // console.log("删除已经加入的checked");
+            changedInfo["check_" + checkedkey[j]] = "";
+        }
+
+        for (var i = 3; i < arrs.length; i++) { //要从zkHost后一位开始以：分割，此时zhHosts的位置是2,
+            var temp = arrs[i].split(":");
+            var key = temp[0].slice(1, -1);
+            var value = temp[1].slice(1, -1);
+            changedInfo[key] = value;
+            if (checkedkey.indexOf(key) > -1) {
+                console.log("有checked 选项" + key)
+                changedInfo["check_" + key] = "checked";
+            }
+        }
+        res.render('changeclusterresult', {title: "Update Cluster", clustername: clustername})
+    }
+
+    if (req.body.operation == "Disable") {
+        console.log("Disable 提交了表单");
+        changedInfo["operation"] = "Disable"
+        res.render('changeclusterresult', {title: "Disable Cluster", clustername: clustername})
+    }
+
+    if (req.body.operation == "Enable") {
+        console.log("Enable 提交了表单");
+        changedInfo["operation"] = "Enable"
+        res.render('changeclusterresult', {title: "Enable Cluster", clustername: clustername})
+    }
+
+    if (req.body.operation == "Delete") {
+        console.log("Delete 提交了表单");
+        delete(AllCluster[clustername]);
+        res.render('changeclusterresult', {title: "Delete Cluster", clustername: clustername})
+    }
+})
+
 
 
 /* GET topic list page. */
@@ -183,7 +198,7 @@ router.get('/clusters/:clustername/topics', function (req, res, next) {
 });
 
 /* GET each topic details . */
-router.get('/clusters/test/topics/:topic', function (req, res, next) {
+router.get('/clusters/:clustername/topics/:topic', function (req, res, next) {
     var topics_name = req.params.topic;
     console.log(req.param.topic);
     kafka1.topics.get(topics_name, function (err, datas) {
@@ -211,12 +226,12 @@ router.get('/clusters/test/topics/:topic', function (req, res, next) {
 });
 
 /* topic create result page. */
-router.get('/clusters/test/createTopic', function (req, res, next) {
+router.get('/clusters/:clustername/createTopic', function (req, res, next) {
     res.render('createtopic');
 });
 
 /* topic create result page. */
-router.get('/clusters/test/createResult', function (req, res, next) {
+router.get('/clusters/:clustername/createResult', function (req, res, next) {
     var topic_name = req.query.topic;
     var kafka2 = require('kafka-node'),
         Producer = kafka2.Producer,

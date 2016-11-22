@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Add Cluster</title>
-    <link rel="shortcut icon" type="image/png" href="/images/favicon.png">\
+    <link rel="shortcut icon" type="image/png" href="/images/favicon.png">
     <link rel='stylesheet' href='/bootstrap-3.3.5/css/bootstrap.min.css'>
     <link rel="stylesheet" media="screen" href="/stylesheets/index.min.css">
     <link rel="stylesheet" media="screen" href="/dataTables/stylesheets/dataTables.bootstrap.css">
@@ -222,8 +222,9 @@
                             <input type="number" id="tuning_kafkaAdminClientThreadPoolQueueSize"
                                    name="tuning.kafkaAdminClientThreadPoolQueueSize" value="1000" class="form-control">
                         </div>
+                        <span id="tuning_kafkaAdminClientThreadPoolQueueSize_error_0" class="help-block"></span>
                         <div class="form-group  ">
-                            <button type="submit" class="submit-button btn btn-primary"> Save</button>
+                            <button type="submit" class="submit-button btn btn-primary" > Save</button>
                         </div>
                         <a href="/" class="cancel-button btn btn-default" role="button">Cancel</a>
                     </fieldset>
@@ -243,6 +244,8 @@
 <script src="/dataTables/javascripts/dataTables.bootstrap.js"></script>
 
 <script>
+
+    
     function goBack() {
         window.history.back()
     }

@@ -33,17 +33,22 @@
 <div class="container" role="main">
     <ol class="breadcrumb">
         <li><a href="/">Clusters</a></li>
-        <li class="active"><%=title%></li>
+        <li class="active"><%= title %></li>
     </ol>
     <div class="col-md-6 un-pad-me">
         <div class="panel panel-default">
-            <div class="panel-heading"><h3><%=title%></h3></div>
+            <div class="panel-heading"><h3><%= title %></h3></div>
 
             <div class="alert alert-success" role="alert">Done!</div>
+            <% if(title == "Disable Cluster" || title == "Enable Cluster" || title == "Delete Cluster") { %>
             <div class="alert alert-info" role="alert">
-                <a href="/clusters/<%=clustername%>">Go to cluster view.</a>
+                <a href="/">Go to cluster list.</a>
             </div>
-
+            <% } else { %>
+            <div class="alert alert-info" role="alert">
+                <a href="/clusters/<%= clustername %>">Go to cluster view.</a>
+            </div>
+            <% } %>
         </div>
     </div>
 
@@ -61,13 +66,13 @@
     }
 
     function checkBoxSelect(idPrefix, booleanValue, display) {
-        $("[id^="+idPrefix+"]").prop("checked",booleanValue);
+        $("[id^=" + idPrefix + "]").prop("checked", booleanValue);
     }
 
     function selectBySubname(selectId, selectClass, display) {
         var subname = $(selectId).val().toLowerCase();
         $('.' + selectClass).not("[name*='" + subname + "']").css("display", "none");
-        $("[class='"+selectClass+"'][name*='"+subname+"']").css("display", display);
+        $("[class='" + selectClass + "'][name*='" + subname + "']").css("display", display);
         if (subname == "") {
             $('.' + selectClass).css("display", display);
         }
