@@ -20,7 +20,7 @@ function getBrokerList(callback) {
         for (var brokerid = 0; brokerid < brokernum; brokerid++) {
             !function (brokerid) {
                 getbrokerinfo(brokerid + 1, function (data) {
-                    console.log(data)
+                    console.log(data);
                     BrokerList[brokerid] = new Array();
                     BrokerList[brokerid][0] = brokerid;
                     BrokerList[brokerid][1] = data.host;
@@ -89,7 +89,81 @@ function getbrokernumbers(callback) {
             console.log(error.stack);
             return;
         }
-        callback (children.length);
+        callback(children.length);
+    });
+}
+
+
+function getconsumerList(callback) {
+    client.getChildren("/consumers", function (error, children, stats) {
+        if (error) {
+            console.log(error.stack);
+            return;
+        }
+        callback(children);//返回consumers数组
+    });
+}
+
+
+function getEachConsumeTopics(consumergp, callback) {
+    var offsetpath = "/consumers/" + consumergp + "/offsets";
+    var ownerspath = "/consumers/" + consumergp + "/owners";
+
+    var consumtopics = [];
+    client.exists(offsetpath, function (error, stat) {
+        if (error) {
+            return console.log("err1" + error.stack);
+        }
+        if (stat) {//console.log("offoffoffoffoff")
+            client.getChildren(offsetpath, function (error, children) {
+                if (error) {
+                    return console.log("err2" + error.stack);
+                }
+                consumtopics = children;
+                callback(consumtopics);
+            });
+        } else {
+            client.exists(ownerspath, function (error, stat) {
+                if (error) {
+                    return console.log("err3" + error.stack);
+                }
+                if (stat) {//console.log("owneowneowneowneowne")
+                    client.getChildren(ownerspath, function (error, children) {
+                        if (error) {
+                            return console.log("err4" + error.stack);
+                        }
+                        consumtopics = children;
+                        callback(consumtopics);
+                    });
+                } else {
+                    consumtopics = [];
+                    callback(consumtopics);
+                }
+            });
+        }
+    });
+
+}
+
+
+function getAllConsumeInfo(callback) {
+    var allconsumersInfo = [];
+    var num = 1;
+    getconsumerList(function (consumers) {
+        for (var i = 0; i < consumers.length; i++) {
+            !function (i) {
+                var entryInfo = [];
+                entryInfo[0] = consumers[i];
+                entryInfo[1] = "ZK";
+                getEachConsumeTopics(consumers[i], function (consumtopics) {
+                    entryInfo[2] = consumtopics;
+                    allconsumersInfo.push(entryInfo);
+                    if (num++ == consumers.length) {
+                        callback(allconsumersInfo);
+                    }
+                });
+            }(i);
+        }
     });
 }
 
@@ -97,4 +171,5 @@ function getbrokernumbers(callback) {
 zkutils.getbrokerinfo = getbrokerinfo;
 zkutils.getBrokerList = getBrokerList;
 zkutils.getbrokernumbers = getbrokernumbers;
+zkutils.getAllConsumeInfo = getAllConsumeInfo;
 module.exports = zkutils;

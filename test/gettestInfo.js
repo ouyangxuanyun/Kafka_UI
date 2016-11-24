@@ -10,21 +10,21 @@ var attsjson = {
     filterConsumers: 'true',
     activeOffsetCacheEnabled:'true',
     displaySizeEnabled: 'true',
-    'tuning.brokerViewUpdatePeriodSeconds': '930',
-    'tuning.clusterManagerThreadPoolSize': '92',
-    'tuning.clusterManagerThreadPoolQueueSize': '9100',
-    'tuning.kafkaCommandThreadPoolSize': '92',
-    'tuning.kafkaCommandThreadPoolQueueSize': '9100',
-    'tuning.logkafkaCommandThreadPoolSize': '92',
-    'tuning.logkafkaCommandThreadPoolQueueSize': '9100',
-    'tuning.logkafkaUpdatePeriodSeconds': '930',
-    'tuning.partitionOffsetCacheTimeoutSecs': '95',
-    'tuning.brokerViewThreadPoolSize': '92',
-    'tuning.brokerViewThreadPoolQueueSize': '91000',
-    'tuning.offsetCacheThreadPoolSize': '92',
-    'tuning.offsetCacheThreadPoolQueueSize': '91000',
-    'tuning.kafkaAdminClientThreadPoolSize': '92',
-    'tuning.kafkaAdminClientThreadPoolQueueSize': '91000'
+    'tuning.brokerViewUpdatePeriodSeconds': '930', // 10,1000
+    'tuning.clusterManagerThreadPoolSize': '92',//2,1000
+    'tuning.clusterManagerThreadPoolQueueSize': '9100',//10,1000
+    'tuning.kafkaCommandThreadPoolSize': '92',//2,1000
+    'tuning.kafkaCommandThreadPoolQueueSize': '9100',//10,1000
+    'tuning.logkafkaCommandThreadPoolSize': '92',//2,1000
+    'tuning.logkafkaCommandThreadPoolQueueSize': '9100',//10,1000
+    'tuning.logkafkaUpdatePeriodSeconds': '930',//10,1000
+    'tuning.partitionOffsetCacheTimeoutSecs': '95',//5,1000
+    'tuning.brokerViewThreadPoolSize': '92',//2,1000
+    'tuning.brokerViewThreadPoolQueueSize': '91000',//10,1000
+    'tuning.offsetCacheThreadPoolSize': '92',//2,100//10,1000
+    'tuning.offsetCacheThreadPoolQueueSize': '91000',//10,1000
+    'tuning.kafkaAdminClientThreadPoolSize': '92',//2,1000
+    'tuning.kafkaAdminClientThreadPoolQueueSize': '91000'//10,1000
 }
 
 function gettestInfo() {

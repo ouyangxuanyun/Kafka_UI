@@ -293,4 +293,14 @@ router.get('/clusters/:clustername/brokers/:brokerlistId', function (req, res, n
     })
 });
 
+/* Consumers 页面 */
+router.get('/clusters/:clustername/consumers', function (req,res) {
+    var clustername = req.params.clustername;
+    zkutil.getAllConsumeInfo(function (allconsumeInfo) {
+        console.log(allconsumeInfo)
+        res.render('consumerlist',{clustername:clustername, allconsumeInfo:allconsumeInfo})
+    })
+});
+
+
 module.exports = router;

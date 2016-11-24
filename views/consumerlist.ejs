@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Broker List</title>
+    <title>Consumer List</title>
     <link rel="shortcut icon" type="image/png" href="/images/favicon.png">
     <link rel='stylesheet' href='/bootstrap-3.3.5/css/bootstrap.min.css'>
     <link rel="stylesheet" media="screen" href="/stylesheets/index.min.css">
@@ -9,9 +9,6 @@
           href="/dataTables/stylesheets/dataTables.bootstrap.css">
     <link rel="stylesheet" media="screen"
           href="/chartist/stylesheets/chartist.min.css">
-    <!--
-    <script data-main="/vassets/javascripts/index.js" src="/webjars/requirejs/2.1.20/require.min.js"></script>
-    -->
     <script src="/chartist/javascripts/chartist.min.js"></script>
 </head>
 <body role="document">
@@ -27,8 +24,6 @@
             <a class="navbar-brand un-float-me" href="/">
                 Kafka Manager</a><span class="label label-primary"><%=clustername%></span>
         </div>
-
-
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li class="dropdown">
@@ -39,9 +34,9 @@
                         <li><a href="/">List</a></li>
                     </ul>
                 </li>
-                <li class="active"><a href="/clusters/<%=clustername%>/brokers">Brokers</a></li>
+                <li><a href="/clusters/test/brokers">Brokers</a></li>
                 <li class="dropdown">
-                    <a href="/clusters/test/topics" class="dropdown-toggle" data-toggle="dropdown">Topic<span class="caret"></span></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Topic<span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
                         <li><a href="/clusters/<%=clustername%>/createTopic">Create</a></li>
                         <li><a href="/clusters/<%=clustername%>/topics">List</a></li>
@@ -59,92 +54,50 @@
                 </li>
             </ul>
         </div>
+
     </div>
 </div>
+
 
 <div class="container" role="main">
     <ol class="breadcrumb">
         <li><a href="/">Clusters</a></li>
-        <li><a href="/clusters/<%=clustername%>"><%=clustername%></a></li>
-        <li class="active">Brokers</li>
+        <li><a href="/clusters/<%= clustername %>"><%=clustername%></a></li>
+        <li class="active">Consumers</li>
     </ol>
-
-    <div class="col-md-7 un-pad-me">
+    <div class="col-md-12">
         <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3>
-                    <button type="button" class="btn btn-link" onclick="goBack()">
-                        <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
-                    </button>
-                    Brokers
-                </h3>
-            </div>
-            <table class="table">
+            <div class="panel-heading"><h3>Consumers</h3></div>
+            <table class="table" id="consumer-table">
                 <thead>
                 <tr>
-                    <td>Id</td>
-                    <td>Host</td>
-                    <td>Port</td>
-                    <td>JMX Port</td>
-                    <td>Time</td>
-                    <td>Version</td>
-                  <!--  <td>Bytes In</td>
-                    <td>Bytes Out</td>
-                    <td>Size</td>
-                    -->
+                    <th>Consumer</th>
+                    <th>Type</th>
+                    <th>Topics it consumes from</th>
                 </tr>
                 </thead>
 
                 <tbody>
-                <!--Dynamic data-->
-
-
-                <%for(var j= 0; j < BrokerList.length; j++) {%>
+                <% for (var i = 0; i < allconsumeInfo.length; i++) { %>
                 <tr>
-                    <td><a href="/clusters/<%=clustername%>/brokers/<%=BrokerList[j][0] + 1%>"><%=BrokerList[j][0] + 1%></a></td>
-                    <td><%=BrokerList[j][1]%> </td>
-                    <td><%=BrokerList[j][2]%> </td>
-                    <td><%=BrokerList[j][3]%> </td>
-                    <td><%=BrokerList[j][4]%> </td>
-                    <td><%=BrokerList[j][5]%> </td>
-
-                    <!--   <td><%BrokerList[j][3]%> </td>
-                    <td><%BrokerList[j][3]%> </td>
-                    <td><%BrokerList[j][3]%> </td>
-                       -->
+                    <td>
+                        <a href="/clusters/<%= clustername %>/consumers/<%= allconsumeInfo[i][0] %>/type/ZK"><%= allconsumeInfo[i][0] %></a>
+                    </td>
+                    <td>ZK</td>
+                    <% if (allconsumeInfo[i][2].length > 1) { %>
+                    <td>
+                        <% for (var j = 0; j < allconsumeInfo[i][2].length; j++) { %>
+                        <a href="/clusters/<%= clustername %>/consumers/<%= allconsumeInfo[i][0] %>/topic/<%= allconsumeInfo[i][2][0] %>/type/ZK"><%= allconsumeInfo[i][2][j] %></a>
+                        <br>
+                        <% } %>
+                    </td>
+                    <% } else { %>
+                    <td>
+                        <a href="/clusters/<%= clustername %>/consumers/<%= allconsumeInfo[i][0] %>/topic/<%= allconsumeInfo[i][2][0] %>/type/ZK"><%= allconsumeInfo[i][2][0] %></a>
+                    </td>
+                    <% } %>
                 </tr>
-                <%}%>
-
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <div class="col-md-5 un-pad-me">
-        <div class="panel panel-default">
-            <div class="panel-heading"><h3>Combined Metrics</h3></div>
-
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>Rate/sec</th>
-                    <th>Mean</th>
-                    <th>1&nbsp;min</th>
-                    <th>5&nbsp;min</th>
-                    <th>15&nbsp;min</th>
-                </tr>
-                </thead>
-                <tbody>
-                <% var Ratetitle = ["Messages in", "Bytes in", "Bytes out", "Bytes rejected", "Failed fetch request", "Failed produce request"] %>
-                <%for(var i= 0; i < combinedMetrics.length; i++) {%>
-                <tr>
-                    <td><%= Ratetitle[i] %></td>
-                    <td><span class="badge"><%=combinedMetrics[i][0].toFixed(2)%> </span></td>
-                    <td><span class="badge"><%=combinedMetrics[i][1].toFixed(2)%> </span></td>
-                    <td><span class="badge"><%=combinedMetrics[i][2].toFixed(2)%> </span></td>
-                    <td><span class="badge"><%=combinedMetrics[i][3].toFixed(2)%> </span></td>
-                <tr>
-                    <%}%>
+                <% } %>
 
                 </tbody>
             </table>
@@ -179,6 +132,12 @@
         $('[type=submit]').prop('disabled', true);
         $('[type=submit]').removeAttr('type');
     }
+</script>
+
+<script ype="text/javascript">
+    $(document).ready(function () {
+        $('#consumer-table').DataTable();
+    });
 </script>
 
 </body>

@@ -8,6 +8,11 @@
     <link rel="stylesheet" media="screen" href="/dataTables/stylesheets/dataTables.bootstrap.css">
     <link rel="stylesheet" media="screen" href="/chartist/stylesheets/chartist.min.css">
     <script src="/chartist/javascripts/chartist.min.js"></script>
+
+    <script src="/jquery-validation-1.14.0/lib/jquery.js"></script>
+    <script src="/jquery-validation-1.14.0/dist/jquery.validate.min.js"></script>
+    <script src="/jquery-validation-1.14.0/dist/localization/messages_zh.js"></script>
+    <script src="/formcheck.js"></script>
 </head>
 
 <body role="document">
@@ -54,7 +59,7 @@
             </div>
 
             <div class="panel-body">
-                <form action="/clusters"   class="form-vertical " role="form">
+                <form id="check_form" action="/clusters" class="form-vertical " role="form">
                     <fieldset>
                         <div class="form-group  " id="name_field">
                             <label class="control-label" for="name">Cluster Name</label>
@@ -222,13 +227,13 @@
                             <input type="number" id="tuning_kafkaAdminClientThreadPoolQueueSize"
                                    name="tuning.kafkaAdminClientThreadPoolQueueSize" value="1000" class="form-control">
                         </div>
-                        <span id="tuning_kafkaAdminClientThreadPoolQueueSize_error_0" class="help-block"></span>
                         <div class="form-group  ">
-                            <button type="submit" class="submit-button btn btn-primary" > Save</button>
+                            <button type="submit" class="submit-button btn btn-primary"> Save</button>
                         </div>
                         <a href="/" class="cancel-button btn btn-default" role="button">Cancel</a>
                     </fieldset>
                 </form>
+
             </div>
         </div>
         <div class="panel panel-info">
@@ -244,8 +249,6 @@
 <script src="/dataTables/javascripts/dataTables.bootstrap.js"></script>
 
 <script>
-
-    
     function goBack() {
         window.history.back()
     }
@@ -267,6 +270,7 @@
         $('[type=submit]').prop('disabled', true);
         $('[type=submit]').removeAttr('type');
     }
+
 </script>
 
 </body>
