@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Consumer List</title>
+    <title>Consumed Topic View</title>
     <link rel="shortcut icon" type="image/png" href="/images/favicon.png">
     <link rel='stylesheet' href='/bootstrap-3.3.5/css/bootstrap.min.css'>
     <link rel="stylesheet" media="screen" href="/stylesheets/index.min.css">
@@ -9,6 +9,7 @@
           href="/dataTables/stylesheets/dataTables.bootstrap.css">
     <link rel="stylesheet" media="screen"
           href="/chartist/stylesheets/chartist.min.css">
+
     <script src="/chartist/javascripts/chartist.min.js"></script>
 </head>
 <body role="document">
@@ -17,6 +18,7 @@
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <!--  Display three horizontal lines when navbar collapsed. -->
                 <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
             </button>
             <img src="/images/favicon.png">
@@ -59,51 +61,78 @@
     </div>
 </div>
 
-
 <div class="container" role="main">
     <ol class="breadcrumb">
         <li><a href="/">Clusters</a></li>
         <li><a href="/clusters/<%= clustername %>"><%= clustername %></a></li>
-        <li class="active">Consumers</li>
+        <li><a href="/clusters/<%= clustername %>/consumers">Consumers</a></li>
+        <li><a href="/clusters/<%= clustername %>/consumers/<%= consumergp %>/type/ZK"><%= consumergp %></a></li>
+        <li class="active">test</li>
     </ol>
-    <div class="col-md-12">
+    <div class="col-md-12 un-pad-me">
         <div class="panel panel-default">
-            <div class="panel-heading"><h3>Consumers</h3></div>
-            <table class="table" id="consumer-table">
-                <thead>
-                <tr>
-                    <th>Consumer</th>
-                    <th>Type</th>
-                    <th>Topics it consumes from</th>
-                </tr>
-                </thead>
+            <div class="panel-heading">
+                <h3>
+                    <button type="button" class="btn btn-link" onclick="goBack()"><span
+                                class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span></button>
+                    <%= consumergp %> / <%= consumerTopic %>
+                </h3>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><h4>Topic Summary</h4></div>
+                        <table class="table">
+                            <tbody>
+                            <tr>
+                                <td>Total Lag</td>
 
-                <tbody>
-                <% for (var i = 0; i < allconsumeInfo.length; i++) { %>
-                <tr>
-                    <td>
-                        <a href="/clusters/<%= clustername %>/consumers/<%= allconsumeInfo[i][0] %>/type/ZK"><%= allconsumeInfo[i][0] %></a>
-                    </td>
-                    <td>ZK</td>
-                    <% if (allconsumeInfo[i][2].length > 1) { %>
-                    <td>
-                        <% for (var j = 0; j < allconsumeInfo[i][2].length; j++) { %>
-                        <a href="/clusters/<%= clustername %>/consumers/<%= allconsumeInfo[i][0] %>/topic/<%= allconsumeInfo[i][2][j] %>/type/ZK"><%= allconsumeInfo[i][2][j] %></a>
-                        <br>
-                        <% } %>
-                    </td>
-                    <% } else { %>
-                    <td>
-                        <a href="/clusters/<%= clustername %>/consumers/<%= allconsumeInfo[i][0] %>/topic/<%= allconsumeInfo[i][2][0] %>/type/ZK"><%= allconsumeInfo[i][2][0] %></a>
-                    </td>
-                    <% } %>
-                </tr>
-                <% } %>
+                                <td><%=totalLag%></td>
+                            </tr>
+                            <tr>
+                                <td>% of Partitions assigned to a consumer instance</td>
+                                <td class="danger"><%=percentage%></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><h4><a
+                                        href="/clusters/<%= clustername %>/topics/<%= consumerTopic %>"><%= consumerTopic %></a>
+                            </h4></div>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Partition</th>
+                                <th>LogSize</th>
+                                <th>Consumer Offset</th>
+                                <th>Lag</th>
+                                <th>Consumer Instance Owner</th>
+                            </tr>
+                            </thead>
 
-                </tbody>
-            </table>
+                            <tbody>
+                            <% for (var i = 0; i < allInfo.length; i++) { %>
+                            <tr>
+                                <td><%= allInfo[i][0] %></td>
+                                <td><%= allInfo[i][1] %></td>
+                                <td><%= allInfo[i][2] %></td>
+                                <td><%= allInfo[i][3] %></td>
+                                <td class="warning"><%= allInfo[i][4] %></td>
+                            </tr>
+                            <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
 </div>
 
 <script src="/jquery-2.1.4/jquery.min.js"></script>
@@ -135,12 +164,7 @@
     }
 </script>
 
-<script ype="text/javascript">
-    $(document).ready(function () {
-        $('#consumer-table').DataTable();
-    });
-</script>
-
 </body>
 </html>
+
 

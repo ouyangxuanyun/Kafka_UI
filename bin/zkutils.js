@@ -69,7 +69,7 @@ function getbrokerinfo(brokerid, callback) {
         }
         if (stat) {// console.log(brokerid + ' Node exists.');
             client.getData(path,//function (event) {console.log('Got event: %s.', event);},
-                function (error, data, stat) {
+                function (error, data) {
                     if (error) {
                         return console.log(error.stack);
                     } else {
@@ -83,8 +83,9 @@ function getbrokerinfo(brokerid, callback) {
     });
 }
 
+
 function getbrokernumbers(callback) {
-    client.getChildren("/brokers/ids", function (error, children, stats) {
+    client.getChildren("/brokers/ids", function (error, children) {
         if (error) {
             console.log(error.stack);
             return;
@@ -168,8 +169,122 @@ function getAllConsumeInfo(callback) {
 }
 
 
+function getConsumerOffset(consumergp, topic, callback) {
+    var Parti_ConsumOff = [];
+    var offsetpath = "/consumers/" + consumergp + "/offsets";
+    client.exists(offsetpath, function (error, stat) {
+        if (error) {
+            return console.log("err" + error.stack);
+        }
+        if (stat) {
+            console.log("----------------------------- getConsumerOffset run")
+            client.getChildren(offsetpath + "/" + topic, function (error, children) {
+                if (error) {
+                    return console.log(error.stack);
+                } else {
+                    // console.log("childrenchildrenchildrenchildrenchildrenchildren" + children[1])
+                    console.log(children.length)
+                    for (var i = 0; i < children.length; i++) {
+                        !function (i) {
+                            getPartiOffset(consumergp, topic, children[i], function (data) {
+                                Parti_ConsumOff[children[i]] = data;
+                                if (i == children.length - 1) callback(Parti_ConsumOff)
+                            })
+                        }(i)
+                    }
+                }
+            });
+        } else {
+            callback(Parti_ConsumOff)
+        }
+    });
+}
+
+function getPartiOffset(consumergp, topic, partition, callback) {
+    var path = "/consumers/" + consumergp + "/offsets/" + topic + "/" + partition;
+    client.getData(path,//function (event) {console.log('Got event: %s.', event);},
+        function (error, data) {
+            if (error) {
+                return console.log(error.stack);
+            } else {
+                callback(data.toString('utf8')) //data buffer -> String
+            }//console.log('Got data: %s', data.toString('utf8'));
+        }
+    );
+}
+
+
+function getPartiOwner(consumergp, topic, partition, callback) {
+    var path = "/consumers/" + consumergp + "/owners/" + topic + "/" + partition;
+    client.getData(path,//function (event) {console.log('Got event: %s.', event);},
+        function (error, data) {
+            if (error) {
+                return console.log(error.stack);
+            } else {
+                callback(data.toString('utf8'));
+            }
+        }
+    );
+}
+
+
+function getInstanceOwner(consumergp,topic,callback) {
+    var Parti_Owner = [];
+    var ownerspath = "/consumers/" + consumergp + "/owners";
+    client.exists(ownerspath, function (error, stat) {
+        if (error) {
+            return console.log("err" + error.stack);
+        }
+        if (stat) {
+            client.getChildren(ownerspath + "/" + topic, function (error, children) {
+                if (error) {
+                    return console.log(error.stack);
+                } else {
+                    console.log("---------------------------------getInstanceOwner run")
+                    if (children.length == 0) callback(Parti_Owner); //有owners/topic 但是里面为空，就要返回空数组
+                    for (var i = 0; i < children.length; i++) {
+                        !function (i) {
+                            getPartiOwner(consumergp, topic, children[i], function (data) {
+                                Parti_Owner[children[i]] = data;
+                                if (i == children.length - 1) callback(Parti_Owner)
+                            })
+                        }(i)
+                    }
+                }
+            });
+        } else {
+            callback(Parti_Owner)
+        }
+    });
+}
+
+// getInstanceOwner("KafkaManagerOffsetCache","__consumer_offsets",function (data) {
+//     console.log(data)
+//     }
+// )
+
+//  getConsumerOffset("console-consumer-96912","logstash",function (data) {
+//      console.log("console-consumer-96912------logstash")
+//      console.log(data)
+//  })
+//
+// getConsumerOffset("kafka-node-group","kafka2pgtest",function (data) {
+//     console.log("kafka-node-group---------kafka2pgtest")
+//     console.log(data)
+// })
+// getConsumerOffset("hadooplogread","logstashtest",function (data) {
+//      console.log("hadooplogread-------------logstashtest")
+//      console.log(data)
+//  })
+
+
+// getPartiOffset("console-consumer-96912", "logstash", 0)
+
+
 zkutils.getbrokerinfo = getbrokerinfo;
 zkutils.getBrokerList = getBrokerList;
 zkutils.getbrokernumbers = getbrokernumbers;
 zkutils.getAllConsumeInfo = getAllConsumeInfo;
+zkutils.getConsumerOffset = getConsumerOffset;
+zkutils.getInstanceOwner = getInstanceOwner;
 module.exports = zkutils;

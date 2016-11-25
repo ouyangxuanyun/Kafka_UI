@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Broker List</title>
+    <title>Consumer View</title>
     <link rel="shortcut icon" type="image/png" href="/images/favicon.png">
     <link rel='stylesheet' href='/bootstrap-3.3.5/css/bootstrap.min.css'>
     <link rel="stylesheet" media="screen" href="/stylesheets/index.min.css">
@@ -9,7 +9,6 @@
           href="/dataTables/stylesheets/dataTables.bootstrap.css">
     <link rel="stylesheet" media="screen"
           href="/chartist/stylesheets/chartist.min.css">
-
     <script src="/chartist/javascripts/chartist.min.js"></script>
 </head>
 <body role="document">
@@ -37,7 +36,7 @@
                         <li><a href="/">List</a></li>
                     </ul>
                 </li>
-                <li class="active"><a href="/clusters/<%=clustername%>/brokers">Brokers</a></li>
+                <li class=""><a href="/clusters/<%=clustername%>/brokers">Brokers</a></li>
                 <li class="dropdown">
                     <a href="/clusters/test/topics" class="dropdown-toggle" data-toggle="dropdown">Topic<span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
@@ -47,7 +46,7 @@
                 </li>
                 <li><a href="/clusters/<%=clustername%>/leader">Preferred Replica Election</a></li>
                 <li><a href="/clusters/<%=clustername%>/assignment">Reassign Partitions</a></li>
-                <li><a href="/clusters/<%=clustername%>/consumers">Consumers</a></li>
+                <li class="active"><a href="/clusters/<%=clustername%>/consumers">Consumers</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Logkafka<span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
@@ -60,97 +59,53 @@
     </div>
 </div>
 
+
 <div class="container" role="main">
     <ol class="breadcrumb">
         <li><a href="/">Clusters</a></li>
         <li><a href="/clusters/<%=clustername%>"><%=clustername%></a></li>
-        <li class="active">Brokers</li>
+        <li><a href="/clusters/<%=clustername%>/consumers">Consumers</a></li>
+        <li class="active"><%=consumergp%></li>
     </ol>
-
-    <div class="col-md-7 un-pad-me">
+    <div class="col-md-12 un-pad-me">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3>
-                    <button type="button" class="btn btn-link" onclick="goBack()">
-                        <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
-                    </button>
-                    Brokers
-                </h3>
+                <h3><button type="button" class="btn btn-link" onclick="goBack()"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span></button><%=consumergp%></h3>
             </div>
-            <table class="table">
-                <thead>
-                <tr>
-                    <td>Id</td>
-                    <td>Host</td>
-                    <td>Port</td>
-                    <td>JMX Port</td>
-                    <td>Time</td>
-                    <td>Version</td>
-                  <!--  <td>Bytes In</td>
-                    <td>Bytes Out</td>
-                    <td>Size</td>
-                    -->
-                </tr>
-                </thead>
-
-                <tbody>
-                <!--Dynamic data-->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><h4>Consumed Topic Information</h4></div>
+                        <table class="table">
+                            <thead>
+                            <tr><th>Topic</th><th>Partitions Covered %</th><th>Total Lag</th></tr>
+                            </thead>
 
 
-                <%for(var j= 0; j < BrokerList.length; j++) {%>
-                <tr>
-                    <td><a href="/clusters/<%=clustername%>/brokers/<%=BrokerList[j][0] + 1%>"><%=BrokerList[j][0] + 1%></a></td>
-                    <td><%=BrokerList[j][1]%> </td>
-                    <td><%=BrokerList[j][2]%> </td>
-                    <td><%=BrokerList[j][3]%> </td>
-                    <td><%=BrokerList[j][4]%> </td>
-                    <td><%=BrokerList[j][5]%> </td>
 
-                    <!--   <td><%BrokerList[j][3]%> </td>
-                    <td><%BrokerList[j][3]%> </td>
-                    <td><%BrokerList[j][3]%> </td>
-                       -->
-                </tr>
-                <%}%>
 
-                </tbody>
-            </table>
-        </div>
-    </div>
+                            <tbody>
+                            <tr>
+                                <td><a href="/clusters/<%=clustername%>/consumers/<%=consumergp%>/topic/TTTopics it consumes from/type/ZK">???consumer_offsets????</a></td>
+                                <td class="">100</td>
+                                <td>186</td>
+                            </tr>
+                            </tbody>
+                        </table>
 
-    <div class="col-md-5 un-pad-me">
-        <div class="panel panel-default">
-            <div class="panel-heading"><h3>Combined Metrics</h3></div>
 
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>Rate/sec</th>
-                    <th>Mean</th>
-                    <th>1&nbsp;min</th>
-                    <th>5&nbsp;min</th>
-                    <th>15&nbsp;min</th>
-                </tr>
-                </thead>
-                <tbody>
-                <% var Ratetitle = ["Messages in", "Bytes in", "Bytes out", "Bytes rejected", "Failed fetch request", "Failed produce request"] %>
-                <%for(var i= 0; i < combinedMetrics.length; i++) {%>
-                <tr>
-                    <td><%= Ratetitle[i] %></td>
-                    <td><span class="badge"><%=combinedMetrics[i][0].toFixed(2)%> </span></td>
-                    <td><span class="badge"><%=combinedMetrics[i][1].toFixed(2)%> </span></td>
-                    <td><span class="badge"><%=combinedMetrics[i][2].toFixed(2)%> </span></td>
-                    <td><span class="badge"><%=combinedMetrics[i][3].toFixed(2)%> </span></td>
-                <tr>
-                    <%}%>
 
-                </tbody>
-            </table>
+
+
+
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-<script src="/jquery-2.1.4/jquery.min.js"></script>
+<script src="/jquery2.1.4/jquery.min.js"></script>
 <script src="/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="/dataTables/javascripts/jquery.dataTables.min.js"></script>
 <script src="/dataTables/javascripts/dataTables.bootstrap.js"></script>
@@ -161,13 +116,13 @@
     }
 
     function checkBoxSelect(idPrefix, booleanValue, display) {
-        $("[id^=" + idPrefix + "]").prop("checked", booleanValue);
+        $("[id^="+idPrefix+"]").prop("checked",booleanValue);
     }
 
     function selectBySubname(selectId, selectClass, display) {
         var subname = $(selectId).val().toLowerCase();
         $('.' + selectClass).not("[name*='" + subname + "']").css("display", "none");
-        $("[class='" + selectClass + "'][name*='" + subname + "']").css("display", display);
+        $("[class='"+selectClass+"'][name*='"+subname+"']").css("display", display);
         if (subname == "") {
             $('.' + selectClass).css("display", display);
         }

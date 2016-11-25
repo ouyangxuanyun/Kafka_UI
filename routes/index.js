@@ -8,6 +8,7 @@ var KafkaRest = require('kafka-rest');
 var url = 'http://10.192.33.76:8082';
 var kafka1 = new KafkaRest({'url': url});
 var kafka2connstr = '10.192.33.57:2181,10.192.33.69:2181,10.192.33.76:2181';
+var nodeutils = require('../bin/nodeutils')
 
 var testInfo = require('../test/gettestInfo')
 var AllCluster = [];
@@ -24,7 +25,7 @@ router.get('/', function (req, res, next) {
         cluster.kafkaVersion = AllCluster[key]["kafkaVersion"];
         cluster.zkHosts = AllCluster[key]["zkHosts"];
         cluster.operation = AllCluster[key]["operation"];
-        console.log("／／／／／／／／／／／／／／／／／／／／／／／" +　cluster.operation)
+        console.log("／／／／／／／／／／／／／／／／／／／／／／／" + cluster.operation)
         clusters.push(cluster);// console.log(cluster.name,cluster.kafkaVersion,cluster.zkHosts,cluster.operation);
     }
     res.render('clusters', {clusters: clusters});
@@ -144,7 +145,6 @@ router.post('/clusters/:clustername', function (req, res, next) {
         res.render('changeclusterresult', {title: "Delete Cluster", clustername: clustername})
     }
 })
-
 
 
 /* GET topic list page. */
@@ -293,13 +293,65 @@ router.get('/clusters/:clustername/brokers/:brokerlistId', function (req, res, n
     })
 });
 
-/* Consumers 页面 */
-router.get('/clusters/:clustername/consumers', function (req,res) {
+/* Consumers List 页面 */
+router.get('/clusters/:clustername/consumers', function (req, res) {
     var clustername = req.params.clustername;
     zkutil.getAllConsumeInfo(function (allconsumeInfo) {
         console.log(allconsumeInfo)
-        res.render('consumerlist',{clustername:clustername, allconsumeInfo:allconsumeInfo})
+        res.render('consumerlist', {clustername: clustername, allconsumeInfo: allconsumeInfo})
     })
+});
+
+
+/* Consumed Topic Information 页面 */
+router.get('/clusters/:clustername/consumers/:consumergp/type/ZK', function (req, res) {
+    var clustername = req.params.clustername;
+    var consumergp = req.params.consumergp;
+    res.render('consumedTopicInfo', {clustername: clustername, consumergp: consumergp})
+});
+
+
+/* Topics it consumes from 链接页面 */
+router.get('/clusters/:clustername/consumers/:consumergp/topic/:consumerTopic/type/ZK', function (req, res) {
+    var clustername = req.params.clustername;
+    var consumergp = req.params.consumergp;
+    var consumerTopic = req.params.consumerTopic;
+    var allInfo = [];
+    nodeutils.getPartitionOffset(consumerTopic, function (Partition_LogSize) {
+        console.log("############" + Partition_LogSize);
+        zkutil.getConsumerOffset(consumergp, consumerTopic, function (ConsumerOffset) {
+            console.log("############" + ConsumerOffset);
+            zkutil.getInstanceOwner(consumergp, consumerTopic, function (InstanceOwner) {
+                console.log("############" + InstanceOwner);
+                var instancenum = 0;
+                for (var i = 0; i < Partition_LogSize.length; i++) { //i代表partition
+                    var rowInfo = [];
+                    var totalLag = 0;
+                    rowInfo[0] = i;
+                    rowInfo[1] = Partition_LogSize[i];
+                    rowInfo[2] = (ConsumerOffset[i] == undefined) ? 0 : ConsumerOffset[i];
+                    rowInfo[3] = rowInfo[1] - rowInfo[2];
+                    totalLag += rowInfo[3];
+                    if (InstanceOwner[i] == undefined) {
+                        rowInfo[4] = "None";
+                    } else {
+                        rowInfo[4] = InstanceOwner[i];
+                        instancenum++;
+                    }
+                    allInfo[i] = rowInfo;
+                }//console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");console.log(allInfo)
+                var percentage = 100 * (instancenum/Partition_LogSize.length).toFixed(2)
+                res.render('consumer_topic', {
+                    clustername: clustername,
+                    consumergp: consumergp,
+                    consumerTopic: consumerTopic,
+                    totalLag:totalLag,
+                    percentage:percentage,
+                    allInfo: allInfo
+                })
+            });
+        });
+    });
 });
 
 
