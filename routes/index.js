@@ -9,12 +9,21 @@ var url = 'http://10.192.33.76:8082';
 var kafka1 = new KafkaRest({'url': url});
 var kafka2connstr = '10.192.33.57:2181,10.192.33.69:2181,10.192.33.76:2181';
 var nodeutils = require('../bin/nodeutils')
+var URL = require('url');
+
+var async = require('async');
 
 var testInfo = require('../test/gettestInfo')
 var AllCluster = [];
 AllCluster.length = 1;  // 全局存储创建的cluster 信息
-AllCluster["test1"] = testInfo();// console.log(AllCluster["test"])
+AllCluster["test"] = testInfo();// console.log(AllCluster["test"])
 
+var Broker_List = [
+    [1, "10.192.33.57", 9998],
+    [2, "10.192.33.26", 9998],
+    [3, "10.192.33.69", 9998],
+    [4, "10.192.33.76", 9998]
+];
 
 /*显示clusters list 信息， homepage页*/
 router.get('/', function (req, res, next) {
@@ -148,80 +157,43 @@ router.post('/clusters/:clustername', function (req, res, next) {
 
 
 /* GET topic list page. */
-router.get('/clusters/:clustername/topics', function (req, res, next) {
-    //var topics = JSON.parse(fs.readFileSync('./test/TopicList.json'));
-    var clustername = req.params.clustername;
-    var topic_count = 0;
-    var topic_list = [];
-    var broker_list = 0;
+router.get('/clusters/test/topics', function (req, res, next) {
+    var topicList = new Array();
 
-    kafka1.topics.list(function (err, data) {
-        if (err) {
-            console.log('Failed to list topics: ' + err);
-            res.render('topics', err);
-        }
-        else {
-            kafka1.brokers.list(function (err, b_data) {
-                if (err) {
-                    console.log('Failed to get brokers list :' + err);
-                    res.render('topics', err);
-                }
-                else {
-                    //console.log('Getting brokers list: \n' + data);
-                    broker_list = b_data;
-                }
-            });
-            for (var i = 0; i < data.length; i++) {
-                //console.log(data[i].name);
-                kafka1.topics.get(data[i].name, function (err, datas) {
-                    if (err) {
-                        console.log('Failed to get topic info of ' + data[i].name + ': ' + err);
-                        res.render('topics', err);
-                    }
-                    else {
-                        console.log('==================\n');
-                        console.log(datas.raw.partitions[0]);
-                        datas.brokers = broker_list;
-                        topic_list.push(datas);
-                        topic_count++;
-                        //console.log(topic_list);
-                        if (topic_count == data.length) {
-                            res.render('topics', {clustername: clustername, topics: topic_list});
-                            console.log(topic_list);
-                        }
-                    }
+    kafka.getTopicList(function (t_data){
+        var brokers = t_data.brokerList.length;
+        //console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~brokers num ' + brokers +', list '+t_data.brokerList)
+        var count_tt = 0;
+        jmxutil.getJMXdata(Broker_List, brokers, t_data.topicList, function(jmx_data){
+            async.each(jmx_data, function(jmx_item, callback){
+                var topic_name = jmx_item.topic;
+                kafka.getTopicSummary(topic_name, function(ts_data){
+                    ts_data.offset = jmx_item.end_offset;
+                    ts_data.producerMsg = jmx_item.metrics.MessagesInPerSec[0]
+                    topicList.push(ts_data);
+                    callback();
                 })
-            }
-        }
+            }, function(err){
+                res.render('topiclist', {topicList: topicList});
+            })
+        })
     });
-    //res.render('topics', JSON.parse(topics));
 });
 
 /* GET each topic details . */
-router.get('/clusters/:clustername/topics/:topic', function (req, res, next) {
-    var topics_name = req.params.topic;
-    console.log(req.param.topic);
-    kafka1.topics.get(topics_name, function (err, datas) {
-        if (err) {
-            console.log('Failed to list topics: ' + err);
-            res.render('topicdetail', err);
-        }
-        else {
-            var topicdetail = datas;
-            topicdetail['topicname'] = topics_name;
-            kafka1.brokers.list(function (err, data) {
-                if (err) {
-                    console.log('Failed to get brokers list :' + err);
-                    res.render('topicdetail', err);
-                }
-                else {
-                    //console.log('Getting brokers list: \n' + data);
-                    topicdetail['brokers'] = data;
-                    res.render('topicdetail', {topicdetail: topicdetail});
-                    //console.log(topicdetail.raw.partitions)
-                }
-            });
-        }
+router.get('/clusters/test/topics/*', function (req, res, next) {
+    var pathurl = URL.parse(req.url).pathname;
+    var topic_name = pathurl.substr(22);
+    var topicdetails = new Object();
+    kafka.getTopicSummary(topic_name, function(ts_data) {
+        jmxutil.getTopicJMXdata(Broker_List,ts_data.brokers, topic_name, function(jmx_data){
+            topicdetails.offset = jmx_data.end_offset;
+            topicdetails.logPartition_arr = jmx_data.logEndPartition_arr;
+            console.log(topicdetails.logPartition_arr)
+            topicdetails.metrics = jmx_data.metrics;
+            topicdetails.topicSummary = ts_data;
+            res.render('topicdetails', { topicdetails: topicdetails});
+        })
     });
 });
 
