@@ -135,12 +135,33 @@
                 <tbody>
                 <% var Ratetitle = ["Messages in", "Bytes in", "Bytes out", "Bytes rejected", "Failed fetch request", "Failed produce request"] %>
                 <%for(var i= 0; i < combinedMetrics.length; i++) {%>
+
                 <tr>
                     <td><%= Ratetitle[i] %></td>
-                    <td><span class="badge"><%=combinedMetrics[i][0].toFixed(2)%> </span></td>
-                    <td><span class="badge"><%=combinedMetrics[i][1].toFixed(2)%> </span></td>
-                    <td><span class="badge"><%=combinedMetrics[i][2].toFixed(2)%> </span></td>
-                    <td><span class="badge"><%=combinedMetrics[i][3].toFixed(2)%> </span></td>
+                    <td>
+                        <% var b_in_mean = '' %>
+                        <% if (combinedMetrics[i][0] < 1000) b_in_mean = combinedMetrics[i][0].toFixed(2) %>
+                        <% if (combinedMetrics[i][0] >= 1000) b_in_mean = (combinedMetrics[i][0] / 1000).toFixed(1) + 'k' %>
+                        <span class="badge"><%= b_in_mean %></span>
+                    </td>
+                    <td>
+                        <% var b_in_1 = '' %>
+                        <% if (combinedMetrics[i][1] < 1000) b_in_1 = combinedMetrics[i][1].toFixed(2) %>
+                        <% if (combinedMetrics[i][1] >= 1000) b_in_1 = (combinedMetrics[i][1] / 1000).toFixed(1) + 'k' %>
+                        <span class="badge"><%= b_in_1 %></span>
+                    </td>
+                    <td>
+                        <% var b_in_10 = '' %>
+                        <% if (combinedMetrics[i][2] < 1000) b_in_10 = combinedMetrics[i][2].toFixed(2) %>
+                        <% if (combinedMetrics[i][2] >= 1000) b_in_10 = (combinedMetrics[i][2] / 1000).toFixed(1) + 'k' %>
+                        <span class="badge"><%= b_in_10 %></span>
+                    </td>
+                    <td>
+                        <% var b_in_15 = '' %>
+                        <% if (combinedMetrics[i][3] < 1000) b_in_15 = combinedMetrics[i][3].toFixed(2) %>
+                        <% if (combinedMetrics[i][3] >= 1000) b_in_15 = (combinedMetrics[i][3] / 1000).toFixed(1) + 'k' %>
+                        <span class="badge"><%= b_in_15 %></span>
+                    </td>
                 <tr>
                     <%}%>
 

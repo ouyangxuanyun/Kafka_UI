@@ -6,6 +6,7 @@ client.connect();
 var zkutils = new Object();
 var BrokerList = [];
 
+
 /**
  * @param callback
  * 首先client.getChildren获取Broker总数，遍历每个broker并获取其Host,Port,JMX Port,Time, Version信息，返回二维数组[[brokerinfo],[brokerinfo]，……]
@@ -19,8 +20,7 @@ function getBrokerList(callback) {
         var brokernum = children.length, flag = 0;
         for (var brokerid = 0; brokerid < brokernum; brokerid++) {
             !function (brokerid) {
-                getbrokerinfo(brokerid + 1, function (data) {
-                    console.log(data);
+                getbrokerinfo(brokerid + 1, function (data) {//console.log(data);
                     BrokerList[brokerid] = new Array();
                     BrokerList[brokerid][0] = brokerid;
                     BrokerList[brokerid][1] = data.host;
@@ -36,6 +36,7 @@ function getBrokerList(callback) {
 
     });
 }
+
 
 /**
  * @param time
@@ -53,6 +54,7 @@ function timeStamp2String(time) {
     var second = datetime.getSeconds();
     return year + "-" + month + "-" + date + " " + hour + ":" + minute + ":" + second;
 };
+
 
 /**
  *
@@ -106,6 +108,11 @@ function getconsumerList(callback) {
 }
 
 
+/**
+ * 获取指定Consumer Gruop 的 消费topics
+ * @param consumergp
+ * @param callback
+ */
 function getEachConsumeTopics(consumergp, callback) {
     var offsetpath = "/consumers/" + consumergp + "/offsets";
     var ownerspath = "/consumers/" + consumergp + "/owners";
@@ -143,10 +150,14 @@ function getEachConsumeTopics(consumergp, callback) {
             });
         }
     });
-
 }
 
 
+/**
+ *遍历consumer gruop， 获取每个consumer group 的名称， 类型和消费topics 的信息，保存到数组
+ * @param callback 传回参数是数组，[Consumer, Type, [Topics it consumes from]]
+ *
+ */
 function getAllConsumeInfo(callback) {
     var allconsumersInfo = [];
     var num = 1;
@@ -169,6 +180,12 @@ function getAllConsumeInfo(callback) {
 }
 
 
+/**
+ *获取指定topic 各个partition的Consumer Offset
+ * @param consumergp
+ * @param topic
+ * @param callback 数组，[key(partition),value(consumer offset)]
+ */
 function getConsumerOffset(consumergp, topic, callback) {
     var Parti_ConsumOff = [];
     var offsetpath = "/consumers/" + consumergp + "/offsets";
@@ -176,13 +193,11 @@ function getConsumerOffset(consumergp, topic, callback) {
         if (error) {
             return console.log("err" + error.stack);
         }
-        if (stat) {
-            console.log("----------------------------- getConsumerOffset run")
+        if (stat) {//console.log("----------------------------- getConsumerOffset run")
             client.getChildren(offsetpath + "/" + topic, function (error, children) {
                 if (error) {
                     return console.log(error.stack);
                 } else {
-                    // console.log("childrenchildrenchildrenchildrenchildrenchildren" + children[1])
                     console.log(children.length)
                     for (var i = 0; i < children.length; i++) {
                         !function (i) {
@@ -199,6 +214,7 @@ function getConsumerOffset(consumergp, topic, callback) {
         }
     });
 }
+
 
 function getPartiOffset(consumergp, topic, partition, callback) {
     var path = "/consumers/" + consumergp + "/offsets/" + topic + "/" + partition;
@@ -228,6 +244,12 @@ function getPartiOwner(consumergp, topic, partition, callback) {
 }
 
 
+/**
+ * 获取指定topic 各个partition的Consumer Instance Owner
+ * @param consumergp
+ * @param topic
+ * @param callback 数组[key(partition),value(Consumer Instance Owner)]
+ */
 function getInstanceOwner(consumergp,topic,callback) {
     var Parti_Owner = [];
     var ownerspath = "/consumers/" + consumergp + "/owners";
@@ -239,8 +261,7 @@ function getInstanceOwner(consumergp,topic,callback) {
             client.getChildren(ownerspath + "/" + topic, function (error, children) {
                 if (error) {
                     return console.log(error.stack);
-                } else {
-                    console.log("---------------------------------getInstanceOwner run")
+                } else {//console.log("---------------------------------getInstanceOwner run")
                     if (children.length == 0) callback(Parti_Owner); //有owners/topic 但是里面为空，就要返回空数组
                     for (var i = 0; i < children.length; i++) {
                         !function (i) {
@@ -258,27 +279,25 @@ function getInstanceOwner(consumergp,topic,callback) {
     });
 }
 
-// getInstanceOwner("KafkaManagerOffsetCache","__consumer_offsets",function (data) {
-//     console.log(data)
-//     }
-// )
 
-//  getConsumerOffset("console-consumer-96912","logstash",function (data) {
-//      console.log("console-consumer-96912------logstash")
-//      console.log(data)
-//  })
-//
-// getConsumerOffset("kafka-node-group","kafka2pgtest",function (data) {
-//     console.log("kafka-node-group---------kafka2pgtest")
-//     console.log(data)
-// })
-// getConsumerOffset("hadooplogread","logstashtest",function (data) {
-//      console.log("hadooplogread-------------logstashtest")
-//      console.log(data)
-//  })
-
-
-// getPartiOffset("console-consumer-96912", "logstash", 0)
+/**
+ * 提供给topic详情页面，过滤出指定topic的消费组
+ * @param topic
+ * @param callback
+ */
+function filterconsumers(topic,callback){
+    var result = [];
+    getAllConsumeInfo(function (allconsumeInfo) {
+        for (var i = 0; i < allconsumeInfo.length; i++){
+            !function (i) {
+              if (allconsumeInfo[i][2].indexOf(topic) > -1) {
+                  result.push(allconsumeInfo[i][0]);
+              }
+              if (i == allconsumeInfo.length - 1) callback(result);
+            }(i)
+        }
+    })
+}
 
 
 zkutils.getbrokerinfo = getbrokerinfo;
@@ -287,4 +306,5 @@ zkutils.getbrokernumbers = getbrokernumbers;
 zkutils.getAllConsumeInfo = getAllConsumeInfo;
 zkutils.getConsumerOffset = getConsumerOffset;
 zkutils.getInstanceOwner = getInstanceOwner;
+zkutils.filterconsumers = filterconsumers;
 module.exports = zkutils;

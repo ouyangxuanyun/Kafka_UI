@@ -30,7 +30,7 @@
             </button>
             <img src="/images/favicon.png">
             <a class="navbar-brand un-float-me" href="/">
-                Kafka Manager</a><span class="label label-primary">test</span>
+                Kafka Manager</a><span class="label label-primary"><%= clustername %></span>
         </div>
 
         <div class="navbar-collapse collapse">
@@ -38,26 +38,27 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Cluster<span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
-                        <li><a href="/addCluster">Add Cluster</a></li>                                    <li><a href="/clusters/test">Summary</a></li>
+                        <li><a href="/addCluster">Add Cluster</a></li>
+                        <li><a href="/clusters/<%= clustername %>">Summary</a></li>
                         <li><a href="/">List</a></li>
                     </ul>
                 </li>
-                <li><a href="/clusters/test/brokers">Brokers</a></li>
+                <li><a href="/clusters/<%= clustername %>/brokers">Brokers</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Topic<span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
-                        <li><a href="/clusters/test/createTopic">Create</a></li>
-                        <li><a href="/clusters/test/topics">List</a></li>
+                        <li><a href="/clusters/<%= clustername %>/createTopic">Create</a></li>
+                        <li><a href="/clusters/<%= clustername %>/topics">List</a></li>
                     </ul>
                 </li>
-                <li><a href="/clusters/test/leader">Preferred Replica Election</a></li>
-                <li><a href="/clusters/test/assignment">Reassign Partitions</a></li>
-                <li><a href="/clusters/test/consumers">Consumers</a></li>
+                <li><a href="/clusters/<%= clustername %>/leader">Preferred Replica Election</a></li>
+                <li><a href="/clusters/<%= clustername %>/assignment">Reassign Partitions</a></li>
+                <li><a href="/clusters/<%= clustername %>/consumers">Consumers</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Logkafka<span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
-                        <li><a href="/clusters/test/logkafkas">List Logkafka</a></li>
-                        <li><a href="/clusters/test/createLogkafka">Create Logkafka</a></li>
+                        <li><a href="/clusters/<%= clustername %>/logkafkas">List Logkafka</a></li>
+                        <li><a href="/clusters/<%= clustername %>/createLogkafka">Create Logkafka</a></li>
                     </ul>
                 </li>
             </ul>
@@ -71,18 +72,21 @@
 
         <li><a href="/">Clusters</a></li>
 
-        <li><a href="/clusters/test">test</a></li>
+        <li><a href="/clusters/<%= clustername %>"><%= clustername %></a></li>
 
-        <li><a href="/clusters/test/topics">Topics</a></li>
+        <li><a href="/clusters/<%= clustername %>/topics">Topics</a></li>
 
-        <li class="active"><%=topicdetails.topicSummary.name%></li>
+        <li class="active"><%= topicdetails.topicSummary.name %></li>
 
     </ol>
 
     <div class="col-md-12 un-pad-me">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3><button type="button" class="btn btn-link" onclick="goBack()"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span></button><%=topicdetails.topicSummary.name%></h3>
+                <h3>
+                    <button type="button" class="btn btn-link" onclick="goBack()"><span
+                                class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                    </button><%= topicdetails.topicSummary.name %></h3>
             </div>
 
             <div class="row">
@@ -93,28 +97,28 @@
                             <tbody>
                             <tr>
                                 <td>Replication</td>
-                                <td><%=topicdetails.topicSummary.replicas%></td>
+                                <td><%= topicdetails.topicSummary.replicas %></td>
                             <tr>
                                 <td>Number of Partitions</td>
-                                <td><%=topicdetails.topicSummary.partitions%></td>
+                                <td><%= topicdetails.topicSummary.partitions %></td>
                             </tr>
                             <tr>
                                 <td>Sum of partition offsets</td>
-                                <td><%=topicdetails.offset%></td>
+                                <td><%= topicdetails.offset %></td>
                             </tr>
                             <tr>
                                 <td>Total number of Brokers</td>
-                                <td><%=topicdetails.topicSummary.brokers%></td>
+                                <td><%= topicdetails.topicSummary.brokers %></td>
                             </tr>
                             <tr>
                                 <td>Number of Brokers for Topic</td>
-                                <td><%= topicdetails.topicSummary.t_brokers%></td>
+                                <td><%= topicdetails.topicSummary.t_brokers %></td>
                             </tr>
                             <tr>
                                 <td>Preferred Replicas %</td>
                                 <td class="
 ">
-                                    <%= topicdetails.topicSummary.prefferedReplicas%>
+                                    <%= topicdetails.topicSummary.prefferedReplicas %>
                                 </td>
                             </tr>
                             <tr>
@@ -122,7 +126,7 @@
                                 <td class="
 
 ">
-                                    <%=topicdetails.topicSummary.brokerSkewed%>
+                                    <%= topicdetails.topicSummary.brokerSkewed %>
                                 </td>
                             </tr>
                             <tr>
@@ -130,7 +134,7 @@
                                 <td class="
 
 ">
-                                    <%=topicdetails.topicSummary.brokerSpread%>
+                                    <%= topicdetails.topicSummary.brokerSpread %>
                                 </td>
                             </tr>
                             <tr>
@@ -145,7 +149,7 @@
                             <tr>
                                 <td>Leader Size</td>
                                 <td>
-                                    <%=topicdetails.topicSummary.leaderSize%>
+                                    <%= topicdetails.topicSummary.leaderSize %>
                                 </td>
                             </tr>
 
@@ -155,7 +159,6 @@
                     </div>
                     <div class="panel panel-default">
                         <div class="panel-heading"><h4>Metrics</h4></div>
-
 
 
                         <table class="table">
@@ -172,127 +175,127 @@
                             <tr>
                                 <td>Messages in /sec</td>
                                 <td>
-                                    <span class="badge"><%=topicdetails.metrics.MessagesInPerSec[0].toFixed(2)%></span>
+                                    <span class="badge"><%= topicdetails.metrics.MessagesInPerSec[0].toFixed(2) %></span>
                                 </td>
                                 <td>
-                                    <span class="badge"><%=topicdetails.metrics.MessagesInPerSec[1].toFixed(2)%></span>
+                                    <span class="badge"><%= topicdetails.metrics.MessagesInPerSec[1].toFixed(2) %></span>
                                 </td>
                                 <td>
-                                    <span class="badge"><%=topicdetails.metrics.MessagesInPerSec[2].toFixed(2)%></span>
+                                    <span class="badge"><%= topicdetails.metrics.MessagesInPerSec[2].toFixed(2) %></span>
                                 </td>
                                 <td>
-                                    <span class="badge"><%=topicdetails.metrics.MessagesInPerSec[3].toFixed(2)%></span>
+                                    <span class="badge"><%= topicdetails.metrics.MessagesInPerSec[3].toFixed(2) %></span>
                                 </td>
                             <tr>
                             <tr>
                                 <td>Bytes in /sec</td>
                                 <td>
-                                    <%var b_in_mean = ''%>
-                                    <%if (topicdetails.metrics.BytesInPerSec[0]<1000) b_in_mean = topicdetails.metrics.BytesInPerSec[0].toFixed(2)%>
-                                    <%if (topicdetails.metrics.BytesInPerSec[0]>=1000) b_in_mean = (topicdetails.metrics.BytesInPerSec[0]/1000).toFixed(1)+'k'%>
-                                    <span class="badge"><%=b_in_mean%></span>
+                                    <% var b_in_mean = '' %>
+                                    <% if (topicdetails.metrics.BytesInPerSec[0] < 1000) b_in_mean = topicdetails.metrics.BytesInPerSec[0].toFixed(2) %>
+                                    <% if (topicdetails.metrics.BytesInPerSec[0] >= 1000) b_in_mean = (topicdetails.metrics.BytesInPerSec[0] / 1000).toFixed(1) + 'k' %>
+                                    <span class="badge"><%= b_in_mean %></span>
                                 </td>
                                 <td>
-                                    <%var b_in_1 = ''%>
-                                    <%if (topicdetails.metrics.BytesInPerSec[1]<1000) b_in_1 = topicdetails.metrics.BytesInPerSec[1].toFixed(2)%>
-                                    <%if (topicdetails.metrics.BytesInPerSec[1]>=1000) b_in_1 = (topicdetails.metrics.BytesInPerSec[1]/1000).toFixed(1)+'k'%>
-                                    <span class="badge"><%=b_in_1%></span>
+                                    <% var b_in_1 = '' %>
+                                    <% if (topicdetails.metrics.BytesInPerSec[1] < 1000) b_in_1 = topicdetails.metrics.BytesInPerSec[1].toFixed(2) %>
+                                    <% if (topicdetails.metrics.BytesInPerSec[1] >= 1000) b_in_1 = (topicdetails.metrics.BytesInPerSec[1] / 1000).toFixed(1) + 'k' %>
+                                    <span class="badge"><%= b_in_1 %></span>
                                 </td>
                                 <td>
-                                    <%var b_in_10 = ''%>
-                                    <%if (topicdetails.metrics.BytesInPerSec[2]<1000) b_in_10 = topicdetails.metrics.BytesInPerSec[2].toFixed(2)%>
-                                    <%if (topicdetails.metrics.BytesInPerSec[2]>=1000) b_in_10 = (topicdetails.metrics.BytesInPerSec[2]/1000).toFixed(1)+'k'%>
-                                    <span class="badge"><%=b_in_10%></span>
+                                    <% var b_in_10 = '' %>
+                                    <% if (topicdetails.metrics.BytesInPerSec[2] < 1000) b_in_10 = topicdetails.metrics.BytesInPerSec[2].toFixed(2) %>
+                                    <% if (topicdetails.metrics.BytesInPerSec[2] >= 1000) b_in_10 = (topicdetails.metrics.BytesInPerSec[2] / 1000).toFixed(1) + 'k' %>
+                                    <span class="badge"><%= b_in_10 %></span>
                                 </td>
                                 <td>
-                                    <%var b_in_15 = ''%>
-                                    <%if (topicdetails.metrics.BytesInPerSec[3]<1000) b_in_15 = topicdetails.metrics.BytesInPerSec[3].toFixed(2)%>
-                                    <%if (topicdetails.metrics.BytesInPerSec[3]>=1000) b_in_15 = (topicdetails.metrics.BytesInPerSec[3]/1000).toFixed(1)+'k'%>
-                                    <span class="badge"><%=b_in_15%></span>
+                                    <% var b_in_15 = '' %>
+                                    <% if (topicdetails.metrics.BytesInPerSec[3] < 1000) b_in_15 = topicdetails.metrics.BytesInPerSec[3].toFixed(2) %>
+                                    <% if (topicdetails.metrics.BytesInPerSec[3] >= 1000) b_in_15 = (topicdetails.metrics.BytesInPerSec[3] / 1000).toFixed(1) + 'k' %>
+                                    <span class="badge"><%= b_in_15 %></span>
                                 </td>
                             <tr>
                             <tr>
                                 <td>Bytes out /sec</td>
                                 <td>
-                                    <%var b_out_mean = ''%>
-                                    <%if (topicdetails.metrics.BytesOutPerSec[0]<1000) b_out_mean = topicdetails.metrics.BytesOutPerSec[0].toFixed(2)%>
-                                    <%if (topicdetails.metrics.BytesOutPerSec[0]>=1000) b_out_mean = (topicdetails.metrics.BytesOutPerSec[0]/1000).toFixed(1)+'k'%>
-                                    <span class="badge"><%=b_out_mean%></span>
+                                    <% var b_out_mean = '' %>
+                                    <% if (topicdetails.metrics.BytesOutPerSec[0] < 1000) b_out_mean = topicdetails.metrics.BytesOutPerSec[0].toFixed(2) %>
+                                    <% if (topicdetails.metrics.BytesOutPerSec[0] >= 1000) b_out_mean = (topicdetails.metrics.BytesOutPerSec[0] / 1000).toFixed(1) + 'k' %>
+                                    <span class="badge"><%= b_out_mean %></span>
                                 </td>
                                 <td>
-                                    <%var b_out_1 = ''%>
-                                    <%if (topicdetails.metrics.BytesOutPerSec[1]<1000) b_out_1 = topicdetails.metrics.BytesOutPerSec[1].toFixed(2)%>
-                                    <%if (topicdetails.metrics.BytesOutPerSec[1]>=1000) b_out_1 = (topicdetails.metrics.BytesOutPerSec[1]/1000).toFixed(1)+'k'%>
-                                    <span class="badge"><%=b_out_1%></span>
+                                    <% var b_out_1 = '' %>
+                                    <% if (topicdetails.metrics.BytesOutPerSec[1] < 1000) b_out_1 = topicdetails.metrics.BytesOutPerSec[1].toFixed(2) %>
+                                    <% if (topicdetails.metrics.BytesOutPerSec[1] >= 1000) b_out_1 = (topicdetails.metrics.BytesOutPerSec[1] / 1000).toFixed(1) + 'k' %>
+                                    <span class="badge"><%= b_out_1 %></span>
                                 </td>
                                 <td>
-                                    <%var b_out_10 = ''%>
-                                    <%if (topicdetails.metrics.BytesOutPerSec[2]<1000) b_out_10 = topicdetails.metrics.BytesOutPerSec[2].toFixed(2)%>
-                                    <%if (topicdetails.metrics.BytesOutPerSec[2]>=1000) b_out_10 = (topicdetails.metrics.BytesOutPerSec[2]/1000).toFixed(1)+'k'%>
-                                    <span class="badge"><%=b_out_10%></span>
+                                    <% var b_out_10 = '' %>
+                                    <% if (topicdetails.metrics.BytesOutPerSec[2] < 1000) b_out_10 = topicdetails.metrics.BytesOutPerSec[2].toFixed(2) %>
+                                    <% if (topicdetails.metrics.BytesOutPerSec[2] >= 1000) b_out_10 = (topicdetails.metrics.BytesOutPerSec[2] / 1000).toFixed(1) + 'k' %>
+                                    <span class="badge"><%= b_out_10 %></span>
                                 </td>
                                 <td>
-                                    <%var b_out_15 = ''%>
-                                    <%if (topicdetails.metrics.BytesOutPerSec[3]<1000) b_out_15 = topicdetails.metrics.BytesOutPerSec[3].toFixed(2)%>
-                                    <%if (topicdetails.metrics.BytesOutPerSec[3]>=1000) b_out_15 = (topicdetails.metrics.BytesOutPerSec[3]/1000).toFixed(1)+'k'%>
-                                    <span class="badge"><%=b_out_15%></span>
+                                    <% var b_out_15 = '' %>
+                                    <% if (topicdetails.metrics.BytesOutPerSec[3] < 1000) b_out_15 = topicdetails.metrics.BytesOutPerSec[3].toFixed(2) %>
+                                    <% if (topicdetails.metrics.BytesOutPerSec[3] >= 1000) b_out_15 = (topicdetails.metrics.BytesOutPerSec[3] / 1000).toFixed(1) + 'k' %>
+                                    <span class="badge"><%= b_out_15 %></span>
                                 </td>
                             <tr>
                             <tr>
                                 <td>Bytes rejected /sec</td>
                                 <td>
-                                    <%var b_rejct_mean = ''%>
-                                    <%if (topicdetails.metrics.BytesRejectedPerSec[0]<1000) b_rejct_mean = topicdetails.metrics.BytesRejectedPerSec[0].toFixed(2)%>
-                                    <%if (topicdetails.metrics.BytesRejectedPerSec[0]>=1000) b_rejct_mean = (topicdetails.metrics.BytesRejectedPerSec[0]/1000).toFixed(1)+'k'%>
-                                    <span class="badge"><%=b_rejct_mean%></span>
+                                    <% var b_rejct_mean = '' %>
+                                    <% if (topicdetails.metrics.BytesRejectedPerSec[0] < 1000) b_rejct_mean = topicdetails.metrics.BytesRejectedPerSec[0].toFixed(2) %>
+                                    <% if (topicdetails.metrics.BytesRejectedPerSec[0] >= 1000) b_rejct_mean = (topicdetails.metrics.BytesRejectedPerSec[0] / 1000).toFixed(1) + 'k' %>
+                                    <span class="badge"><%= b_rejct_mean %></span>
                                 </td>
                                 <td>
-                                    <%var b_rejct_1 = ''%>
-                                    <%if (topicdetails.metrics.BytesRejectedPerSec[1]<1000) b_rejct_1 = topicdetails.metrics.BytesRejectedPerSec[1].toFixed(2)%>
-                                    <%if (topicdetails.metrics.BytesRejectedPerSec[1]>=1000) b_rejct_1 = (topicdetails.metrics.BytesRejectedPerSec[1]/1000).toFixed(1)+'k'%>
-                                    <span class="badge"><%=b_rejct_1%></span>
+                                    <% var b_rejct_1 = '' %>
+                                    <% if (topicdetails.metrics.BytesRejectedPerSec[1] < 1000) b_rejct_1 = topicdetails.metrics.BytesRejectedPerSec[1].toFixed(2) %>
+                                    <% if (topicdetails.metrics.BytesRejectedPerSec[1] >= 1000) b_rejct_1 = (topicdetails.metrics.BytesRejectedPerSec[1] / 1000).toFixed(1) + 'k' %>
+                                    <span class="badge"><%= b_rejct_1 %></span>
                                 </td>
                                 <td>
-                                    <%var b_rejct_10 = ''%>
-                                    <%if (topicdetails.metrics.BytesRejectedPerSec[2]<1000) b_rejct_10 = topicdetails.metrics.BytesRejectedPerSec[2].toFixed(2)%>
-                                    <%if (topicdetails.metrics.BytesRejectedPerSec[2]>=1000) b_rejct_10 = (topicdetails.metrics.BytesRejectedPerSec[2]/1000).toFixed(1)+'k'%>
-                                    <span class="badge"><%=b_rejct_10%></span>
+                                    <% var b_rejct_10 = '' %>
+                                    <% if (topicdetails.metrics.BytesRejectedPerSec[2] < 1000) b_rejct_10 = topicdetails.metrics.BytesRejectedPerSec[2].toFixed(2) %>
+                                    <% if (topicdetails.metrics.BytesRejectedPerSec[2] >= 1000) b_rejct_10 = (topicdetails.metrics.BytesRejectedPerSec[2] / 1000).toFixed(1) + 'k' %>
+                                    <span class="badge"><%= b_rejct_10 %></span>
                                 </td>
                                 <td>
-                                    <%var b_rejct_15 = ''%>
-                                    <%if (topicdetails.metrics.BytesRejectedPerSec[3]<1000) b_rejct_15 = topicdetails.metrics.BytesRejectedPerSec[3].toFixed(2)%>
-                                    <%if (topicdetails.metrics.BytesRejectedPerSec[3]>=1000) b_rejct_15 = (topicdetails.metrics.BytesRejectedPerSec[3]/1000).toFixed(1)+'k'%>
-                                    <span class="badge"><%=b_rejct_15%></span>
+                                    <% var b_rejct_15 = '' %>
+                                    <% if (topicdetails.metrics.BytesRejectedPerSec[3] < 1000) b_rejct_15 = topicdetails.metrics.BytesRejectedPerSec[3].toFixed(2) %>
+                                    <% if (topicdetails.metrics.BytesRejectedPerSec[3] >= 1000) b_rejct_15 = (topicdetails.metrics.BytesRejectedPerSec[3] / 1000).toFixed(1) + 'k' %>
+                                    <span class="badge"><%= b_rejct_15 %></span>
                                 </td>
                             <tr>
                             <tr>
                                 <td>Failed fetch request /sec</td>
                                 <td>
-                                    <span class="badge"><%=topicdetails.metrics.FailedFetchRequestsPerSec[0].toFixed(2)%></span>
+                                    <span class="badge"><%= topicdetails.metrics.FailedFetchRequestsPerSec[0].toFixed(2) %></span>
                                 </td>
                                 <td>
-                                    <span class="badge"><%=topicdetails.metrics.FailedFetchRequestsPerSec[1].toFixed(2)%></span>
+                                    <span class="badge"><%= topicdetails.metrics.FailedFetchRequestsPerSec[1].toFixed(2) %></span>
                                 </td>
                                 <td>
-                                    <span class="badge"><%=topicdetails.metrics.FailedFetchRequestsPerSec[2].toFixed(2)%></span>
+                                    <span class="badge"><%= topicdetails.metrics.FailedFetchRequestsPerSec[2].toFixed(2) %></span>
                                 </td>
                                 <td>
-                                    <span class="badge"><%=topicdetails.metrics.FailedFetchRequestsPerSec[3].toFixed(2)%></span>
+                                    <span class="badge"><%= topicdetails.metrics.FailedFetchRequestsPerSec[3].toFixed(2) %></span>
                                 </td>
                             <tr>
                             <tr>
                                 <td>Failed produce request /sec</td>
                                 <td>
-                                    <span class="badge"><%=topicdetails.metrics.FailedProduceRequestsPerSec[0].toFixed(2)%></span>
+                                    <span class="badge"><%= topicdetails.metrics.FailedProduceRequestsPerSec[0].toFixed(2) %></span>
                                 </td>
                                 <td>
-                                    <span class="badge"><%=topicdetails.metrics.FailedProduceRequestsPerSec[1].toFixed(2)%></span>
+                                    <span class="badge"><%= topicdetails.metrics.FailedProduceRequestsPerSec[1].toFixed(2) %></span>
                                 </td>
                                 <td>
-                                    <span class="badge"><%=topicdetails.metrics.FailedProduceRequestsPerSec[2].toFixed(2)%></span>
+                                    <span class="badge"><%= topicdetails.metrics.FailedProduceRequestsPerSec[2].toFixed(2) %></span>
                                 </td>
                                 <td>
-                                    <span class="badge"><%=topicdetails.metrics.FailedProduceRequestsPerSec[3].toFixed(2)%></span>
+                                    <span class="badge"><%= topicdetails.metrics.FailedProduceRequestsPerSec[3].toFixed(2) %></span>
                                 </td>
                             <tr>
                             </tbody>
@@ -308,37 +311,47 @@
                             <tbody>
                             <tr>
                                 <td>
-                                    <a href="/clusters/test/topics/test/confirm_delete" class='btn btn-primary btn-block'>Delete Topic</a>
+                                    <a href="/clusters/test/topics/test/confirm_delete"
+                                       class='btn btn-primary btn-block'>Delete Topic</a>
                                 </td>
                                 <td>
 
-                                    <form action="/clusters/test/assignment?t=test" method="POST" class="form-vertical " role="form">
+                                    <form action="/clusters/test/assignment?t=test" method="POST" class="form-vertical "
+                                          role="form">
 
                                         <fieldset>
                                             <input type="hidden" name="operation" value="run">
                                             <input type="hidden" name="brokers" value="">
 
-                                            <div class="form-group  " >
-                                                <button type="submit" class="btn btn-primary btn-block"> Reassign Partitions </button>
+                                            <div class="form-group  ">
+                                                <button type="submit" class="btn btn-primary btn-block"> Reassign
+                                                    Partitions
+                                                </button>
                                             </div>
                                         </fieldset>
                                     </form>
                                 </td>
                                 <td>
-                                    <a href="/clusters/test/assignment/confirm?t=test" class="submit-button btn btn-primary" role="button">Generate Partition Assignments</a>
+                                    <a href="/clusters/test/assignment/confirm?t=test"
+                                       class="submit-button btn btn-primary" role="button">Generate Partition
+                                        Assignments</a>
                                 </td>
 
                             </tr>
                             <tr>
                                 <td>
-                                    <a href="/clusters/test/topics/test/addPartitions" class="submit-button btn btn-primary" role="button">Add Partitions</a>
+                                    <a href="/clusters/test/topics/test/addPartitions"
+                                       class="submit-button btn btn-primary" role="button">Add Partitions</a>
                                 </td>
                                 <td>
-                                    <a href="/clusters/test/topics/test/updateConfig" class="submit-button btn btn-primary" role="button">Update Config</a>
+                                    <a href="/clusters/test/topics/test/updateConfig"
+                                       class="submit-button btn btn-primary" role="button">Update Config</a>
                                 </td>
 
                                 <td>
-                                    <a href="/clusters/test/topics/test/assignments/manual" class="submit-button btn btn-primary" role="button">Manual Partition Assignments</a>
+                                    <a href="/clusters/test/topics/test/assignments/manual"
+                                       class="submit-button btn btn-primary" role="button">Manual Partition
+                                        Assignments</a>
                                 </td>
 
                             </tr>
@@ -350,22 +363,29 @@
                         <div class="panel-heading"><h4>Partitions by Broker</h4></div>
                         <table class="table" style="table-layout: fixed; width: 100%">
                             <thead>
-                            <tr><th>Broker</th><th># of Partitions</th><th>Partitions</th><th>Skewed?</th></tr>
+                            <tr>
+                                <th>Broker</th>
+                                <th># of Partitions</th>
+                                <th>Partitions</th>
+                                <th>Skewed?</th>
+                            </tr>
                             </thead>
                             <tbody>
 
-                            <%for (var i= 0; i< topicdetails.topicSummary.t_brokers; i++) {%>
+                            <% for (var i = 0; i < topicdetails.topicSummary.t_brokers; i++) { %>
                             <tr>
-                                <td><a href="/clusters/test/brokers/<%=topicdetails.topicSummary.broker_list[i].broker%>"><%=topicdetails.topicSummary.broker_list[i].broker%></a></td>
-                                <td><%=topicdetails.topicSummary.broker_list[i].partitions%></td>
-                                <td style="word-wrap: break-word"><%=topicdetails.topicSummary.broker_list[i].list%></td>
-                                <%var skewed = (topicdetails.topicSummary.brokerSkewed != 0)%>
+                                <td>
+                                    <a href="/clusters/<%=clustername%>/brokers/<%= topicdetails.topicSummary.broker_list[i].broker %>"><%= topicdetails.topicSummary.broker_list[i].broker %></a>
+                                </td>
+                                <td><%= topicdetails.topicSummary.broker_list[i].partitions %></td>
+                                <td style="word-wrap: break-word"><%= topicdetails.topicSummary.broker_list[i].list %></td>
+                                <% var skewed = (topicdetails.topicSummary.brokerSkewed != 0) %>
                                 <td class="
 ">
-                                    <%=skewed%>
+                                    <%= skewed %>
                                 </td>
                             </tr>
-                            <%}%>
+                            <% } %>
 
                             </tbody>
                         </table>
@@ -375,11 +395,12 @@
 
                         <table class="table">
                             <tbody>
-
+                            <% for (var connum = 0; connum < consumers.length; connum++) { %>
                             <tr>
-                                <td><a href="/clusters/test/consumers/kafka-node1-group/topic/test/type/ZK">consumer group 待定</a></td>
+                                <td><a href="/clusters/<%=clustername%>/consumers/<%=consumers[connum]%>/topic/<%=topic_name%>/type/ZK"><%=consumers[connum]%></a></td>
                                 <td>type 待定</td>
                             </tr>
+                            <% } %>
 
                             </tbody>
                         </table>
@@ -407,30 +428,30 @@
                             </thead>
                             <tbody>
 
-                            <%for(var i= topicdetails.topicSummary.partitions_list.length-1; i>= 0 ; i--) {%>
+                            <% for(var i = topicdetails.topicSummary.partitions_list.length - 1; i >= 0 ; i--) { %>
                             <tr>
-                                <td><%=topicdetails.topicSummary.partitions_list[i].parition_id%></td>
+                                <td><%= topicdetails.topicSummary.partitions_list[i].parition_id %></td>
 
-                                <%  var p_offset = 0
-                                    for (var j= 0; j<topicdetails.logPartition_arr.length; j++){
-                                        if (topicdetails.logPartition_arr[j].partition==topicdetails.topicSummary.partitions_list[i].parition_id){
-                                            p_offset= topicdetails.logPartition_arr[j].end_offset
+                                <% var p_offset = 0
+                                    for (var j = 0; j < topicdetails.logPartition_arr.length; j++) {
+                                        if (topicdetails.logPartition_arr[j].partition == topicdetails.topicSummary.partitions_list[i].parition_id) {
+                                            p_offset = topicdetails.logPartition_arr[j].end_offset
                                         }
                                     }
                                 %>
-                                <td><%=p_offset%></td>
+                                <td><%= p_offset %></td>
 
                                 <td class="
 ">
-                                    <a href="/clusters/test/brokers/<%=topicdetails.topicSummary.partitions_list[i].leader%>"><%=topicdetails.topicSummary.partitions_list[i].leader%></a>
+                                    <a href="/clusters/<%=clustername%>/brokers/<%= topicdetails.topicSummary.partitions_list[i].leader %>"><%= topicdetails.topicSummary.partitions_list[i].leader %></a>
                                 </td>
-                                <td style="word-wrap: break-word"><%=topicdetails.topicSummary.partitions_list[i].replica_list%></td>
+                                <td style="word-wrap: break-word"><%= topicdetails.topicSummary.partitions_list[i].replica_list %></td>
 
 
-                                <td style="word-wrap: break-word"><%=topicdetails.topicSummary.partitions_list[i].isr_list%></td>
+                                <td style="word-wrap: break-word"><%= topicdetails.topicSummary.partitions_list[i].isr_list %></td>
                                 <td class="
 ">
-                                    <%=topicdetails.topicSummary.partitions_list[i].prefferedLeader%>
+                                    <%= topicdetails.topicSummary.partitions_list[i].prefferedLeader %>
                                 </td>
                                 <td class="
 
@@ -438,10 +459,10 @@
                                     underreplicated待定
                                 </td>
 
-                                <td><%=topicdetails.topicSummary.leaderSize%></td>
+                                <td><%= topicdetails.topicSummary.leaderSize %></td>
 
                             </tr>
-                            <%}%>
+                            <% } %>
 
                             </tbody>
                         </table>
@@ -461,13 +482,13 @@
     }
 
     function checkBoxSelect(idPrefix, booleanValue, display) {
-        $("[id^="+idPrefix+"]").prop("checked",booleanValue);
+        $("[id^=" + idPrefix + "]").prop("checked", booleanValue);
     }
 
     function selectBySubname(selectId, selectClass, display) {
         var subname = $(selectId).val().toLowerCase();
         $('.' + selectClass).not("[name*='" + subname + "']").css("display", "none");
-        $("[class='"+selectClass+"'][name*='"+subname+"']").css("display", display);
+        $("[class='" + selectClass + "'][name*='" + subname + "']").css("display", display);
         if (subname == "") {
             $('.' + selectClass).css("display", display);
         }

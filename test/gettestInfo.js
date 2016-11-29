@@ -1,6 +1,8 @@
+//初始化集群
+
 var attsjson = {
     name: 'test1',
-    zkHosts: 'VM-01:2181,VM-02:2181',
+    zkHosts: 'VM-01:2181,VM-02:2181,VM-03:2181',
     kafkaVersion: '0.9.0.1',
     jmxEnabled: 'false',
     jmxUser: '',

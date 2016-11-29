@@ -2,7 +2,7 @@
 var KafkaRest = require('kafka-rest');
 var argv = require('minimist')(process.argv.slice(2));
 var async = require('async');
-var api_url = argv.url || "http://10.192.33.76:8082";
+var api_url = argv.url || "http://10.192.33.76:8082"; //kafka-restful proxy
 var help = (argv.help || argv.h);
 
 if (help) {
@@ -66,7 +66,7 @@ function listTopicPartitions(broid, topicList, callback) {
 
     if (topicList == null || topicList.length == 0) {
         console.log("Didn't find any topics, skipping listing partitions.");
-        callback(perTopicDetail);
+        callback(null,perTopicDetail);
     }
     //以下是获取在此broker上的每个topic的信息：包括name，replication，partitions，partitionsOnBroker,partitions,skew
     var i = 0;
@@ -104,7 +104,7 @@ function listTopicPartitions(broid, topicList, callback) {
                 if (topicList.length == perTopicDetail.length - 2) {
                     perTopicDetail[0] = BrokerIdSummary_Topics
                     perTopicDetail[1] = BrokerIdSummary_Partitions
-                    callback(perTopicDetail);
+                    callback(null,perTopicDetail);
                 }
             }
         });

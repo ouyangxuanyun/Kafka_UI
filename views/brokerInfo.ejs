@@ -20,7 +20,7 @@
             </button>
             <img src="/images/favicon.png">
             <a class="navbar-brand un-float-me" href="/">
-                Kafka Manager</a><span class="label label-primary">test</span>
+                Kafka Manager</a><span class="label label-primary"><%= clustername %></span>
         </div>
 
         <div class="navbar-collapse collapse">
@@ -28,26 +28,27 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Cluster<span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
-                        <li><a href="/addCluster">Add Cluster</a></li>                                    <li><a href="/clusters/test">Summary</a></li>
+                        <li><a href="/addCluster">Add Cluster</a></li>
+                        <li><a href="/clusters/<%= clustername %>">Summary</a></li>
                         <li><a href="/">List</a></li>
                     </ul>
                 </li>
-                <li class="active"><a href="/clusters/test/brokers">Brokers</a></li>
+                <li class="active"><a href="/clusters/<%= clustername %>/brokers">Brokers</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Topic<span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
-                        <li><a href="/clusters/test/createTopic">Create</a></li>
-                        <li><a href="/clusters/test/topics">List</a></li>
+                        <li><a href="/clusters/<%= clustername %>/createTopic">Create</a></li>
+                        <li><a href="/clusters/<%= clustername %>/topics">List</a></li>
                     </ul>
                 </li>
-                <li><a href="/clusters/test/leader">Preferred Replica Election</a></li>
-                <li><a href="/clusters/test/assignment">Reassign Partitions</a></li>
-                <li><a href="/clusters/test/consumers">Consumers</a></li>
+                <li><a href="/clusters/<%= clustername %>/leader">Preferred Replica Election</a></li>
+                <li><a href="/clusters/<%= clustername %>/assignment">Reassign Partitions</a></li>
+                <li><a href="/clusters/<%= clustername %>/consumers">Consumers</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Logkafka<span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
-                        <li><a href="/clusters/test/logkafkas">List Logkafka</a></li>
-                        <li><a href="/clusters/test/createLogkafka">Create Logkafka</a></li>
+                        <li><a href="/clusters/<%= clustername %>/logkafkas">List Logkafka</a></li>
+                        <li><a href="/clusters/<%= clustername %>/createLogkafka">Create Logkafka</a></li>
                     </ul>
                 </li>
             </ul>
@@ -59,8 +60,8 @@
     <ol class="breadcrumb">
         <li><a href="/">Clusters</a></li>
         <li><a href="/clusters/<%= clustername %>"><%= clustername %></a></li>
-        <li><a href="/clusters/<%=clustername%>/brokers">Brokers</a></li>
-        <li class="active"><%= brokerlistId%></li>
+        <li><a href="/clusters/<%= clustername %>/brokers">Brokers</a></li>
+        <li class="active"><%= brokerlistId %></li>
     </ol>
 
     <div class="col-md-12 un-pad-me">
@@ -69,7 +70,7 @@
                 <h3>
                     <button type="button" class="btn btn-link" onclick="goBack()"><span
                                 class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span></button>
-                    Broker Id <%=brokerlistId%>
+                    Broker Id <%= brokerlistId %>
                 </h3>
             </div>
             <div class="row">
@@ -89,15 +90,15 @@
 
                             <tr>
                                 <td>% of Messages</td>
-                                <td><%= (100*brokerMetric[0][0]/InOutMessage[0][0]).toFixed(2) %>%</td>
+                                <td><%= (100 * brokerMetric[0][0] / InOutMessage[0][0]).toFixed(2) %>%</td>
                             </tr>
                             <tr>
                                 <td>% of Incoming</td>
-                                <td><%= (100*brokerMetric[1][0]/InOutMessage[1][0]).toFixed(2) %>%</td>
+                                <td><%= (100 * brokerMetric[1][0] / InOutMessage[1][0]).toFixed(2) %>%</td>
                             </tr>
                             <tr>
                                 <td>% of Outgoing</td>
-                                <td><%= (100*brokerMetric[2][0]/InOutMessage[2][0]).toFixed(2) %>%</td>
+                                <td><%= (100 * brokerMetric[2][0] / InOutMessage[2][0]).toFixed(2) %>%</td>
                             </tr>
                             </tbody>
                         </table>
@@ -121,12 +122,33 @@
                             <!--Dynamic data-->
                             <% var Ratetitle = ["Messages in", "Bytes in", "Bytes out", "Bytes rejected", "Failed fetch request", "Failed produce request"] %>
                             <% for(var i = 0; i < 6; i++) { %>
+
                             <tr>
                                 <td><%= Ratetitle[i] %></td>
-                                <td><span class="badge"><%= brokerMetric[i][0].toFixed(2) %> </span></td>
-                                <td><span class="badge"><%= brokerMetric[i][1].toFixed(2) %> </span></td>
-                                <td><span class="badge"><%= brokerMetric[i][2].toFixed(2) %> </span></td>
-                                <td><span class="badge"><%= brokerMetric[i][3].toFixed(2) %> </span></td>
+                                <td>
+                                    <% var b_in_mean = '' %>
+                                    <% if (brokerMetric[i][0] < 1000) b_in_mean = brokerMetric[i][0].toFixed(2) %>
+                                    <% if (brokerMetric[i][0] >= 1000) b_in_mean = (brokerMetric[i][0] / 1000).toFixed(1) + 'k' %>
+                                    <span class="badge"><%= b_in_mean %></span>
+                                </td>
+                                <td>
+                                    <% var b_in_1 = '' %>
+                                    <% if (brokerMetric[i][1] < 1000) b_in_1 = brokerMetric[i][1].toFixed(2) %>
+                                    <% if (brokerMetric[i][1] >= 1000) b_in_1 = (brokerMetric[i][1] / 1000).toFixed(1) + 'k' %>
+                                    <span class="badge"><%= b_in_1 %></span>
+                                </td>
+                                <td>
+                                    <% var b_in_10 = '' %>
+                                    <% if (brokerMetric[i][2] < 1000) b_in_10 = brokerMetric[i][2].toFixed(2) %>
+                                    <% if (brokerMetric[i][2] >= 1000) b_in_10 = (brokerMetric[i][2] / 1000).toFixed(1) + 'k' %>
+                                    <span class="badge"><%= b_in_10 %></span>
+                                </td>
+                                <td>
+                                    <% var b_in_15 = '' %>
+                                    <% if (brokerMetric[i][3] < 1000) b_in_15 = brokerMetric[i][3].toFixed(2) %>
+                                    <% if (brokerMetric[i][3] >= 1000) b_in_15 = (brokerMetric[i][3] / 1000).toFixed(1) + 'k' %>
+                                    <span class="badge"><%= b_in_15 %></span>
+                                </td>
                             <tr>
                                 <% } %>
                             </tbody>
@@ -134,35 +156,6 @@
                     </div>
                 </div>
             </div>
-            <!--<div class="row">-->
-                <!--<div class="col-md-12">-->
-                    <!--<div class="panel panel-default">-->
-                        <!--<div class="panel-heading"><h4>Messages count</h4></div>-->
-                        <!--<div class="ct-chart"></div>-->
-                        <!--<script>-->
-                            <!--var options = {-->
-                                <!--axisY: {-->
-                                    <!--type: Chartist.AutoScaleAxis,-->
-                                    <!--low: -1,-->
-                                    <!--// high: 1,-->
-                                    <!--onlyInteger: true-->
-                                <!--}-->
-                            <!--};-->
-
-                            <!--var data = {-->
-                                <!--labels: [< dataIn[0] >],-->
-                                <!--//labels: ['09:21:58','09:22:28','09:22:58','09:23:28','09:23:58','09:24:28','09:24:58','09:25:28','09:25:58','09:26:28'],-->
-                                <!--//labels:['09:21:58','09:22:28','09:22:58','09:23:28'],-->
-                                <!--//labels:[1,2,3],-->
-                                <!--series: [-->
-                                    <!--[< dataIn[1] >]-->
-                                <!--]-->
-                            <!--};-->
-                            <!--new Chartist.Line('.ct-chart', data, options);-->
-                        <!--</script>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
 
             <div class="panel panel-default">
                 <div class="panel-heading"><h4>Per Topic Detail</h4></div>
@@ -180,9 +173,11 @@
 
                     <tbody>
                     <% for(var i = 2; i < topiclistdetail.length; i++) { %>
-                    <% if (topiclistdetail[i].partitions.length !== 0) { %>  <!-- 传进来的有空值，会在界面显示空行，排除这种情况-->
+                    <% if (topiclistdetail[i].partitions.length !== 0) { %>
+                    <!-- 传进来的有空值，会在界面显示空行，排除这种情况-->
                     <tr>
-                        <td><a href="/clusters/<%= topiclistdetail[i].name %>"style="word-wrap: break-word"/><%=topiclistdetail[i].name %></td>
+                        <td><a href="/clusters/<%=clustername%>/topics/<%= topiclistdetail[i].name %>"
+                               style="word-wrap: break-word"/><%= topiclistdetail[i].name %></td>
                         <td style="word-wrap: break-word"><%= topiclistdetail[i].replicationlen %></td>
                         <td style="word-wrap: break-word"><%= topiclistdetail[i].partitionslen %></td>
                         <td style="word-wrap: break-word"><%= topiclistdetail[i].paronbro %></td>

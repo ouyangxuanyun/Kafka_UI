@@ -81,8 +81,11 @@
                 <tbody>
                 <% for (var i = 0; i < allconsumeInfo.length; i++) { %>
                 <tr>
+                    <!--<td>-->
+                        <!--<a href="/clusters/<% clustername %>/consumers/<% allconsumeInfo[i][0] %>/type/ZK"><% allconsumeInfo[i][0] %></a>-->
+                    <!--</td>-->
                     <td>
-                        <a href="/clusters/<%= clustername %>/consumers/<%= allconsumeInfo[i][0] %>/type/ZK"><%= allconsumeInfo[i][0] %></a>
+                        <%= allconsumeInfo[i][0] %>
                     </td>
                     <td>ZK</td>
                     <% if (allconsumeInfo[i][2].length > 1) { %>

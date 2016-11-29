@@ -8,15 +8,16 @@
     <link rel="stylesheet" media="screen" href="/stylesheets/index.min.css">
     <link rel="stylesheet" media="screen" href="dataTables/stylesheets/dataTables.bootstrap.css">
     <link rel="stylesheet" media="screen" href="/chartist/stylesheets/chartist.min.css">
-    <!--
-    <script data-main="/javascripts/index.js" src="/requirejs/2.1.20/require.min.js"></script>
-    -->
     <script src="/chartist/javascripts/chartist.min.js"></script>
-
     <script src="/jquery-2.1.4/jquery.min.js"></script>
     <script src="/bootstrap-3.3.5/js/bootstrap.min.js"></script>
     <script src="/dataTables/javascripts/jquery.dataTables.min.js"></script>
     <script src="/dataTables/javascripts/dataTables.bootstrap.js"></script>
+
+    <script src="/jquery-validation-1.14.0/lib/jquery.js"></script>
+    <script src="/jquery-validation-1.14.0/dist/jquery.validate.min.js"></script>
+    <script src="/jquery-validation-1.14.0/dist/localization/messages_zh.js"></script>
+    <script src="/formcheck.js"></script>
 
 </head>
 <body role="document">
@@ -30,7 +31,7 @@
             </button>
             <img src="/images/favicon.png">
             <a class="navbar-brand un-float-me" href="/">
-                Kafka Manager</a><span class="label label-primary">test</span>
+                Kafka Manager</a><span class="label label-primary"><%=clustername%></span>
         </div>
 
         <div class="navbar-collapse collapse">
@@ -40,28 +41,28 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Cluster<span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
                         <li><a href="/addCluster">Add Cluster</a></li>
-                        <li><a href="/clusters/test">Summary</a></li>
+                        <li><a href="/clusters/<%=clustername%>">Summary</a></li>
                         <li><a href="/">List</a></li>
                     </ul>
                 </li>
-                <li><a href="/clusters/test/brokers">Brokers</a></li>
+                <li><a href="/clusters/<%=clustername%>/brokers">Brokers</a></li>
 
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Topic<span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
                         <li class="active"><a href="/clusters/test/createTopic">Create</a></li>
-                        <li><a href="/clusters/test/topics">List</a></li>
+                        <li><a href="/clusters/<%=clustername%>/topics">List</a></li>
                     </ul>
                 </li>
 
-                <li><a href="/clusters/test/leader">Preferred Replica Election</a></li>
-                <li><a href="/clusters/test/assignment">Reassign Partitions</a></li>
-                <li><a href="/clusters/test/consumers">Consumers</a></li>
+                <li><a href="/clusters/<%=clustername%>/leader">Preferred Replica Election</a></li>
+                <li><a href="/clusters/<%=clustername%>/assignment">Reassign Partitions</a></li>
+                <li><a href="/clusters/<%=clustername%>/consumers">Consumers</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Logkafka<span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
-                        <li><a href="/clusters/test/logkafkas">List Logkafka</a></li>
-                        <li><a href="/clusters/test/createLogkafka">Create Logkafka</a></li>
+                        <li><a href="/clusters/<%=clustername%>/logkafkas">List Logkafka</a></li>
+                        <li><a href="/clusters/<%=clustername%>/createLogkafka">Create Logkafka</a></li>
                     </ul>
                 </li>
             </ul>
@@ -75,8 +76,8 @@
     <ol class="breadcrumb">
 
         <li><a href="/">Clusters</a></li>
-        <li><a href="/clusters/test">test</a></li>
-        <li><a href="/clusters/test/topics">Topics</a></li>
+        <li><a href="/clusters/<%=clustername%>"><%=clustername%></a></li>
+        <li><a href="/clusters/<%=clustername%>/topics">Topics</a></li>
         <li class="active">Create Topic</li>
 
     </ol>
@@ -87,7 +88,7 @@
 
             <div class="panel-body">
 
-                <form action="/clusters/test/createResult" class="form-vertical " role="form">
+                <form id="check_create_topic" action="/clusters/<%=clustername%>/createResult" class="form-vertical " role="form">
                     <table class="table">
                         <tbody>
                         <tr>

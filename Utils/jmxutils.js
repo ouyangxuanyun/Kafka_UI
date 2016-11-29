@@ -18,7 +18,7 @@ function connecthost(host, port, callback) {
     });
     client.connect();
     client.on("connect", function () {
-        console.log("connect successful !");
+        console.log("jmx connect successful !");
         var Items = ["MessagesInPerSec","BytesInPerSec","BytesOutPerSec",
             "BytesRejectedPerSec","FailedFetchRequestsPerSec","FailedProduceRequestsPerSec"];// 需要计算的属性值
         for (var i = 0; i < 6; i++) {
@@ -27,7 +27,7 @@ function connecthost(host, port, callback) {
                     // console.log("MessagesInPerSec" + data)
                     Metrics[i] = data; //MessagesIn
                     flag++;
-                    if (flag === 6) callback(Metrics)
+                    if (flag === 6) callback(null,Metrics)
                 });
             }(i);
         }
@@ -58,7 +58,6 @@ function getmetricrow(client,MBeanname, callback) {
 /**
  * @param BrokerList 传入所有的broker
  * @param callback 得到各个broker 6行信息（每行4个）的均值，作为combinedMetric返回
- *
  */
 function getcombinedMetrics(BrokerList, callback) {
     var result = [];
@@ -66,7 +65,7 @@ function getcombinedMetrics(BrokerList, callback) {
     var flag = 0;
     for (var i = 0; i < BrokerList.length; i++) {
         !function (i) {
-            connecthost(BrokerList[i][1], BrokerList[i][3], function (oneHostMetric) { // data是一个二维数组，[MessagesIn,BytesIn,BytesOut…]
+            connecthost(BrokerList[i][1], BrokerList[i][3], function (err,oneHostMetric) { // data是一个二维数组，[MessagesIn,BytesIn,BytesOut…]
                 result[i] = oneHostMetric;
                 flag++;//console.log(flag);console.log(BrokerList.length);console.log(result); //各个host数据全部计算完毕，flag满足条件进行下一步
                 if (flag == BrokerList.length) {
@@ -81,7 +80,7 @@ function getcombinedMetrics(BrokerList, callback) {
                             combinedMetric[m][n] = temp;
                         }
                     }
-                    callback(combinedMetric);
+                    callback(null,combinedMetric);
                 }
             })
         }(i);

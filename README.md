@@ -1,28 +1,3 @@
-1 index.js 页面的路由/clusters，此部分获取创建新cluster的数据，并存入attresult数组，key是各个参数名称，value是输入的对应值，如下是提交的表单信息：
-{ name: 'TEST',
-  zkHosts: 'VM-01:2181 VM-02:2181 VM-03:2181 VM-04:2181',
-  kafkaVersion: '0.9.0.1',
-  jmxEnabled: 'true',
-  jmxUser: 'test',
-  jmxPass: 'test',
-  logkafkaEnabled: 'true',
-  pollConsumers: 'true',
-  filterConsumers: 'true',
-  activeOffsetCacheEnabled: 'true',
-  displaySizeEnabled: 'true',
-  'tuning.brokerViewUpdatePeriodSeconds': '30',
-  'tuning.clusterManagerThreadPoolSize': '2',
-  'tuning.clusterManagerThreadPoolQueueSize': '100',
-  'tuning.kafkaCommandThreadPoolSize': '2',
-  'tuning.kafkaCommandThreadPoolQueueSize': '100',
-  'tuning.logkafkaCommandThreadPoolSize': '2',
-  'tuning.logkafkaCommandThreadPoolQueueSize': '100',
-  'tuning.logkafkaUpdatePeriodSeconds': '30',
-  'tuning.partitionOffsetCacheTimeoutSecs': '5',
-  'tuning.brokerViewThreadPoolSize': '1',
-  'tuning.brokerViewThreadPoolQueueSize': '1000',
-  'tuning.offsetCacheThreadPoolSize': '1',
-  'tuning.offsetCacheThreadPoolQueueSize': '1000',
-  'tuning.kafkaAdminClientThreadPoolSize': '1',
-  'tuning.kafkaAdminClientThreadPoolQueueSize': '1000' }
-对其进行操作后完成attresult数组。
+Kafka-manager-node is a  tool for managing Apache Kafka.  This project imitates Kafka-manger which wrote by scala. Some functions have not finished yet.
+
+
