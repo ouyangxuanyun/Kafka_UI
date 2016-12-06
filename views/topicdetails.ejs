@@ -1,71 +1,7 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Topic View</title>
-    <link rel="shortcut icon" type="image/png" href="/images/favicon.png">
-    <link rel='stylesheet' href='/bootstrap-3.3.5/css/bootstrap.min.css'>
+<%- include('components/header.ejs')%>
+<%- include('components/nav.ejs')%>
 
-    <link rel="stylesheet" media="screen" href="/stylesheets/index.min.css">
-    <link rel="stylesheet" media="screen" href="/dataTables/stylesheets/dataTables.bootstrap.css">
-    <link rel="stylesheet" media="screen" href="/chartist/stylesheets/chartist.min.css">
-    <!--
-    <script data-main="/vassets/javascripts/index.js" src="/webjars/requirejs/2.1.20/require.min.js"></script>
-    -->
-    <script src="/chartist/javascripts/chartist.min.js"></script>
-
-    <script src="/jquery-2.1.4/jquery.min.js"></script>
-    <script src="/bootstrap-3.3.5/js/bootstrap.min.js"></script>
-    <script src="/dataTables/javascripts/jquery.dataTables.min.js"></script>
-    <script src="/dataTables/javascripts/dataTables.bootstrap.js"></script>
-
-</head>
 <body role="document">
-
-<div class="navbar navbar-default" role="navigation">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <!--  Display three horizontal lines when navbar collapsed. -->
-                <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
-            </button>
-            <img src="/images/favicon.png">
-            <a class="navbar-brand un-float-me" href="/">
-                Kafka Manager</a><span class="label label-primary"><%= clustername %></span>
-        </div>
-
-        <div class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Cluster<span class="caret"></span></a>
-                    <ul class="dropdown-menu" role="menu">
-                        <li><a href="/addCluster">Add Cluster</a></li>
-                        <li><a href="/clusters/<%= clustername %>">Summary</a></li>
-                        <li><a href="/">List</a></li>
-                    </ul>
-                </li>
-                <li><a href="/clusters/<%= clustername %>/brokers">Brokers</a></li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Topic<span class="caret"></span></a>
-                    <ul class="dropdown-menu" role="menu">
-                        <li><a href="/clusters/<%= clustername %>/createTopic">Create</a></li>
-                        <li><a href="/clusters/<%= clustername %>/topics">List</a></li>
-                    </ul>
-                </li>
-                <li><a href="/clusters/<%= clustername %>/leader">Preferred Replica Election</a></li>
-                <li><a href="/clusters/<%= clustername %>/assignment">Reassign Partitions</a></li>
-                <li><a href="/clusters/<%= clustername %>/consumers">Consumers</a></li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Logkafka<span class="caret"></span></a>
-                    <ul class="dropdown-menu" role="menu">
-                        <li><a href="/clusters/<%= clustername %>/logkafkas">List Logkafka</a></li>
-                        <li><a href="/clusters/<%= clustername %>/createLogkafka">Create Logkafka</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-    </div>
-</div>
-
 <div class="container" role="main">
 
     <ol class="breadcrumb">
@@ -116,33 +52,50 @@
                             </tr>
                             <tr>
                                 <td>Preferred Replicas %</td>
+                                <%var pr_r_class =''
+                                    if(50<topicdetails.topicSummary.prefferedReplicas&&topicdetails.topicSummary.prefferedReplicas<100) pr_r_class='warning'
+                                    else if (topicdetails.topicSummary.prefferedReplicas<=50) pr_r_class='danger'
+                                %>
                                 <td class="
+                                <%=pr_r_class%>
 ">
                                     <%= topicdetails.topicSummary.prefferedReplicas %>
                                 </td>
                             </tr>
                             <tr>
                                 <td>Brokers Skewed %</td>
+                                <%var b_sk_class =''
+                                    if(0<topicdetails.topicSummary.brokerSkewed&&topicdetails.topicSummary.brokerSkewed<50) b_sk_class='warning'
+                                    else if (topicdetails.topicSummary.brokerSkewed>=50) b_sk_class='danger'
+                                %>
                                 <td class="
-
+                                <%=b_sk_class%>
 ">
                                     <%= topicdetails.topicSummary.brokerSkewed %>
                                 </td>
                             </tr>
                             <tr>
                                 <td>Brokers Spread %</td>
+                                <%var b_spr_class =''
+                                    if(50<topicdetails.topicSummary.brokerSpread&&topicdetails.topicSummary.brokerSpread<100) b_spr_class='warning'
+                                    else if (topicdetails.topicSummary.brokerSpread<=50) b_spr_class='danger'
+                                %>
                                 <td class="
-
+                                <%=b_spr_class%>
 ">
                                     <%= topicdetails.topicSummary.brokerSpread %>
                                 </td>
                             </tr>
                             <tr>
                                 <td>Under-replicated %</td>
+                                <%var u_rpli_class =''
+                                    if(0<topicdetails.under_replicated&&topicdetails.under_replicated<50) u_rpli_class='warning'
+                                    else if (topicdetails.under_replicated>=50) u_rpli_class='danger'
+                                %>
                                 <td class="
-
+                                <%=u_rpli_class%>
 ">
-                                    u_r_rate待定
+                                    <%=topicdetails.under_replicated%>
                                 </td>
                             </tr>
 
@@ -449,14 +402,28 @@
 
 
                                 <td style="word-wrap: break-word"><%= topicdetails.topicSummary.partitions_list[i].isr_list %></td>
+                                <%var pr_l_class =''
+                                    if(topicdetails.topicSummary.partitions_list[i].prefferedLeader==false) pr_l_class='warning'
+                                %>
                                 <td class="
+                                <%=pr_l_class%>
 ">
                                     <%= topicdetails.topicSummary.partitions_list[i].prefferedLeader %>
                                 </td>
-                                <td class="
+                                <% var u_r_flag = false
+                                    for (var j = 0; j < topicdetails.underReplicated_arr.length; j++) {
+                                        if (topicdetails.underReplicated_arr[j].partition == topicdetails.topicSummary.partitions_list[i].parition_id) {
+                                            if (topicdetails.underReplicated_arr[j].under_replicated) u_r_flag = true
+                                        }
+                                    }
+                                    var u_r_class =''
+                                    if(topicdetails.topicSummary.partitions_list[i].prefferedLeader==true) u_r_class='warning'
 
+                                %>
+                                <td class="
+                                <%=u_r_class%>
 ">
-                                    underreplicated待定
+                                    <%=u_r_flag%>
                                 </td>
 
                                 <td><%= topicdetails.topicSummary.leaderSize %></td>
@@ -476,29 +443,7 @@
 </div>
 
 
-<script>
-    function goBack() {
-        window.history.back()
-    }
-
-    function checkBoxSelect(idPrefix, booleanValue, display) {
-        $("[id^=" + idPrefix + "]").prop("checked", booleanValue);
-    }
-
-    function selectBySubname(selectId, selectClass, display) {
-        var subname = $(selectId).val().toLowerCase();
-        $('.' + selectClass).not("[name*='" + subname + "']").css("display", "none");
-        $("[class='" + selectClass + "'][name*='" + subname + "']").css("display", display);
-        if (subname == "") {
-            $('.' + selectClass).css("display", display);
-        }
-    }
-
-    function disableSubmission() {
-        $('[type=submit]').prop('disabled', true);
-        $('[type=submit]').removeAttr('type');
-    }
-</script>
+<%- include('components/footer.ejs')%>
 
 </body>
 </html>

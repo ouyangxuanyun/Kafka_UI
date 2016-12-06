@@ -1,23 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
+<%- include('components/header.ejs')%>
 
-    <title>Kafka Manager</title>
-    <link rel="shortcut icon" type="image/png" href="/images/favicon.png">
-    <link rel="stylesheet" media="screen" href="/stylesheets/index.min.css">
-    <link rel='stylesheet' href='/bootstrap-3.3.5/css/bootstrap.min.css'>
-    <link rel="stylesheet" media="screen" href="/dataTables/stylesheets/dataTables.bootstrap.css">
-    <link rel="stylesheet" media="screen" href="/chartist/stylesheets/chartist.min.css">
-
-    <script src="/chartist/javascripts/chartist.min.js"></script>
-    <script src="/jquery-2.1.4/jquery.min.js"></script>
-    <script src="/bootstrap-3.3.5/js/bootstrap.min.js"></script>
-    <script src="/dataTables/javascripts/jquery.dataTables.min.js"></script>
-    <script src="/dataTables/javascripts/dataTables.bootstrap.js"></script>
-
-</head>
 <body role="document">
-
 <nav class="navbar navbar-default" role="navigation">
     <div class="container">
         <div class="navbar-header">
@@ -111,43 +94,18 @@
                         </div>
                     </td>
                     <% } %>
-
                     <td>
                         <%= clusters[i].kafkaVersion %>
                     </td>
                 </tr>
                 <% } %>
-
                 </tbody>
             </table>
         </div>
     </div>
 </div>
 
-<script>
-
-    function goBack() {
-        window.history.back()
-    }
-
-    function checkBoxSelect(idPrefix, booleanValue, display) {
-        $("[id^=" + idPrefix + "]").prop("checked", booleanValue);
-    }
-
-    function selectBySubname(selectId, selectClass, display) {
-        var subname = $(selectId).val().toLowerCase();
-        $('.' + selectClass).not("[name*='" + subname + "']").css("display", "none");
-        $("[class='" + selectClass + "'][name*='" + subname + "']").css("display", display);
-        if (subname == "") {
-            $('.' + selectClass).css("display", display);
-        }
-    }
-
-    function disableSubmission() {
-        $('[type=submit]').prop('disabled', true);
-        $('[type=submit]').removeAttr('type');
-    }
-</script>
+<%- include('components/footer.ejs')%>
 
 </body>
 </html>

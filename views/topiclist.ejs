@@ -1,93 +1,12 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Topic List</title>
-    <link rel="shortcut icon" type="image/png" href="/images/favicon.png">
-    <link rel='stylesheet' href='/bootstrap-3.3.5/css/bootstrap.min.css'>
+<%- include('components/header.ejs')%>
+<%- include('components/nav.ejs') %>
 
-    <link rel="stylesheet" media="screen" href="/stylesheets/index.min.css">
-    <link rel="stylesheet" media="screen" href="/dataTables/stylesheets/dataTables.bootstrap.css">
-    <link rel="stylesheet" media="screen" href="/chartist/stylesheets/chartist.min.css">
-    <!--
-    <script data-main="/vassets/javascripts/index.js" src="/webjars/requirejs/2.1.20/require.min.js"></script>
-    -->
-    <script src="/chartist/javascripts/chartist.min.js"></script>
-
-    <script src="/jquery-2.1.4/jquery.min.js"></script>
-    <script src="/bootstrap-3.3.5/js/bootstrap.min.js"></script>
-    <script src="/dataTables/javascripts/jquery.dataTables.min.js"></script>
-    <script src="/dataTables/javascripts/dataTables.bootstrap.js"></script>
-</head>
 <body role="document">
-
-<div class="navbar navbar-default" role="navigation">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <!--  Display three horizontal lines when navbar collapsed. -->
-                <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
-            </button>
-            <img src="/images/favicon.png">
-            <a class="navbar-brand un-float-me" href="/">
-                Kafka Manager</a><span class="label label-primary"><%=clustername%></span>
-        </div>
-
-        <div class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Cluster<span class="caret"></span></a>
-                    <ul class="dropdown-menu" role="menu">
-
-
-                        <li><a href="/addCluster">Add Cluster</a></li>
-
-
-
-                        <li><a href="/clusters/<%=clustername%>">Summary</a></li>
-
-
-
-                        <li><a href="/">List</a></li>
-
-
-                    </ul>
-                </li>
-                <li><a href="/clusters/<%=clustername%>/brokers">Brokers</a></li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Topic<span class="caret"></span></a>
-                    <ul class="dropdown-menu" role="menu">
-
-
-                        <li><a href="/clusters/<%=clustername%>/createTopic">Create</a></li>
-
-
-
-                        <li class="active"><a href="/clusters/<%=clustername%>/topics">List</a></li>
-
-
-                    </ul>
-                </li>
-                <li><a href="/clusters/<%=clustername%>/leader">Preferred Replica Election</a></li>
-                <li><a href="/clusters/<%=clustername%>/assignment">Reassign Partitions</a></li>
-                <li><a href="/clusters/<%=clustername%>/consumers">Consumers</a></li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Logkafka<span class="caret"></span></a>
-                    <ul class="dropdown-menu" role="menu">
-                        <li><a href="/clusters/<%=clustername%>/logkafkas">List Logkafka</a></li>
-                        <li><a href="/clusters/<%=clustername%>/createLogkafka">Create Logkafka</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-
-    </div>
-</div>
-
 <div class="container" role="main">
 
     <ol class="breadcrumb">
         <li><a href="/">Clusters</a></li>
-        <li><a href="/clusters/<%=clustername%>"><%=clustername%></a></li>
+        <li><a href="/clusters/<%= clustername %>"><%= clustername %></a></li>
         <li class="active">Topics</li>
     </ol>
 
@@ -97,14 +16,17 @@
             <table class="table">
                 <tr>
                     <td>
-                        <a href="/clusters/test/assignments/confirm" class="submit-button btn btn-primary" role="button">Generate Partition Assignments</a>
+                        <a href="/clusters/test/assignments/confirm" class="submit-button btn btn-primary"
+                           role="button">Generate Partition Assignments</a>
                     </td>
                     <td>
-                        <a href="/clusters/test/assignments/run" class="submit-button btn btn-primary" role="button">Run Partition Assignments</a>
+                        <a href="/clusters/test/assignments/run" class="submit-button btn btn-primary" role="button">Run
+                            Partition Assignments</a>
                     </td>
 
                     <td>
-                        <a href="/clusters/test/topics/addPartitions" class="submit-button btn btn-primary" role="button">Add Partitions</a>
+                        <a href="/clusters/test/topics/addPartitions" class="submit-button btn btn-primary"
+                           role="button">Add Partitions</a>
                     </td>
                 </tr>
                 </tbody>
@@ -117,7 +39,8 @@
             <div class="panel-heading"><h3>Topics</h3></div>
             <table class="table" id="topics-table">
                 <thead>
-                <tr><th>Topic</th>
+                <tr>
+                    <th>Topic</th>
                     <th># Partitions</th>
                     <th># Brokers</th>
                     <th>Brokers Spread %</th>
@@ -132,65 +55,54 @@
                 <tbody>
 
                 <!--Dynamic data-->
-                <%for(var i= 0; i < topicList.length ; i++) {%>
+                <% for(var i = 0; i < topicList.length ; i++) { %>
                 <tr class="
 
 ">
                     <td class="
 
-"><a href="/clusters/<%=clustername%>/topics/<%=topicList[i].name%>"><%=topicList[i].name%></a></td>
-                    <td><%=topicList[i].partitions%></td>
-                    <td><%=topicList[i].t_brokers%></td>
+"><a href="/clusters/<%= clustername %>/topics/<%= topicList[i].name %>"><%= topicList[i].name %></a></td>
+                    <td><%= topicList[i].partitions %></td>
+                    <td><%= topicList[i].t_brokers %></td>
+                    <% var b_spr_class = ''
+                        if (50 < topicList[i].brokerSpread && topicList[i].brokerSpread < 100) b_spr_class = 'warning'
+                        else if (topicList[i].brokerSpread <= 50) b_spr_class = 'danger'
+                    %>
                     <td class="
-    danger
-"><%=topicList[i].brokerSpread%></td>
+                    <%= b_spr_class %>
+"><%= topicList[i].brokerSpread %></td>
+                    <% var b_sk_class = ''
+                        if (0 < topicList[i].brokerSkewed && topicList[i].brokerSkewed < 50) b_sk_class = 'warning'
+                        else if (topicList[i].brokerSkewed >= 50) b_sk_class = 'danger'
+                    %>
                     <td class="
-"><%=topicList[i].brokerSkewed%></td>
-                    <td><%=topicList[i].replicas%></td>
+                    <%= b_sk_class %>
+"><%= topicList[i].brokerSkewed %></td>
+                    <td><%= topicList[i].replicas %></td>
+                    <% var u_rpl_class = ''
+                        if (0 < topicList[i].unserReplicated && topicList[i].unserReplicated < 50) u_rpl_class = 'warning'
+                        else if (topicList[i].unserReplicated >= 50) u_rpl_class = 'danger'
+                    %>
                     <td class="
-">0</td>
-                    <td><%=topicList[i].producerMsg.toFixed(2)%></td>
-                    <td><%=topicList[i].offset%></td>
-                    <td><%=topicList[i].leaderSize%></td>
+                    <%= u_rpl_class %>
+"><%= topicList[i].unserReplicated %></td>
+                    <td><%= topicList[i].producerMsg.toFixed(2) %></td>
+                    <td><%= topicList[i].offset %></td>
+                    <td><%= topicList[i].leaderSize %></td>
                 </tr>
-                <%}%>
+                <% } %>
                 </tbody>
             </table>
         </div>
     </div>
-
 </div>
 
+<%- include('components/footer.ejs')%>
 
-
-<script>
-    function goBack() {
-        window.history.back()
-    }
-
-    function checkBoxSelect(idPrefix, booleanValue, display) {
-        $("[id^="+idPrefix+"]").prop("checked",booleanValue);
-    }
-
-    function selectBySubname(selectId, selectClass, display) {
-        var subname = $(selectId).val().toLowerCase();
-        $('.' + selectClass).not("[name*='" + subname + "']").css("display", "none");
-        $("[class='"+selectClass+"'][name*='"+subname+"']").css("display", display);
-        if (subname == "") {
-            $('.' + selectClass).css("display", display);
-        }
-    }
-
-    function disableSubmission() {
-        $('[type=submit]').prop('disabled', true);
-        $('[type=submit]').removeAttr('type');
-    }
-</script>
-
-<script ype="text/javascript">
-    $(document).ready(function() {
+<script type="text/javascript">
+    $(document).ready(function () {
         $('#topics-table').DataTable();
-    } );
+    });
 </script>
 
 </body>

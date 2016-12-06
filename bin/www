@@ -5,7 +5,7 @@
  */
 
 var app = require('../app');
-var debug = require('debug')('Kafka-manager-node:server');
+//var debug = require('debug')('Kafka-manager-node:server');
 var http = require('http');
 
 /**
@@ -86,6 +86,6 @@ function onListening() {
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
-  debug('Listening on ' + bind);
+  //debug('Listening on ' + bind);
   console.log("启动服务，Port："+port);
 }

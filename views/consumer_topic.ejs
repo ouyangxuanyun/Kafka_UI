@@ -1,66 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Consumed Topic View</title>
-    <link rel="shortcut icon" type="image/png" href="/images/favicon.png">
-    <link rel='stylesheet' href='/bootstrap-3.3.5/css/bootstrap.min.css'>
-    <link rel="stylesheet" media="screen" href="/stylesheets/index.min.css">
-    <link rel="stylesheet" media="screen"
-          href="/dataTables/stylesheets/dataTables.bootstrap.css">
-    <link rel="stylesheet" media="screen"
-          href="/chartist/stylesheets/chartist.min.css">
-
-    <script src="/chartist/javascripts/chartist.min.js"></script>
-</head>
+<%- include('components/header.ejs')%>
+<%- include('components/nav.ejs')%>
 <body role="document">
-
-<div class="navbar navbar-default" role="navigation">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <!--  Display three horizontal lines when navbar collapsed. -->
-                <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
-            </button>
-            <img src="/images/favicon.png">
-            <a class="navbar-brand un-float-me" href="/">
-                Kafka Manager</a><span class="label label-primary"><%= clustername %></span>
-        </div>
-
-
-        <div class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Cluster<span class="caret"></span></a>
-                    <ul class="dropdown-menu" role="menu">
-                        <li><a href="/addCluster">Add Cluster</a></li>
-                        <li><a href="/clusters/<%= clustername %>">Summary</a></li>
-                        <li><a href="/">List</a></li>
-                    </ul>
-                </li>
-                <li class=""><a href="/clusters/<%= clustername %>/brokers">Brokers</a></li>
-                <li class="dropdown">
-                    <a href="/clusters/test/topics" class="dropdown-toggle" data-toggle="dropdown">Topic<span
-                                class="caret"></span></a>
-                    <ul class="dropdown-menu" role="menu">
-                        <li><a href="/clusters/<%= clustername %>/createTopic">Create</a></li>
-                        <li><a href="/clusters/<%= clustername %>/topics">List</a></li>
-                    </ul>
-                </li>
-                <li><a href="/clusters/<%= clustername %>/leader">Preferred Replica Election</a></li>
-                <li><a href="/clusters/<%= clustername %>/assignment">Reassign Partitions</a></li>
-                <li class="active"><a href="/clusters/<%= clustername %>/consumers">Consumers</a></li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Logkafka<span class="caret"></span></a>
-                    <ul class="dropdown-menu" role="menu">
-                        <li><a href="/clusters/<%= clustername %>/logkafkas">List Logkafka</a></li>
-                        <li><a href="/clusters/<%= clustername %>/createLogkafka">Create Logkafka</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-    </div>
-</div>
-
 <div class="container" role="main">
     <ol class="breadcrumb">
         <li><a href="/">Clusters</a></li>
@@ -135,34 +75,7 @@
 
 </div>
 
-<script src="/jquery-2.1.4/jquery.min.js"></script>
-<script src="/bootstrap-3.3.5/js/bootstrap.min.js"></script>
-<script src="/dataTables/javascripts/jquery.dataTables.min.js"></script>
-<script src="/dataTables/javascripts/dataTables.bootstrap.js"></script>
-
-<script>
-    function goBack() {
-        window.history.back()
-    }
-
-    function checkBoxSelect(idPrefix, booleanValue, display) {
-        $("[id^=" + idPrefix + "]").prop("checked", booleanValue);
-    }
-
-    function selectBySubname(selectId, selectClass, display) {
-        var subname = $(selectId).val().toLowerCase();
-        $('.' + selectClass).not("[name*='" + subname + "']").css("display", "none");
-        $("[class='" + selectClass + "'][name*='" + subname + "']").css("display", display);
-        if (subname == "") {
-            $('.' + selectClass).css("display", display);
-        }
-    }
-
-    function disableSubmission() {
-        $('[type=submit]').prop('disabled', true);
-        $('[type=submit]').removeAttr('type');
-    }
-</script>
+<%- include('components/footer.ejs')%>
 
 </body>
 </html>

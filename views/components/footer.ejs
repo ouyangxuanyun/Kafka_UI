@@ -1,0 +1,22 @@
+<script>
+    function goBack() {
+        window.history.back()
+    }
+    function checkBoxSelect(idPrefix, booleanValue, display) {
+        $("[id^=" + idPrefix + "]").prop("checked", booleanValue);
+    }
+
+    function selectBySubname(selectId, selectClass, display) {
+        var subname = $(selectId).val().toLowerCase();
+        $('.' + selectClass).not("[name*='" + subname + "']").css("display", "none");
+        $("[class='" + selectClass + "'][name*='" + subname + "']").css("display", display);
+        if (subname == "") {
+            $('.' + selectClass).css("display", display);
+        }
+    }
+
+    function disableSubmission() {
+        $('[type=submit]').prop('disabled', true);
+        $('[type=submit]').removeAttr('type');
+    }
+</script>

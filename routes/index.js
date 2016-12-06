@@ -2,10 +2,10 @@
 var express = require('express');
 var router = express.Router();
 var fs = require('fs');
-var kafka = require('../Utils/kafkautil');
-var jmxutil = require('../Utils/jmxutils');
-var zkutil = require('../Utils/zkutils');
-var nodeutils = require('../Utils/nodeutils')
+var kafka = require('../utils/kafkautil');
+var jmxutil = require('../utils/jmxutils');
+var zkutil = require('../utils/zkutils');
+var nodeutils = require('../utils/nodeutils')
 var async = require('async');
 
 var testInfo = require('../test/gettestInfo')
@@ -41,13 +41,13 @@ router.get('/', function (req, res, next) {
         cluster.operation = AllCluster[key]["operation"];
         clusters.push(cluster);// console.log(cluster.name,cluster.kafkaVersion,cluster.zkHosts,cluster.operation);
     }
-    res.render('clusters', {clusters: clusters});
+    res.render('clusters', {clusters: clusters,Title:"Kafka Manager"});
 });
 
 
 /* 添加cluster页面*/
 router.get('/addCluster', function (req, res, next) {
-    res.render('addcluster');
+    res.render('addcluster',{Title:"Add Cluster"});
 });
 
 
@@ -76,7 +76,7 @@ router.get('/clusters', function (req, res, next) {
     }//console.log(attresult);
     AllCluster[attresult["clustername"]] = attresult;
     AllCluster.length++;
-    res.render('changeclusterresult', {title: "Add Cluster", clustername: clustername})
+    res.render('changeclusterresult', {title: "Add Cluster", clustername: clustername,Title:"Add Cluster"})
 });
 
 
@@ -89,7 +89,8 @@ router.get('/clusters/:clustername', function (req, res, next) {
                 clusterInfoname: clusterInfoname,
                 listlen: listlen,
                 bronum: bronum,
-                clusterInfo: AllCluster[clusterInfoname]
+                clusterInfo: AllCluster[clusterInfoname],
+                Title:"Kafka Manager"
             });
         });
     })
@@ -101,7 +102,7 @@ router.get('/updateCluster', function (req, res, next) {
     console.log(req.query.c);//获取要修改的cluster name
     var modifyname = req.query.c;
     var originInfo = AllCluster[modifyname];
-    res.render('updateCluster', {modifyname: modifyname, originInfo: originInfo});
+    res.render('updateCluster', {modifyname: modifyname, originInfo: originInfo,Title:"Update Cluster"});
 });
 
 /* Clusters 页面增删改  Modify/Disable/Enable/Delete,　update页面save按钮 或者Cluster页面Disable，Enable，Delete按钮*/
@@ -128,22 +129,22 @@ router.post('/clusters/:clustername', function (req, res, next) {
                 changedInfo["check_" + key] = "checked";
             }
         }
-        res.render('changeclusterresult', {title: "Update Cluster", clustername: clustername})
+        res.render('changeclusterresult', {title: "Update Cluster", clustername: clustername,Title:"Update Cluster"})
     }
 
     if (req.body.operation == "Disable") {//console.log("Disable 提交了表单");
         changedInfo["operation"] = "Disable"
-        res.render('changeclusterresult', {title: "Disable Cluster", clustername: clustername})
+        res.render('changeclusterresult', {title: "Disable Cluster", clustername: clustername,Title:"Disable Cluster"})
     }
 
     if (req.body.operation == "Enable") {//console.log("Enable 提交了表单");
         changedInfo["operation"] = "Enable"
-        res.render('changeclusterresult', {title: "Enable Cluster", clustername: clustername})
+        res.render('changeclusterresult', {title: "Enable Cluster", clustername: clustername,Title:"Enable Cluster"})
     }
 
     if (req.body.operation == "Delete") {//console.log("Delete 提交了表单");
         delete(AllCluster[clustername]);
-        res.render('changeclusterresult', {title: "Delete Cluster", clustername: clustername})
+        res.render('changeclusterresult', {title: "Delete Cluster", clustername: clustername,Title:"Delete Cluster"})
     }
 })
 
@@ -161,12 +162,13 @@ router.get('/clusters/:clustername/topics', function (req, res, next) {
                 var topic_name = jmx_item.topic;
                 kafka.getTopicSummary(topic_name, function (ts_data) {
                     ts_data.offset = jmx_item.end_offset;
+                    ts_data.unserReplicated = Math.floor(jmx_item.under_replicas*100/ts_data.partitions);
                     ts_data.producerMsg = jmx_item.metrics.MessagesInPerSec[0]
                     topicList.push(ts_data);
                     callback();
                 })
             }, function (err) {
-                res.render('topiclist', {topicList: topicList, clustername: clustername});
+                res.render('topiclist', {topicList: topicList, clustername: clustername,Title:"Topic List"});
             })
         })
     });
@@ -182,6 +184,8 @@ router.get('/clusters/:clustername/topics/:topic_name', function (req, res, next
             zkutil.filterconsumers(topic_name, function (consumers) { //一维数组，Consumers consuming from this topic的结果
                 //console.log(consumers);
                 topicdetails.offset = jmx_data.end_offset;
+                topicdetails.under_replicated = Math.floor(jmx_data.under_replicated*100/ts_data.partitions);
+                topicdetails.underReplicated_arr = jmx_data.underReplicated_arr;
                 topicdetails.logPartition_arr = jmx_data.logEndPartition_arr;//console.log(topicdetails.logPartition_arr)
                 topicdetails.metrics = jmx_data.metrics;
                 topicdetails.topicSummary = ts_data;
@@ -189,7 +193,8 @@ router.get('/clusters/:clustername/topics/:topic_name', function (req, res, next
                     topicdetails: topicdetails,
                     clustername: clustername,
                     topic_name: topic_name,
-                    consumers: consumers
+                    consumers: consumers,
+                    Title:"Topic View"
                 });
             })
         })
@@ -199,7 +204,7 @@ router.get('/clusters/:clustername/topics/:topic_name', function (req, res, next
 /* topic create result page. */
 router.get('/clusters/:clustername/createTopic', function (req, res, next) {
     var clustername = req.params.clustername;
-    res.render('createtopic', {clustername: clustername});
+    res.render('createtopic', {clustername: clustername,Title:"Create Topic"});
 });
 
 /* topic create result page. */
@@ -207,7 +212,7 @@ router.get('/clusters/:clustername/createResult', function (req, res, next) {
     var clustername = req.params.clustername;
     var topic_name = req.query.topic;
     nodeutils.createTopic(topic_name, function () {
-        res.render('createtopicresult', {topic_name: topic_name, clustername: clustername});
+        res.render('createtopicresult', {topic_name: topic_name, clustername: clustername,Title:"Create Topic"});
     })
 });
 
@@ -221,7 +226,8 @@ router.get('/clusters/:clustername/brokers', function (req, res, next) {
             res.render('brokers', {
                 clustername: clustername,
                 combinedMetrics: combinedMetrics,
-                BrokerList: BrokerList
+                BrokerList: BrokerList,
+                Title:"Broker List"
             })
         });
     });
@@ -279,7 +285,8 @@ router.get('/clusters/:clustername/brokers/:brokerlistId', function (req, res, n
                 brokerlistId: broid,
                 brokerMetric: results[1],
                 topiclistdetail: results[2],
-                InOutMessage: results[0]
+                InOutMessage: results[0],
+                Title:"Broker View"
             })
         });
 });
@@ -289,7 +296,7 @@ router.get('/clusters/:clustername/brokers/:brokerlistId', function (req, res, n
 router.get('/clusters/:clustername/consumers', function (req, res) {
     var clustername = req.params.clustername;
     zkutil.getAllConsumeInfo(function (allconsumeInfo) {//console.log(allconsumeInfo)
-        res.render('consumerlist', {clustername: clustername, allconsumeInfo: allconsumeInfo})
+        res.render('consumerlist', {clustername: clustername, allconsumeInfo: allconsumeInfo,Title:"Consumer List"})
     })
 });
 
@@ -298,7 +305,7 @@ router.get('/clusters/:clustername/consumers', function (req, res) {
 router.get('/clusters/:clustername/consumers/:consumergp/type/ZK', function (req, res) {
     var clustername = req.params.clustername;
     var consumergp = req.params.consumergp;
-    res.render('consumedTopicInfo', {clustername: clustername, consumergp: consumergp})
+    res.render('consumedTopicInfo', {clustername: clustername, consumergp: consumergp,Title:"Consumer View"})
 });
 
 
@@ -315,9 +322,9 @@ router.get('/clusters/:clustername/consumers/:consumergp/topic/:consumerTopic/ty
             zkutil.getInstanceOwner(consumergp, consumerTopic, function (InstanceOwner) {
                 // console.log("############" + InstanceOwner);
                 var instancenum = 0;
+                var totalLag = 0;
                 for (var i = 0; i < Partition_LogSize.length; i++) { //i代表partition
                     var rowInfo = [];
-                    var totalLag = 0;
                     rowInfo[0] = i;
                     rowInfo[1] = Partition_LogSize[i];
                     rowInfo[2] = (ConsumerOffset[i] == undefined) ? 0 : ConsumerOffset[i];
@@ -338,7 +345,8 @@ router.get('/clusters/:clustername/consumers/:consumergp/topic/:consumerTopic/ty
                     consumerTopic: consumerTopic,
                     totalLag: totalLag,
                     percentage: percentage,
-                    allInfo: allInfo
+                    allInfo: allInfo,
+                    Title:"Consumed Topic View"
                 })
             });
         });

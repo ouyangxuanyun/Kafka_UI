@@ -172,9 +172,10 @@ function getTopicSummary (topic, callback) {
                 b_arry[0] = t_data.raw.partitions[0].replicas[0].broker;
                 var t_brokers = 1;//number of brokers for topic
                 for(var m= 0; m< t_data.raw.partitions.length; m++) {
+                    if (t_data.raw.partitions[m].replicas[0].leader) { p_r_num++; }//++jnn
                     for(var n= 0; n< t_data.raw.partitions[m].replicas.length; n++) {
                         var flag= false;
-                        if (t_data.raw.partitions[m].replicas[0].leader) { p_r_num++; }
+                        //--jnn
                         for(var l= 0; l<b_arry.length; l++) {
                             if (t_data.raw.partitions[m].replicas[n].broker == b_arry[l]) {
                                 flag =true;
@@ -205,7 +206,7 @@ function getTopicSummary (topic, callback) {
                         }
                     }
                     broker_paritions.broker = b_arry[i];//==
-                    broker_paritions.parititions = partitons_list.length;//==
+                    broker_paritions.partitions = partitons_list.length;//==
                     partitons_list.sort();//==
                     var list = new String();
                     for (var j= 0; j< partitons_list.length; j++){
@@ -271,8 +272,8 @@ function getTopicSummary (topic, callback) {
                 topicDetail.brokers = brokers; //number of brokers for cluster
                 //topicDetail.b_p_list = b_p_list;//broker list for topic
                 topicDetail.broker_list = broker_partition_list;//broker list for topic, list is a string
-                topicDetail.prefferedReplicas = Math.round(p_r_num*100/partitions);//preferred replicas %
-                topicDetail.brokerSpread = Math.round(t_brokers*100/brokers); //broker spread %
+                topicDetail.prefferedReplicas = Math.floor(p_r_num*100/partitions);//preferred replicas %//mod jnn
+                topicDetail.brokerSpread = Math.floor(t_brokers*100/brokers); //broker spread %//mod jnn
                 topicDetail.brokerSkewed = brokerSkewed;//broker skewed %
                 topicDetail.replicas = t_data.raw.partitions[0].replicas.length;//number of replicas
                 topicDetail.partitions_list = partitions_list;//partitions info

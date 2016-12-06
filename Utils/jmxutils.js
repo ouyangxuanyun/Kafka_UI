@@ -198,10 +198,41 @@ function getJMXdata(cluster_arr, brokers, topic_arr, callback) {
                 FailedProduceRequestsPerSec = [0,0,0,0],
                 MessagesInPerSec = [0,0,0,0],
                 logStartPartition_arr = new Array(),
-                logEndPartition_arr = new Array()
+                logEndPartition_arr = new Array(),
+                underReplicated_arr = new Array(),//++ jnn
+                u_r_pnum = 0 //++ jnn
             async.each(mb_data, function(mb_item, callback){
                 if(mb_item.topic==topic){
-                    if(mb_item.name == 'LogStartOffset') {
+                    if(mb_item.name == 'UnderReplicated') {
+                        if(underReplicated_arr.length!=0){
+                            async.each(underReplicated_arr, function(partition_item, callback){
+                                if (mb_item.partition == partition_item.partition){
+                                    if(partition_item.under_replicated == 0 && mb_item.value != 0) {
+                                        partition_item.under_replicated = mb_item.value;
+                                        u_r_pnum++;
+                                    }
+                                    callback('the partition is existed!');
+                                }
+                                else callback();
+                            }, function(err){
+                                if(err) {
+                                    //console.log(err);
+                                    callback();
+                                }
+                                else {
+                                    underReplicated_arr.push({partition: mb_item.partition, under_replicated: mb_item.value});
+                                    if(mb_item.value != 0) u_r_pnum++;
+                                    callback();
+                                }
+                            })
+                        }
+                        else {
+                            underReplicated_arr.push({partition: mb_item.partition, under_replicated: mb_item.value});
+                            if(mb_item.value != 0) u_r_pnum++;
+                            callback();
+                        }
+                    }
+                    else if(mb_item.name == 'LogStartOffset') {
                         if(logStartPartition_arr.length!=0){
                             async.each(logStartPartition_arr, function(partition_item, callback){
                                 if (mb_item.partition == partition_item){
@@ -373,7 +404,7 @@ function getJMXdata(cluster_arr, brokers, topic_arr, callback) {
                 metrics.FailedFetchRequestsPerSec = FailedFetchRequestsPerSec
                 metrics.FailedProduceRequestsPerSec = FailedProduceRequestsPerSec
                 metrics.MessagesInPerSec = MessagesInPerSec
-                result.push({topic: topic, end_offset: end_offset, start_offset: start_offset, offset: (end_offset-start_offset), metrics: metrics})
+                result.push({topic: topic, under_replicas: u_r_pnum, end_offset: end_offset, start_offset: start_offset, offset: (end_offset-start_offset), metrics: metrics})
                 callback()
             })
         }, function(err){
@@ -400,12 +431,43 @@ function getTopicJMXdata(cluster_arr, brokers, topic, callback) {
         FailedProduceRequestsPerSec = [0,0,0,0],
         MessagesInPerSec = [0,0,0,0],
         logStartPartition_arr = new Array(),
-        logEndPartition_arr = new Array()
+        logEndPartition_arr = new Array(),
+        underReplicated_arr = new Array(),
+        u_r_pnum = 0
 
     getMBeanList(cluster_arr, brokers, function(mb_data){
         async.each(mb_data, function(mb_item, callback){
             if(mb_item.topic==topic){
-                if(mb_item.name == 'LogStartOffset') {
+                if(mb_item.name == 'UnderReplicated') {
+                    if(underReplicated_arr.length!=0){
+                        async.each(underReplicated_arr, function(partition_item, callback){
+                            if (mb_item.partition == partition_item.partition){
+                                if(partition_item.under_replicated == 0 && mb_item.value != 0) {
+                                    partition_item.under_replicated = mb_item.value;
+                                    u_r_pnum++;
+                                }
+                                callback('the partition is existed!');
+                            }
+                            else callback();
+                        }, function(err){
+                            if(err) {
+                                //console.log(err);
+                                callback();
+                            }
+                            else {
+                                underReplicated_arr.push({partition: mb_item.partition, under_replicated: mb_item.value});
+                                if(mb_item.value != 0) u_r_pnum++;
+                                callback();
+                            }
+                        })
+                    }
+                    else {
+                        underReplicated_arr.push({partition: mb_item.partition, under_replicated: mb_item.value});
+                        if(mb_item.value != 0) u_r_pnum++;
+                        callback();
+                    }
+                }
+                else if(mb_item.name == 'LogStartOffset') {
                     if(logStartPartition_arr.length!=0){
                         async.each(logStartPartition_arr, function(partition_item, callback){
                             if (mb_item.partition == partition_item.partition){
@@ -577,7 +639,7 @@ function getTopicJMXdata(cluster_arr, brokers, topic, callback) {
             metrics.FailedFetchRequestsPerSec = FailedFetchRequestsPerSec
             metrics.FailedProduceRequestsPerSec = FailedProduceRequestsPerSec
             metrics.MessagesInPerSec = MessagesInPerSec
-            callback({topic: topic, logEndPartition_arr: logEndPartition_arr, end_offset: end_offset, logStartPartition_arr: logStartPartition_arr, start_offset: start_offset, offset: (end_offset-start_offset), metrics: metrics})
+            callback({topic: topic, underReplicated_arr: underReplicated_arr, under_replicated: u_r_pnum, logEndPartition_arr: logEndPartition_arr, end_offset: end_offset, logStartPartition_arr: logStartPartition_arr, start_offset: start_offset, offset: (end_offset-start_offset), metrics: metrics})
         })
     })
 }
